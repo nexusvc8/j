@@ -25,13 +25,12 @@
             --danger: #dc2626;
             --danger-light: rgba(220, 38, 38, 0.1);
             
-            /* Light Mode Theme */
+            /* Theme Colors */
             --bg-body: #f1f5f9;
             --surface: #ffffff;
             --surface-card: #f8fafc;
             --surface-hover: #e2e8f0;
             --border: #e2e8f0;
-            --border-light: rgba(0, 0, 0, 0.06);
             
             --text-main: #0f172a;
             --text-muted: #64748b;
@@ -42,10 +41,10 @@
             --radius-lg: 18px;
             --radius-xl: 22px;
             --header-height: 58px;
-            --transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
             --shadow-md: 0 4px 14px rgba(0,0,0,0.06);
-            --shadow-lg: 0 10px 25px rgba(0,0,0,0.08);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
         }
 
         * {
@@ -56,13 +55,17 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        body {
-            height: 100vh;
+        html, body {
+            height: 100%;
+            min-height: 100%;
             background-color: var(--bg-body);
             color: var(--text-main);
+            overflow-x: hidden;
+        }
+
+        body {
             display: flex;
             flex-direction: column;
-            overflow: hidden;
         }
 
         .mono { font-family: 'JetBrains Mono', monospace; }
@@ -91,7 +94,44 @@
         #notification-box.danger { background: linear-gradient(135deg, #ef4444, #dc2626); border: 1px solid #f87171; }
         #notification-box.hidden { top: -80px; opacity: 0; }
 
-        /* App Header (Hidden initially for Login/Signup) */
+        /* Live Payout Toast */
+        #live-payout-ticker {
+            position: fixed;
+            bottom: 24px;
+            left: 24px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 8px 16px 8px 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: var(--shadow-lg);
+            z-index: 9999;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            transform: translateY(60px);
+            opacity: 0;
+            pointer-events: none;
+            max-width: 330px;
+        }
+        #live-payout-ticker.show { transform: translateY(0); opacity: 1; }
+        .ticker-badge {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        .ticker-badge.wth { background: #dcfce7; color: #059669; }
+        .ticker-badge.act { background: #e0e7ff; color: #4338ca; }
+        .ticker-details { display: flex; flex-direction: column; overflow: hidden; }
+        .ticker-title { font-size: 12.5px; font-weight: 700; color: var(--text-main); white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
+        .ticker-sub { font-size: 11px; color: var(--text-muted); margin-top: 1px; display: flex; align-items: center; gap: 4px; }
+
+        /* App Header */
         .app-header {
             height: var(--header-height);
             background: var(--surface);
@@ -102,15 +142,11 @@
             padding: 0 18px;
             z-index: 1200;
             flex-shrink: 0;
+            position: sticky;
+            top: 0;
             box-shadow: var(--shadow-sm);
         }
-
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
+        .header-left { display: flex; align-items: center; gap: 12px; }
         .menu-btn {
             background: var(--surface-card);
             border: 1px solid var(--border);
@@ -125,47 +161,17 @@
             font-size: 22px;
             transition: var(--transition);
         }
-        .menu-btn:hover {
-            background: var(--surface-hover);
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-
-        .header-brand-wrap {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .header-logo {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid var(--primary);
-            box-shadow: 0 0 8px rgba(79, 70, 229, 0.2);
-        }
-
-        .brand-name {
-            font-size: 19px;
-            font-weight: 800;
-            color: var(--text-main);
-            letter-spacing: -0.4px;
-        }
+        .menu-btn:hover { background: var(--surface-hover); border-color: var(--primary); color: var(--primary); }
+        .header-brand-wrap { display: flex; align-items: center; gap: 10px; }
+        .header-logo { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); }
+        .brand-name { font-size: 19px; font-weight: 800; color: var(--text-main); letter-spacing: -0.4px; }
 
         /* Layout Container */
-        .app-layout {
-            display: flex;
-            flex: 1;
-            height: 100%;
-            overflow: hidden;
-            position: relative;
-        }
+        .app-layout { display: flex; flex: 1; position: relative; min-height: calc(100vh - var(--header-height)); }
 
         /* Sidebar Navigation */
         .sidebar {
             width: 250px;
-            height: 100%;
             background: var(--surface);
             border-right: 1px solid var(--border);
             display: flex;
@@ -175,7 +181,6 @@
             z-index: 1100;
             flex-shrink: 0;
         }
-
         .sidebar-overlay {
             display: none;
             position: fixed;
@@ -188,15 +193,7 @@
             z-index: 1050;
         }
         .sidebar-overlay.active { display: block; }
-
-        .menu-bar {
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            overflow-y: auto;
-        }
-
+        .menu-bar { height: 100%; display: flex; flex-direction: column; justify-content: space-between; }
         .menu-links { list-style: none; display: flex; flex-direction: column; gap: 5px; }
         .menu-links li a {
             display: flex;
@@ -211,10 +208,7 @@
             transition: var(--transition);
         }
         .menu-links li a .icon { font-size: 20px; }
-        .menu-links li a:hover {
-            background-color: var(--surface-card);
-            color: var(--primary);
-        }
+        .menu-links li a:hover { background-color: var(--surface-card); color: var(--primary); }
         .menu-links li a.active {
             background: linear-gradient(135deg, var(--primary), var(--primary-hover));
             color: #ffffff;
@@ -224,12 +218,12 @@
         /* Main Content Container */
         .main-content {
             flex-grow: 1;
-            height: 100%;
-            overflow-y: auto;
             padding: 24px;
+            padding-bottom: 70px;
             background: var(--bg-body);
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
-
         .content-section {
             max-width: 960px;
             margin: 0 auto;
@@ -239,38 +233,19 @@
             border: 1px solid var(--border);
             box-shadow: var(--shadow-md);
         }
-
-        .section-header {
-            margin-bottom: 22px;
-        }
-        .section-header h2 {
-            font-size: 20px;
-            font-weight: 800;
-            color: var(--text-main);
-            letter-spacing: -0.3px;
-        }
-        .section-header p {
-            color: var(--text-muted);
-            font-size: 13.5px;
-            margin-top: 4px;
-        }
+        .section-header { margin-bottom: 22px; }
+        .section-header h2 { font-size: 20px; font-weight: 800; color: var(--text-main); letter-spacing: -0.3px; }
+        .section-header p { color: var(--text-muted); font-size: 13.5px; margin-top: 4px; }
 
         /* Form Controls */
-        label {
-            font-size: 12.5px;
-            font-weight: 700;
-            color: #475569;
-            margin-bottom: 6px;
-            display: block;
-        }
-
+        label { font-size: 12.5px; font-weight: 700; color: #475569; margin-bottom: 6px; display: block; }
         input, select {
             width: 100%;
             padding: 12px 14px;
             margin-bottom: 16px;
             border: 1px solid var(--border);
             border-radius: var(--radius-md);
-            font-size: 14px;
+            font-size: 14.5px;
             background: var(--surface-card);
             color: var(--text-main);
             outline: none;
@@ -281,7 +256,6 @@
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
         }
-
         button.btn-primary {
             width: 100%;
             padding: 12.5px;
@@ -298,7 +272,46 @@
         button.btn-primary:hover { filter: brightness(1.05); transform: translateY(-1px); }
         button:disabled { background: #cbd5e1 !important; color: #64748b !important; cursor: not-allowed; transform: none; box-shadow: none; }
 
-        /* Dashboard Overview */
+        /* WhatsApp Share Buttons */
+        button.btn-whatsapp-share {
+            width: 100%;
+            padding: 13px;
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            color: #ffffff;
+            border: none;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: 14.5px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: var(--transition);
+            box-shadow: 0 4px 14px rgba(37, 211, 102, 0.3);
+            margin-top: 12px;
+        }
+        button.btn-whatsapp-share:hover { filter: brightness(1.08); transform: translateY(-1px); }
+
+        button.btn-poster {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: #ffffff;
+            border: none;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 10px;
+            box-shadow: 0 4px 14px rgba(59, 130, 246, 0.3);
+        }
+
+        /* Dashboard Overview Hero */
         .dash-hero-card {
             background: linear-gradient(135deg, #312e81 0%, #1e1b4b 100%);
             border: 1px solid rgba(79, 70, 229, 0.3);
@@ -312,27 +325,13 @@
             gap: 16px;
             box-shadow: 0 8px 24px rgba(49, 46, 129, 0.2);
         }
-        .dash-hero-bal-title {
-            font-size: 12px;
-            font-weight: 800;
-            color: #c7d2fe;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-        }
-        .dash-hero-bal-val {
-            font-size: 32px;
-            font-weight: 900;
-            color: #ffffff;
-            margin: 4px 0 6px;
-        }
-        .dash-action-buttons {
-            display: flex;
-            gap: 10px;
-        }
+        .dash-hero-bal-title { font-size: 12px; font-weight: 800; color: #c7d2fe; text-transform: uppercase; letter-spacing: 0.8px; }
+        .dash-hero-bal-val { font-size: 32px; font-weight: 900; color: #ffffff; margin: 4px 0 6px; }
+        .dash-action-buttons { display: flex; gap: 10px; }
         .dash-btn {
-            padding: 9px 16px;
+            padding: 9px 18px;
             border-radius: 10px;
-            font-size: 13px;
+            font-size: 13.5px;
             font-weight: 700;
             border: none;
             cursor: pointer;
@@ -361,17 +360,8 @@
             gap: 6px;
             box-shadow: var(--shadow-sm);
         }
-        .stat-card .stat-label {
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--text-muted);
-            text-transform: uppercase;
-        }
-        .stat-card .stat-val {
-            font-size: 20px;
-            font-weight: 800;
-            color: var(--text-main);
-        }
+        .stat-card .stat-label { font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+        .stat-card .stat-val { font-size: 20px; font-weight: 800; color: var(--text-main); }
 
         /* Notice Banner */
         .notice-banner {
@@ -388,28 +378,230 @@
             font-weight: 600;
         }
 
-        /* WhatsApp Card */
-        .whatsapp-card {
-            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
-            border: 1px solid #a7f3d0;
-            color: #047857;
-            padding: 14px 18px;
-            border-radius: var(--radius-md);
-            margin-top: 20px;
+        /* Locked Welcome Bonus Card */
+        .locked-bonus-card {
+            background: linear-gradient(135deg, #fefce8 0%, #fff7ed 100%);
+            border: 1.5px dashed #f59e0b;
+            border-radius: var(--radius-lg);
+            padding: 18px;
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .locked-bonus-header { display: flex; align-items: center; justify-content: space-between; }
+        .locked-bonus-progress-wrap { background: #e2e8f0; border-radius: 50px; height: 9px; overflow: hidden; width: 100%; }
+        .locked-bonus-progress-bar { background: linear-gradient(90deg, #f59e0b, #10b981); height: 100%; width: 0%; transition: width 0.4s ease; }
+
+        /* Bank Card Deposit Design */
+        .bank-card-container {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border-radius: 16px;
+            padding: 22px;
+            color: #fff;
+            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.25);
+            margin-bottom: 22px;
+            border: 1px solid #334155;
+            position: relative;
+            overflow: hidden;
+        }
+        .bank-card-container::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 140px;
+            height: 140px;
+            background: rgba(79, 70, 229, 0.2);
+            border-radius: 50%;
+        }
+        .bank-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+        .bank-chip { width: 42px; height: 32px; background: linear-gradient(135deg, #fbbf24, #d97706); border-radius: 6px; }
+        .bank-badge { background: #059669; color: #fff; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 20px; }
+        .bank-row { margin-bottom: 12px; }
+        .bank-title-label { font-size: 11px; text-transform: uppercase; color: #94a3b8; font-weight: 600; }
+        .bank-title-val { font-size: 18px; font-weight: 800; letter-spacing: 0.5px; color: #f8fafc; }
+        .bank-number-box {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            text-decoration: none;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            padding: 10px 14px;
+            border-radius: 10px;
+            margin-top: 6px;
+        }
+        .bank-number-val { font-size: 19px; font-weight: 800; letter-spacing: 1px; color: #38bdf8; }
+        .btn-copy-acc {
+            background: #4f46e5;
+            color: #fff;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Milestones List Card */
+        .milestone-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: var(--surface-card);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            margin-bottom: 10px;
             transition: var(--transition);
         }
-        .whatsapp-card:hover { transform: translateY(-2px); border-color: #059669; }
-
-        /* Work Packages & Tasks */
-        .investment-plans, .task-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 16px;
+        .milestone-item:hover { border-color: var(--primary); }
+        .milestone-badge {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
         }
+        .milestone-badge.claimable { background: #059669; color: #fff; }
+        .milestone-badge.locked { background: #e2e8f0; color: #64748b; cursor: not-allowed; }
+        .milestone-badge.claimed { background: #dcfce7; color: #047857; cursor: default; }
+
+        /* Team Tabs & Cards */
+        .team-tab-nav {
+            display: flex;
+            gap: 8px;
+            margin: 18px 0 14px 0;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+            overflow-x: auto;
+        }
+        .team-tab-btn {
+            padding: 8px 16px;
+            border: 1px solid var(--border);
+            background: var(--surface-card);
+            color: var(--text-muted);
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+        .team-tab-btn:hover { color: var(--primary); border-color: var(--primary); }
+        .team-tab-btn.active {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+            box-shadow: 0 2px 8px rgba(79, 70, 229, 0.25);
+        }
+
+        .member-card {
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            transition: var(--transition);
+        }
+        .member-card:hover { border-color: var(--primary); background: #ffffff; }
+        .member-info { display: flex; flex-direction: column; gap: 3px; }
+        .member-email { font-size: 13.5px; font-weight: 700; color: var(--text-main); }
+        .member-contact { font-size: 11.5px; color: var(--text-muted); }
+        .member-date { font-size: 11px; font-weight: 600; color: var(--text-dim); }
+
+        /* Responsive History Cards (No Horizontal Sliding) */
+        .history-cards-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .history-card {
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 14px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            transition: var(--transition);
+        }
+        .history-card:hover {
+            border-color: var(--primary);
+            background: #ffffff;
+            box-shadow: var(--shadow-sm);
+        }
+        .history-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .history-method-badge {
+            font-size: 11.5px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+            background: #e0e7ff;
+            color: var(--primary);
+        }
+        .history-status-badge {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 20px;
+            text-transform: capitalize;
+        }
+        .history-status-badge.processing { background: #fef3c7; color: #d97706; }
+        .history-status-badge.approved, .history-status-badge.completed { background: #dcfce7; color: #059669; }
+        .history-status-badge.rejected { background: #fee2e2; color: #dc2626; }
+        
+        .history-card-main {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .history-amount { font-size: 18px; font-weight: 800; color: var(--text-main); }
+        .history-target { font-size: 12px; color: var(--text-muted); }
+        
+        .history-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11.5px;
+            color: var(--text-dim);
+            border-top: 1px solid var(--border);
+            padding-top: 6px;
+            margin-top: 2px;
+        }
+
+        /* Spin Wheel Widget */
+        .spin-wheel-container { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px 0; }
+        .wheel-wrapper { position: relative; width: 300px; height: 300px; margin: 20px auto; }
+        #spinCanvas { border-radius: 50%; box-shadow: 0 8px 24px rgba(0,0,0,0.15); transition: transform 4.5s cubic-bezier(0.17, 0.67, 0.12, 0.99); }
+        .wheel-pointer {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 14px solid transparent;
+            border-right: 14px solid transparent;
+            border-top: 26px solid #ef4444;
+            z-index: 10;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+
+        /* Packages & Task Cards */
+        .investment-plans, .task-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px; }
         .plan-card, .task-card {
             background: var(--surface);
             border: 1px solid var(--border);
@@ -422,59 +614,10 @@
             transition: var(--transition);
             box-shadow: var(--shadow-sm);
         }
-        .plan-card:hover, .task-card:hover {
-            border-color: var(--primary);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-        .plan-card h3, .task-card h3 {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--text-main);
-            margin-bottom: 6px;
-        }
-        .plan-price {
-            font-size: 26px;
-            font-weight: 900;
-            color: var(--primary);
-            margin: 8px 0;
-        }
-        .plan-meta {
-            font-size: 12.5px;
-            color: var(--text-muted);
-            margin-bottom: 16px;
-            line-height: 1.6;
-        }
-
-        /* Tables */
-        .table-wrap {
-            overflow-x: auto;
-            border-radius: var(--radius-md);
-            border: 1px solid var(--border);
-            margin-top: 10px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13.5px;
-            text-align: left;
-        }
-        th {
-            background-color: var(--surface-card);
-            color: var(--text-muted);
-            font-weight: 700;
-            padding: 12px 14px;
-            border-bottom: 1px solid var(--border);
-            font-size: 12px;
-            text-transform: uppercase;
-        }
-        td {
-            padding: 12px 14px;
-            border-bottom: 1px solid var(--border);
-            color: var(--text-main);
-        }
-        tr:last-child td { border-bottom: none; }
-        tr:hover td { background: var(--surface-card); }
+        .plan-card:hover, .task-card:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+        .plan-card h3, .task-card h3 { font-size: 16px; font-weight: 700; color: var(--text-main); margin-bottom: 6px; }
+        .plan-price { font-size: 26px; font-weight: 900; color: var(--primary); margin: 8px 0; }
+        .plan-meta { font-size: 12.5px; color: var(--text-muted); margin-bottom: 16px; line-height: 1.6; }
 
         /* Referral Box */
         .referral-box {
@@ -489,21 +632,16 @@
             margin-top: 8px;
             word-break: break-all;
         }
-        .referral-box button {
-            width: auto;
-            padding: 8px 16px;
-            font-size: 12.5px;
-            white-space: nowrap;
-        }
+        .referral-box button { width: auto; padding: 8px 16px; font-size: 12.5px; white-space: nowrap; }
 
-        /* Modal Overlay */
+        /* Modal Overlay Base */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(15, 23, 42, 0.5);
+            background: rgba(15, 23, 42, 0.55);
             backdrop-filter: blur(4px);
             z-index: 10000;
             display: flex;
@@ -522,14 +660,35 @@
             width: 90%;
             max-width: 400px;
             text-align: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.18);
         }
-        .modal-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 18px;
-        }
+        .modal-buttons { display: flex; gap: 10px; margin-top: 18px; }
         .modal-btn.cancel { background: #94a3b8; color: #fff; }
+
+        /* Task Verification Modal */
+        .task-verify-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+        }
+        .verify-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #e2e8f0;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spinAnim 0.8s linear infinite;
+        }
+        @keyframes spinAnim { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Payment Receipt Modal Styles */
+        .receipt-card { background: #ffffff; border: 1px dashed #cbd5e1; border-radius: var(--radius-md); padding: 18px 14px; margin: 14px 0; text-align: left; }
+        .receipt-row { display: flex; justify-content: space-between; align-items: center; font-size: 12.5px; padding: 6px 0; border-bottom: 1px solid #f1f5f9; }
+        .receipt-row:last-child { border-bottom: none; }
+        .receipt-label { color: var(--text-muted); font-weight: 600; }
+        .receipt-val { font-weight: 700; color: var(--text-main); }
 
         @media (max-width: 860px) {
             .sidebar {
@@ -540,9 +699,13 @@
                 box-shadow: 0 10px 30px rgba(0,0,0,0.15);
             }
             .sidebar.open { left: 0; }
-            .main-content { padding: 16px; }
+            .main-content { padding: 16px; padding-bottom: 90px; }
             .content-section { padding: 18px; }
             .dash-hero-bal-val { font-size: 26px; }
+            #live-payout-ticker { left: 50%; transform: translateX(-50%) translateY(70px); bottom: 18px; width: 92%; max-width: 320px; }
+            #live-payout-ticker.show { transform: translateX(-50%) translateY(0); }
+            .wheel-wrapper { width: 270px; height: 270px; }
+            #spinCanvas { width: 270px; height: 270px; }
         }
     </style>
 </head>
@@ -550,7 +713,16 @@
 
     <div id="notification-box" class="hidden"></div>
 
-    <!-- Header (Hidden on Login/Signup via 'hidden' class, shown after login) -->
+    <!-- Live Anti-detection Ticker -->
+    <div id="live-payout-ticker">
+        <div class="ticker-badge wth" id="ticker-icon"><i class='bx bx-check-circle'></i></div>
+        <div class="ticker-details">
+            <span class="ticker-title mono" id="ticker-title">0301****489 withdrew Rs. 850</span>
+            <span class="ticker-sub" id="ticker-sub"><i class='bx bx-time-five'></i> <span id="ticker-time">Just now</span></span>
+        </div>
+    </div>
+
+    <!-- Header -->
     <header class="app-header hidden" id="app-header">
         <div class="header-left">
             <button class="menu-btn" id="menu-toggle" aria-label="Toggle Sidebar">
@@ -566,18 +738,19 @@
     <div class="app-layout">
         <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
-        <!-- Sidebar Navigation (No Brand Logo or Name inside) -->
+        <!-- Sidebar Navigation -->
         <nav class="sidebar hidden" id="main-sidebar">
             <div class="menu-bar">
                 <ul class="menu-links">
-                    <li><a href="#" class="active" onclick="showSection('home', this)"><i class='bx bx-grid-alt icon'></i><span>Overview</span></a></li>
-                    <li><a href="#" onclick="showSection('deposit', this)"><i class='bx bx-wallet icon'></i><span>Add Funds</span></a></li>
-                    <li><a href="#" onclick="showSection('invest', this)"><i class='bx bx-layer icon'></i><span>Work Packages</span></a></li>
+                    <li><a href="#" class="active" onclick="showSection('home', this)"><i class='bx bx-grid-alt icon'></i><span>Dashboard</span></a></li>
+                    <li><a href="#" onclick="showSection('deposit', this)"><i class='bx bx-wallet icon'></i><span>Deposit</span></a></li>
+                    <li><a href="#" onclick="showSection('invest', this)"><i class='bx bx-layer icon'></i><span>Packages</span></a></li>
                     <li><a href="#" onclick="showSection('task', this)"><i class='bx bx-check-shield icon'></i><span>Daily Tasks</span></a></li>
-                    <li><a href="#" onclick="showSection('send', this)"><i class='bx bx-money-withdraw icon'></i><span>Payout Request</span></a></li>
-                    <li><a href="#" onclick="showSection('history', this)"><i class='bx bx-receipt icon'></i><span>Activity History</span></a></li>
-                    <li><a href="#" onclick="showSection('team', this)"><i class='bx bx-group icon'></i><span>Affiliate Team</span></a></li>
-                    <li><a href="#" onclick="showSection('profile', this)"><i class='bx bx-user icon'></i><span>My Account</span></a></li>
+                    <li><a href="#" onclick="showSection('spin', this)"><i class='bx bx-gift icon'></i><span>Lucky Spin</span></a></li>
+                    <li><a href="#" onclick="showSection('send', this)"><i class='bx bx-money-withdraw icon'></i><span>Withdraw</span></a></li>
+                    <li><a href="#" onclick="showSection('history', this)"><i class='bx bx-receipt icon'></i><span>History</span></a></li>
+                    <li><a href="#" onclick="showSection('team', this)"><i class='bx bx-user-plus icon'></i><span>Invite</span></a></li>
+                    <li><a href="#" onclick="showSection('profile', this)"><i class='bx bx-user icon'></i><span>Profile</span></a></li>
                     <li><a href="#" onclick="logoutUser()"><i class='bx bx-log-out icon'></i><span>Sign Out</span></a></li>
                 </ul>
             </div>
@@ -586,7 +759,7 @@
         <!-- Main Workspace -->
         <section class="main-content">
             <!-- Auth Section -->
-            <div id="auth-section" style="max-width: 420px; margin: 50px auto;">
+            <div id="auth-section" style="max-width: 420px; margin: 40px auto;">
                 <div id="login-container" class="content-section">
                     <div style="text-align: center; margin-bottom: 20px;">
                         <img src="https://i.ibb.co/NgxZd8Sx/image.png" alt="Logo" style="width: 55px; height: 55px; border-radius: 50%; border: 2px solid var(--primary); margin-bottom: 8px;">
@@ -599,7 +772,7 @@
                     <input type="password" id="login-password" placeholder="••••••••">
                     <button class="btn-primary" id="btn-login-submit" onclick="loginUser()">Sign In</button>
                     <p style="text-align:center; margin-top:18px; font-size:13.5px; color:var(--text-muted);">
-                        Don't have an account? <a href="#" onclick="toggleForms()" style="color:var(--primary); font-weight:700; text-decoration:none;">Create Account</a>
+                        Don't have an account? <a href="#" onclick="toggleForms(true)" style="color:var(--primary); font-weight:700; text-decoration:none;">Create Account</a>
                     </p>
                 </div>
 
@@ -607,7 +780,7 @@
                     <div style="text-align: center; margin-bottom: 20px;">
                         <img src="https://i.ibb.co/NgxZd8Sx/image.png" alt="Logo" style="width: 55px; height: 55px; border-radius: 50%; border: 2px solid var(--primary); margin-bottom: 8px;">
                         <h2 style="font-size: 22px; font-weight: 800; color: var(--text-main);">Create Member Account</h2>
-                        <p style="color: var(--text-muted); font-size: 13.5px; margin-top: 4px;">Join the digital work network</p>
+                        <p style="color: var(--text-muted); font-size: 13.5px; margin-top: 4px;">Join & get Rs. 100 Welcome Bonus + 1 Free Spin</p>
                     </div>
                     <label>Email Address</label>
                     <input type="email" id="signup-email" placeholder="name@example.com">
@@ -619,24 +792,24 @@
                     <input type="text" id="signup-referral" placeholder="Sponsor Code">
                     <button class="btn-primary" id="btn-signup-submit" onclick="signupUser()">Register Account</button>
                     <p style="text-align:center; margin-top:18px; font-size:13.5px; color:var(--text-muted);">
-                        Already registered? <a href="#" onclick="toggleForms()" style="color:var(--primary); font-weight:700; text-decoration:none;">Sign In</a>
+                        Already registered? <a href="#" onclick="toggleForms(false)" style="color:var(--primary); font-weight:700; text-decoration:none;">Sign In</a>
                     </p>
                 </div>
             </div>
 
             <!-- Dashboard Container -->
             <div id="dashboard-container" class="hidden">
-                <!-- Overview Section -->
+                <!-- Dashboard Section -->
                 <div id="home-content" class="content-section">
                     <div id="system-notice" class="notice-banner">
                         <div style="display:flex; align-items:center; gap:8px;">
                             <i class='bx bx-info-circle' style="font-size:18px;"></i>
-                            <span>System update: Fast 24-hour payouts and instant task verification active.</span>
+                            <span>Fast 24-hour payouts and instant task verification active.</span>
                         </div>
                         <i class='bx bx-x' style="cursor:pointer; font-size:18px;" onclick="document.getElementById('system-notice').style.display='none'"></i>
                     </div>
 
-                    <!-- Dashboard Hero -->
+                    <!-- Hero Card -->
                     <div class="dash-hero-card">
                         <div>
                             <span class="dash-hero-bal-title">Available Wallet Balance</span>
@@ -644,8 +817,8 @@
                             <span style="font-size:12px; color:#cbd5e1;">Account: <strong id="user-email-display" style="color:#fff;">-</strong></span>
                         </div>
                         <div class="dash-action-buttons">
-                            <button class="dash-btn dep" onclick="showSection('deposit', document.querySelector('a[onclick*=\'deposit\']'))"><i class='bx bx-plus-circle'></i> Add Funds</button>
-                            <button class="dash-btn wth" onclick="showSection('send', document.querySelector('a[onclick*=\'send\']'))"><i class='bx bx-money-withdraw'></i> Payout</button>
+                            <button class="dash-btn dep" onclick="showSection('deposit', document.querySelector('a[onclick*=\'deposit\']'))"><i class='bx bx-plus-circle'></i> Deposit</button>
+                            <button class="dash-btn wth" onclick="showSection('send', document.querySelector('a[onclick*=\'send\']'))"><i class='bx bx-money-withdraw'></i> Withdraw</button>
                         </div>
                     </div>
 
@@ -655,30 +828,89 @@
                             <div class="stat-val mono" id="dash-active-packages">0</div>
                         </div>
                         <div class="stat-card">
-                            <span class="stat-label">Affiliate Commission</span>
+                            <span class="stat-label">Invite Commission</span>
                             <div class="stat-val mono" id="dash-affiliate-earnings" style="color:var(--accent);">Rs. 0.00</div>
                         </div>
                     </div>
 
-                    <!-- WhatsApp Channel Link -->
-                    <a href="https://whatsapp.com/channel/0029VbDZFi69Gv7VYFfOEZ2q" target="_blank" class="whatsapp-card">
-                        <div style="display:flex; align-items:center; gap:12px;">
-                            <i class='bx bxl-whatsapp' style="font-size: 32px;"></i>
+                    <!-- Locked Welcome Bonus Card (Placed Below Stats Grid) -->
+                    <div id="welcome-bonus-box" class="locked-bonus-card">
+                        <div class="locked-bonus-header">
                             <div>
-                                <h4 style="margin:0; font-size:14.5px; font-weight:700;">Official WhatsApp Channel</h4>
-                                <p style="margin:0; font-size:12px; opacity:0.85;">Join our channel for daily updates</p>
+                                <span style="font-size:11.5px; font-weight:800; color:#b45309; text-transform:uppercase; letter-spacing:0.5px;">
+                                    <i class='bx bx-lock-alt'></i> Welcome Bonus Escrow
+                                </span>
+                                <h3 style="font-size:18px; font-weight:800; color:#92400e; margin-top:2px;">Rs. 100.00 Locked Bonus</h3>
                             </div>
+                            <span id="bonus-status-badge" style="font-size:11px; background:#fef3c7; color:#b45309; padding:4px 10px; border-radius:20px; font-weight:700;">Locked</span>
                         </div>
-                        <i class='bx bx-chevron-right' style="font-size: 22px;"></i>
-                    </a>
+                        <div style="font-size:12.5px; color:#78350f; display:flex; justify-content:space-between;">
+                            <span>Requirement: <strong>15 Active Members</strong></span>
+                            <span id="bonus-progress-count" class="mono" style="font-weight:700;">0 / 15</span>
+                        </div>
+                        <div class="locked-bonus-progress-wrap">
+                            <div class="locked-bonus-progress-bar" id="bonus-progress-fill"></div>
+                        </div>
+                        <button class="btn-primary" id="btn-unlock-bonus" onclick="claimLockedBonus()" style="background:linear-gradient(135deg, #f59e0b, #d97706); padding:9px; font-size:13px;" disabled>
+                            Unlock Rs. 100 to Main Balance
+                        </button>
+                    </div>
                 </div>
 
-                <!-- Add Funds / Deposit -->
+                <!-- Lucky Spin Wheel Section -->
+                <div id="spin-content" class="content-section hidden">
+                    <div class="section-header" style="text-align: center;">
+                        <h2>🎡 Lucky Spin & Win</h2>
+                        <p>Spin the lucky wheel! Daily 1 Free Spin + extra spins on every active referral.</p>
+                    </div>
+
+                    <div class="spin-wheel-container">
+                        <div style="font-size: 14px; font-weight: 800; margin-bottom: 6px; color: var(--text-main);">
+                            Available Spins: <span id="user-spins-count" class="mono" style="color: var(--primary); font-size: 17px;">0</span>
+                        </div>
+                        <div style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 12px;">
+                            (Includes 1 Daily Free Spin + Spins on Active Members)
+                        </div>
+
+                        <div class="wheel-wrapper">
+                            <div class="wheel-pointer"></div>
+                            <canvas id="spinCanvas" width="300" height="300"></canvas>
+                        </div>
+
+                        <button class="btn-primary" id="btn-spin-now" onclick="spinWheel()" style="max-width: 250px; font-size: 15px; padding: 13px; margin-top: 10px;">
+                            SPIN NOW
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Deposit (Bank Card Design with Taufeeq Ahmed) -->
                 <div id="deposit-content" class="content-section hidden">
                     <div class="section-header">
-                        <h2>Add Funds to Wallet</h2>
-                        <p>Transfer amount to <strong>03262550724</strong> (Easypaisa / JazzCash) and submit details.</p>
+                        <h2>Deposit Funds</h2>
+                        <p>Transfer exact amount to the official account card below and submit your TRX ID.</p>
                     </div>
+
+                    <!-- Professional Bank Card Style Display -->
+                    <div class="bank-card-container">
+                        <div class="bank-card-header">
+                            <div class="bank-chip"></div>
+                            <span class="bank-badge"><i class='bx bx-check-circle'></i> Verified Account</span>
+                        </div>
+                        <div class="bank-row">
+                            <span class="bank-title-label">Account Holder Title</span>
+                            <div class="bank-title-val">Taufeeq Ahmed</div>
+                        </div>
+                        <div class="bank-row">
+                            <span class="bank-title-label">Payment Channels (Easypaisa / Jazzcash)</span>
+                            <div class="bank-number-box">
+                                <span class="bank-number-val mono">03262550724</span>
+                                <button class="btn-copy-acc" onclick="copyDepositNumber()">
+                                    <i class='bx bx-copy'></i> Copy
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
                     <label>Amount (PKR)</label>
                     <input type="number" id="deposit-amount" inputmode="decimal" placeholder="Minimum Rs. 20">
                     <label>Payment Channel</label>
@@ -687,17 +919,17 @@
                         <option>Jazzcash</option>
                     </select>
                     <label>Transaction ID (TRX ID)</label>
-                    <input type="text" id="transaction-id" inputmode="numeric" placeholder="e.g. 8472910382">
-                    <label>Sender Account / Phone Number</label>
+                    <input type="text" id="transaction-id" placeholder="e.g. 8472910382">
+                    <label>Sender Mobile Number</label>
                     <input type="tel" id="sending-number" inputmode="numeric" placeholder="e.g. 03001234567">
-                    <button class="btn-primary" id="btn-deposit-submit" onclick="submitDeposit()">Submit Verification</button>
+                    <button class="btn-primary" id="btn-deposit-submit" onclick="submitDeposit()">Submit Deposit</button>
                 </div>
 
-                <!-- Work Packages -->
+                <!-- Packages -->
                 <div id="invest-content" class="content-section hidden">
                     <div class="section-header">
                         <h2>Work & Task Packages</h2>
-                        <p>Select your tier to unlock daily tasks and rewards.</p>
+                        <p>Choose your package tier to unlock daily tasks and income.</p>
                     </div>
                     <div id="investment-plans-container" class="investment-plans"></div>
                 </div>
@@ -706,95 +938,165 @@
                 <div id="task-content" class="content-section hidden">
                     <div class="section-header">
                         <h2>Daily Task Activities</h2>
-                        <p>Review and confirm your active task rewards daily.</p>
+                        <p>Complete your tasks every 24 hours to collect earnings.</p>
                     </div>
                     <div id="task-list-container" class="task-list"></div>
                 </div>
 
-                <!-- Payout Section -->
+                <!-- Withdraw -->
                 <div id="send-content" class="content-section hidden">
                     <div class="section-header">
-                        <h2>Request Payout</h2>
-                        <p>Transfer your accumulated task rewards to your mobile wallet.</p>
+                        <h2>Withdraw Funds</h2>
+                        <p>Transfer accumulated task earnings directly to your mobile wallet.</p>
                     </div>
-                    <label>Payout Amount (PKR)</label>
+                    <label>Withdraw Amount (PKR)</label>
                     <input type="number" id="withdraw-amount" inputmode="decimal" placeholder="Amount">
-                    <label>Payout Method</label>
+                    <label>Withdraw Method</label>
                     <select id="withdraw-method">
                         <option>Easypaisa</option>
                         <option>Jazzcash</option>
                     </select>
-                    <label>Account Number / Mobile Number</label>
+                    <label>Account / Mobile Number</label>
                     <input type="tel" id="withdraw-account" inputmode="numeric" placeholder="Account Number">
-                    <button class="btn-primary" id="btn-withdraw-submit" onclick="submitWithdrawal()">Submit Payout Request</button>
+                    <button class="btn-primary" id="btn-withdraw-submit" onclick="submitWithdrawal()">Submit Withdraw Request</button>
 
                     <div style="margin-top: 20px; padding: 16px; border: 1px solid var(--border); border-radius: var(--radius-md); background-color: var(--surface-card);">
-                        <h4 style="margin-bottom: 6px; font-size:13.5px; font-weight:700; color: var(--text-main);">Payout Schedule</h4>
+                        <h4 style="margin-bottom: 6px; font-size:13.5px; font-weight:700; color: var(--text-main);">Withdrawal Guidelines</h4>
                         <p style="font-size: 12.5px; color: var(--text-muted);">• Operating hours: 9:00 AM – 11:00 PM daily.</p>
-                        <p style="font-size: 12.5px; color: var(--danger); margin-top: 4px;">• Double check account details before submission.</p>
+                        <p style="font-size: 12.5px; color: var(--danger); margin-top: 4px;">• Ensure payment details are accurate before submitting.</p>
                     </div>
                 </div>
 
-                <!-- History -->
+                <!-- History (Card-based Layout without Sliding Tables) -->
                 <div id="history-content" class="content-section hidden">
                     <div class="section-header">
                         <h2>Activity History</h2>
-                        <p>Ledger of wallet deposits and payout requests.</p>
+                        <p>Complete ledger of your deposits and withdrawal transactions.</p>
                     </div>
 
-                    <h3 style="font-size: 15px; margin: 16px 0 8px 0; color:var(--text-main);">Deposits (Top-ups)</h3>
-                    <div class="table-wrap">
-                        <table>
-                            <thead><tr><th>Timestamp</th><th>Amount</th><th>Method</th><th>Trx ID</th><th>Status</th></tr></thead>
-                            <tbody id="deposit-history-table"></tbody>
-                        </table>
+                    <h3 style="font-size: 15px; margin: 18px 0 10px 0; color:var(--text-main);">Recent Deposits</h3>
+                    <div id="deposit-history-cards" class="history-cards-container">
+                        <p style="color:var(--text-muted); font-size:13px;">Loading deposits...</p>
                     </div>
 
-                    <h3 style="font-size: 15px; margin: 24px 0 8px 0; color:var(--text-main);">Payouts (Withdrawals)</h3>
-                    <div class="table-wrap">
-                        <table>
-                            <thead><tr><th>Timestamp</th><th>Amount</th><th>Method</th><th>Destination</th><th>Status</th></tr></thead>
-                            <tbody id="withdrawal-history-table"></tbody>
-                        </table>
+                    <h3 style="font-size: 15px; margin: 26px 0 10px 0; color:var(--text-main);">Recent Withdrawals</h3>
+                    <div id="withdrawal-history-cards" class="history-cards-container">
+                        <p style="color:var(--text-muted); font-size:13px;">Loading withdrawals...</p>
                     </div>
                 </div>
 
-                <!-- Team / Affiliate -->
+                <!-- Invite (Affiliate & Milestones with 3-Level Tabs) -->
                 <div id="team-content" class="content-section hidden">
                     <div class="section-header">
-                        <h2>Affiliate & Team Portal</h2>
-                        <p>Share your personal invite link to earn commissions.</p>
+                        <h2>Invite & Multi-Tier Affiliate</h2>
+                        <p>Receive <strong>Level 1: 8%</strong>, <strong>Level 2: 3%</strong>, and <strong>Level 3: 1%</strong> lifetime commissions!</p>
                     </div>
 
                     <div class="stats-grid">
                         <div class="stat-card">
-                            <span class="stat-label">Total Commission Earned</span>
+                            <span class="stat-label">Total Commission</span>
                             <div class="stat-val mono" id="user-referral-earnings" style="color: var(--accent);">Rs. 0.00</div>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-label">Active Members</span>
+                            <div class="stat-val mono" id="user-active-members-count" style="color: var(--primary);">0</div>
                         </div>
                     </div>
 
                     <div style="margin-top: 10px;">
-                        <label>Your Personal Referral Link</label>
+                        <label>Your Personal Invite Link</label>
                         <div class="referral-box">
                             <span id="user-referral-link" class="mono" style="font-size:12.5px; color:var(--text-main);">- - -</span>
                             <button class="btn-primary" onclick="copyReferralLink()">Copy Link</button>
                         </div>
+                        
+                        <!-- 1-Click WhatsApp Share -->
+                        <button class="btn-whatsapp-share" onclick="shareOnWhatsApp()">
+                            <i class='bx bxl-whatsapp' style="font-size: 20px;"></i>
+                            Share on WhatsApp (1-Click)
+                        </button>
+
+                        <!-- Personalized WhatsApp Status Poster Button -->
+                        <button class="btn-poster" onclick="openPosterModal()">
+                            <i class='bx bx-image' style="font-size: 20px;"></i>
+                            Generate HD Status Poster (English)
+                        </button>
                     </div>
 
-                    <h3 style="font-size: 15px; margin: 24px 0 8px 0; color:var(--text-main);">Direct Team Members</h3>
-                    <div class="table-wrap">
-                        <table>
-                            <thead><tr><th>#</th><th>Member Email</th><th>Contact</th><th>Joined</th></tr></thead>
-                            <tbody id="team-members-table"><tr><td colspan="4" style="text-align:center; color:var(--text-muted);">Syncing team...</td></tr></tbody>
-                        </table>
+                    <!-- Milestone Rewards Box (Positioned Below WhatsApp Button) -->
+                    <div style="margin: 22px 0 16px 0; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px; background: #fff;">
+                        <h3 style="font-size: 15.5px; font-weight: 800; color: var(--text-main); margin-bottom: 4px;">
+                            🎯 Team Milestone Rewards
+                        </h3>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;">
+                            Achieve active member targets to claim instant cash prizes directly into your wallet.
+                        </p>
+
+                        <div class="milestone-item">
+                            <div>
+                                <strong style="font-size:13.5px; color:var(--text-main);">5 Active Members</strong>
+                                <div style="font-size:12px; color:var(--accent); font-weight:700;">Bonus: Rs. 30.00</div>
+                            </div>
+                            <button id="ms-btn-5" class="milestone-badge locked" onclick="claimMilestoneReward(5, 30)">0 / 5 Active</button>
+                        </div>
+
+                        <div class="milestone-item">
+                            <div>
+                                <strong style="font-size:13.5px; color:var(--text-main);">15 Active Members</strong>
+                                <div style="font-size:12px; color:var(--accent); font-weight:700;">Bonus: Rs. 70.00</div>
+                            </div>
+                            <button id="ms-btn-15" class="milestone-badge locked" onclick="claimMilestoneReward(15, 70)">0 / 15 Active</button>
+                        </div>
+
+                        <div class="milestone-item">
+                            <div>
+                                <strong style="font-size:13.5px; color:var(--text-main);">35 Active Members</strong>
+                                <div style="font-size:12px; color:var(--accent); font-weight:700;">Bonus: Rs. 240.00</div>
+                            </div>
+                            <button id="ms-btn-35" class="milestone-badge locked" onclick="claimMilestoneReward(35, 240)">0 / 35 Active</button>
+                        </div>
+
+                        <div class="milestone-item">
+                            <div>
+                                <strong style="font-size:13.5px; color:var(--text-main);">50 Active Members</strong>
+                                <div style="font-size:12px; color:var(--accent); font-weight:700;">Bonus: Rs. 300.00</div>
+                            </div>
+                            <button id="ms-btn-50" class="milestone-badge locked" onclick="claimMilestoneReward(50, 300)">0 / 50 Active</button>
+                        </div>
+
+                        <div class="milestone-item">
+                            <div>
+                                <strong style="font-size:13.5px; color:var(--text-main);">100 Active Members (VIP)</strong>
+                                <div style="font-size:12px; color:var(--gold); font-weight:700;">Bonus: Rs. 1,000.00</div>
+                            </div>
+                            <button id="ms-btn-100" class="milestone-badge locked" onclick="claimMilestoneReward(100, 1000)">0 / 100 Active</button>
+                        </div>
+                    </div>
+
+                    <!-- 3-Level Team Tabs -->
+                    <h3 style="font-size: 15px; margin: 24px 0 6px 0; color:var(--text-main);">Team Members Hierarchy</h3>
+                    <div class="team-tab-nav">
+                        <button class="team-tab-btn active" id="tab-btn-l1" onclick="switchTeamTab('l1')">Level 1 (8%)</button>
+                        <button class="team-tab-btn" id="tab-btn-l2" onclick="switchTeamTab('l2')">Level 2 (3%)</button>
+                        <button class="team-tab-btn" id="tab-btn-l3" onclick="switchTeamTab('l3')">Level 3 (1%)</button>
+                    </div>
+
+                    <div id="team-tab-pane-l1" class="history-cards-container">
+                        <p style="color:var(--text-muted); font-size:13px;">Syncing Level 1 members...</p>
+                    </div>
+                    <div id="team-tab-pane-l2" class="history-cards-container hidden">
+                        <p style="color:var(--text-muted); font-size:13px;">Syncing Level 2 members...</p>
+                    </div>
+                    <div id="team-tab-pane-l3" class="history-cards-container hidden">
+                        <p style="color:var(--text-muted); font-size:13px;">Syncing Level 3 members...</p>
                     </div>
                 </div>
 
                 <!-- Profile -->
                 <div id="profile-content" class="content-section hidden">
                     <div class="section-header">
-                        <h2>Account Profile</h2>
-                        <p>Personal credentials and registration info</p>
+                        <h2>User Profile</h2>
+                        <p>Personal credentials and registration overview.</p>
                     </div>
                     <div style="display:flex; flex-direction:column; gap:14px; font-size:13.5px;">
                         <div><strong style="color:var(--text-muted); display:inline-block; width:130px;">Email:</strong> <span id="profile-email">-</span></div>
@@ -806,15 +1108,107 @@
         </section>
     </div>
 
+    <!-- Realistic Task Verification Modal -->
+    <div id="task-verify-modal" class="modal-overlay hidden">
+        <div class="modal-content" style="max-width: 360px;">
+            <div class="task-verify-box">
+                <div class="verify-spinner" id="task-spinner"></div>
+                <h3 id="task-verify-title" style="font-size: 17px; font-weight: 800; color: var(--text-main); margin-top: 6px;">Processing Task</h3>
+                <p id="task-verify-desc" style="font-size: 13px; color: var(--text-muted);">Connecting to work server...</p>
+                <div style="width: 100%; background: #e2e8f0; height: 6px; border-radius: 10px; overflow: hidden; margin-top: 6px;">
+                    <div id="task-verify-progress" style="width: 0%; height: 100%; background: var(--primary); transition: width 0.4s ease;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HD WhatsApp Poster Modal -->
+    <div id="poster-modal" class="modal-overlay hidden">
+        <div class="modal-content" style="max-width: 420px; padding: 18px;">
+            <h3 style="font-size: 18px; font-weight: 800;">Your Promo Status Poster</h3>
+            <p style="font-size: 12.5px; color: var(--text-muted); margin: 4px 0 14px 0;">Post this on your WhatsApp Status to invite new friends!</p>
+            <canvas id="posterCanvas" width="450" height="600" style="width: 100%; height: auto; border-radius: 12px; box-shadow: 0 4px 14px rgba(0,0,0,0.15);"></canvas>
+            <button class="btn-primary" onclick="downloadPoster()" style="margin-top: 14px;">
+                <i class='bx bx-download'></i> Download Poster Image
+            </button>
+            <button class="modal-btn cancel btn-primary" onclick="closePosterModal()" style="margin-top: 8px;">Close</button>
+        </div>
+    </div>
+
     <!-- Confirmation Modal -->
     <div id="confirmation-modal" class="modal-overlay hidden">
         <div class="modal-content">
             <h3 id="modal-title" style="font-size: 18px; font-weight: 800;">Confirm Activation</h3>
-            <p id="modal-text" style="font-size: 13.5px; color: var(--text-muted); margin: 12px 0 18px 0;">Are you sure you want to activate this tier?</p>
+            <p id="modal-text" style="font-size: 13.5px; color: var(--text-muted); margin: 12px 0 18px 0;">Are you sure?</p>
             <div class="modal-buttons">
-                <button id="modal-cancel-btn" class="modal-btn cancel btn-primary">Cancel</button>
-                <button id="modal-confirm-btn" class="modal-btn confirm btn-primary">Confirm</button>
+                <button id="modal-cancel-btn" class="modal-btn cancel btn-primary" onclick="hideConfirmation()">Cancel</button>
+                <button id="modal-confirm-btn" class="modal-btn confirm btn-primary" onclick="executePlanPurchase()">Confirm</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Auto Payment Receipt Modal -->
+    <div id="receipt-modal" class="modal-overlay hidden">
+        <div class="modal-content" style="max-width: 380px;">
+            <div style="display:inline-flex; align-items:center; justify-content:center; width:48px; height:48px; background:#dcfce7; color:#059669; border-radius:50%; margin-bottom:10px;">
+                <i class='bx bx-check-double' style="font-size: 30px;"></i>
+            </div>
+            <h3 style="font-size: 19px; font-weight: 800; color:var(--text-main);">Withdrawal Receipt</h3>
+            <p style="font-size: 12.5px; color: var(--text-muted); margin-top: 2px;">Transaction Submitted Successfully</p>
+            
+            <div class="receipt-card">
+                <div class="receipt-row">
+                    <span class="receipt-label">Amount:</span>
+                    <span class="receipt-val mono" id="rcpt-amount" style="font-size: 15px; color: var(--accent);">Rs. 0.00</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="receipt-label">Method:</span>
+                    <span class="receipt-val" id="rcpt-method">-</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="receipt-label">Account:</span>
+                    <span class="receipt-val mono" id="rcpt-account">-</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="receipt-label">Status:</span>
+                    <span class="receipt-val" style="color:var(--gold);">Processing (24H)</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="receipt-label">Date:</span>
+                    <span class="receipt-val" id="rcpt-date">-</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="receipt-label">Referral ID:</span>
+                    <span class="receipt-val mono" id="rcpt-ref" style="color: var(--primary);">-</span>
+                </div>
+            </div>
+
+            <p style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 12px;">Share your proof on WhatsApp Status to invite new friends!</p>
+
+            <button class="btn-primary" onclick="downloadReceiptSlip()" style="margin-bottom: 8px;">
+                <i class='bx bx-download'></i> Download Status Slip
+            </button>
+            <button class="btn-whatsapp-share" onclick="shareReceiptToWhatsApp()" style="margin-top: 0; margin-bottom: 10px;">
+                <i class='bx bxl-whatsapp'></i> Share to WhatsApp Status
+            </button>
+            <button class="modal-btn cancel btn-primary" onclick="closeReceiptModal()">Close</button>
+        </div>
+    </div>
+
+    <!-- Auto-Redirect Community Modal on Signup -->
+    <div id="community-modal" class="modal-overlay hidden">
+        <div class="modal-content" style="max-width: 370px;">
+            <div style="display:inline-flex; align-items:center; justify-content:center; width:52px; height:52px; background:#ecfdf5; color:#059669; border-radius:50%; margin-bottom:12px;">
+                <i class='bx bxl-whatsapp' style="font-size: 34px;"></i>
+            </div>
+            <h3 style="font-size: 20px; font-weight: 800; color:var(--text-main);">Welcome to Benvixa!</h3>
+            <p style="font-size: 13px; color: var(--text-muted); margin: 8px 0 18px 0; line-height: 1.5;">
+                Your account has been registered! You received a <strong>Rs. 100 Welcome Bonus</strong> + <strong>1 Free Spin</strong>. Join our official WhatsApp Channel for daily updates.
+            </p>
+            <button class="btn-whatsapp-share" onclick="joinCommunityAndSignIn()" style="margin-top:0; margin-bottom: 10px;">
+                <i class='bx bxl-whatsapp'></i> Join Official Channel
+            </button>
+            <button class="modal-btn cancel btn-primary" onclick="closeCommunityModal()">Continue to Sign In</button>
         </div>
     </div>
 
@@ -837,8 +1231,24 @@
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.database();
+
         let currentUser = null;
+        let currentUserProfile = null;
         let countdownIntervals = {};
+        let selectedPlanIdToInvest = null;
+        let serverTimeOffset = 0;
+        let tickerTimeoutId = null;
+        let currentReceiptData = null;
+        let spinReminderInterval = null;
+
+        // Synchronize with Firebase Server Time
+        db.ref(".info/serverTimeOffset").on("value", function(snap) {
+            serverTimeOffset = snap.val() || 0;
+        });
+
+        function getExactTime() {
+            return Date.now() + serverTimeOffset;
+        }
 
         const investmentPlans = [
             { id: 1, name: "Tier 1 Task Pack", invest: 20, daily: 2.1, validity: 60 },
@@ -890,13 +1300,15 @@
         menuToggle.addEventListener('click', toggleSidebar);
         sidebarOverlay.addEventListener('click', toggleSidebar);
 
-        // Online/Offline Listeners
-        window.addEventListener('offline', () => showNotification("Internet connection lost.", "danger"));
-        window.addEventListener('online', () => showNotification("Back online!", "success"));
-
         function maskNumber(number) {
             if (!number || number.length < 11) return number || '-';
             return number.substring(0, 4) + '****' + number.substring(8);
+        }
+
+        function copyDepositNumber() {
+            navigator.clipboard.writeText("03262550724").then(() => {
+                showNotification("Account Number (03262550724) Copied!");
+            });
         }
 
         // --- Auth State ---
@@ -906,19 +1318,20 @@
                 authContainer.classList.add('hidden');
                 dashboardContainer.classList.remove('hidden');
                 
-                // Show Header & Sidebar once logged in
                 appHeader.classList.remove('hidden');
                 sidebar.classList.remove('hidden');
 
-                setupModalListener();
                 showSection('home', document.querySelector('.sidebar a'));
                 loadUserData();
+                startSmartLiveTicker();
+                initSpinWheel();
+                startSpinReminder();
             } else {
                 currentUser = null;
+                currentUserProfile = null;
                 authContainer.classList.remove('hidden');
                 dashboardContainer.classList.add('hidden');
                 
-                // Hide Header & Sidebar completely on Login / Signup page
                 appHeader.classList.add('hidden');
                 sidebar.classList.add('hidden');
                 sidebar.classList.remove('open');
@@ -926,46 +1339,59 @@
 
                 Object.values(countdownIntervals).forEach(clearInterval);
                 countdownIntervals = {};
+                stopSmartLiveTicker();
+                clearInterval(spinReminderInterval);
                 checkForReferralCodeInURL();
             }
         });
 
-        // --- Modal Setup ---
+        // --- Confirmation Modal Setup ---
         const modal = document.getElementById('confirmation-modal');
         const modalTitle = document.getElementById('modal-title');
         const modalText = document.getElementById('modal-text');
         const modalConfirmBtn = document.getElementById('modal-confirm-btn');
-        const modalCancelBtn = document.getElementById('modal-cancel-btn');
-        function hideConfirmation() { modal.classList.add('hidden'); }
-        modalCancelBtn.addEventListener('click', hideConfirmation);
-        modal.addEventListener('click', (e) => { if (e.target === modal) hideConfirmation(); });
 
-        function setupModalListener() {
-            const newConfirmBtn = modalConfirmBtn.cloneNode(true);
-            modalConfirmBtn.parentNode.replaceChild(newConfirmBtn, modalConfirmBtn);
-            newConfirmBtn.addEventListener('click', () => {
-                const planIdToInvest = newConfirmBtn.dataset.planId;
-                if (!planIdToInvest) return;
-                const plan = investmentPlans.find(p => p.id == planIdToInvest);
-                if (!plan) return;
-                
-                newConfirmBtn.disabled = true;
-                newConfirmBtn.innerText = "Activating...";
+        function hideConfirmation() {
+            modal.classList.add('hidden');
+            selectedPlanIdToInvest = null;
+        }
 
-                const userRef = db.ref('users/' + currentUser.uid);
-                userRef.transaction(currentData => {
-                    if (currentData && currentData.balance >= plan.invest) {
-                        currentData.balance -= plan.invest;
-                        return currentData;
-                    }
-                    return;
-                }, (error, committed) => {
-                    newConfirmBtn.disabled = false;
-                    newConfirmBtn.innerText = "Confirm";
-                    hideConfirmation();
-                    if (error) { 
-                        showNotification("An error occurred. Please try again.", "danger"); 
-                    } else if (committed) {
+        function investNow(planId) {
+            const plan = investmentPlans.find(p => p.id == planId);
+            if (!plan) return;
+            selectedPlanIdToInvest = plan.id;
+            modalTitle.innerText = 'Confirm Activation';
+            modalText.innerHTML = `Confirm purchase of <strong>${plan.name}</strong> for <strong>Rs. ${plan.invest}</strong>.<br>Amount will be deducted from your wallet balance.`;
+            modal.classList.remove('hidden');
+        }
+
+        function executePlanPurchase() {
+            if (!selectedPlanIdToInvest) return;
+            const plan = investmentPlans.find(p => p.id == selectedPlanIdToInvest);
+            if (!plan) return;
+
+            modalConfirmBtn.disabled = true;
+            modalConfirmBtn.innerText = "Activating...";
+
+            const userRef = db.ref('users/' + currentUser.uid);
+            userRef.transaction(currentData => {
+                if (currentData === null) return currentData;
+                if (currentData.balance >= plan.invest) {
+                    currentData.balance -= plan.invest;
+                    return currentData;
+                }
+                return;
+            }, (error, committed) => {
+                modalConfirmBtn.disabled = false;
+                modalConfirmBtn.innerText = "Confirm";
+                hideConfirmation();
+
+                if (error) {
+                    showNotification("An error occurred. Please try again.", "danger");
+                } else if (committed) {
+                    db.ref('investments').orderByChild('userId').equalTo(currentUser.uid).once('value', invCheckSnap => {
+                        const isFirstActivation = !invCheckSnap.exists();
+
                         const invData = { 
                             userId: currentUser.uid, 
                             planName: plan.name, 
@@ -976,19 +1402,32 @@
                             date: new Date().toISOString(), 
                             lastClaimed: 0 
                         };
+
                         db.ref('investments').push(invData).then(() => {
-                            showNotification("Work package activated successfully!");
-                            handleReferralCommission(plan.invest);
+                            showNotification("Package activated successfully!");
+                            handleMultiTierCommission(plan.invest);
+                            
+                            if (isFirstActivation && currentUserProfile && currentUserProfile.referredBy && currentUserProfile.referredBy !== 'none') {
+                                db.ref('users/' + currentUserProfile.referredBy).transaction(refUser => {
+                                    if (refUser) {
+                                        refUser.activeReferralsCount = (refUser.activeReferralsCount || 0) + 1;
+                                        refUser.spinsAvailable = (refUser.spinsAvailable || 0) + 1;
+                                    }
+                                    return refUser;
+                                });
+                            }
+
+                            loadActivePackagesCount();
                             showSection('task', document.querySelector("a[onclick*='task']"));
                         });
-                    } else { 
-                        showNotification("Insufficient balance. Please add funds first.", "danger"); 
-                    }
-                });
+                    });
+                } else {
+                    showNotification("Insufficient balance. Please deposit funds first.", "danger");
+                }
             });
         }
 
-        // --- UI & Notification Helpers ---
+        // --- Notification Helper ---
         function showNotification(message, type = 'success') {
             const notificationBox = document.getElementById('notification-box');
             notificationBox.innerHTML = `<i class='bx ${type==='success'?'bx-check-circle':'bx-error-circle'}'></i> ${message}`;
@@ -1009,18 +1448,46 @@
             if (sectionId === 'task') loadTasks();
             if (sectionId === 'history') loadHistory();
             if (sectionId === 'team') loadTeamData();
+            if (sectionId === 'home') loadActivePackagesCount();
+            if (sectionId === 'spin') drawWheel();
         }
 
-        function toggleForms() {
-            document.getElementById('login-container').classList.toggle('hidden');
-            document.getElementById('signup-container').classList.toggle('hidden');
+        function toggleForms(showSignup) {
+            if (showSignup) {
+                document.getElementById('login-container').classList.add('hidden');
+                document.getElementById('signup-container').classList.remove('hidden');
+            } else {
+                document.getElementById('signup-container').classList.add('hidden');
+                document.getElementById('login-container').classList.remove('hidden');
+            }
         }
 
-        // --- Data Loading ---
+        function loadActivePackagesCount() {
+            if (!currentUser) return;
+            db.ref('investments').orderByChild('userId').equalTo(currentUser.uid).once('value', snap => {
+                let count = 0;
+                const now = getExactTime();
+                snap.forEach(child => {
+                    const item = child.val();
+                    if (item.status === 'approved') {
+                        const investDate = new Date(item.date).getTime();
+                        const validityMs = (item.validity || 60) * 24 * 60 * 60 * 1000;
+                        if (now - investDate <= validityMs) {
+                            count++;
+                        }
+                    }
+                });
+                const el = document.getElementById('dash-active-packages');
+                if (el) el.innerText = count;
+            });
+        }
+
+        // --- Load User Data ---
         function loadUserData() {
             db.ref('users/' + currentUser.uid).on('value', snap => {
                 const data = snap.val();
                 if (data) {
+                    currentUserProfile = data;
                     const formattedBal = `Rs. ${parseFloat(data.balance || 0).toFixed(2)}`;
                     document.getElementById('current-balance').innerText = formattedBal;
                     document.getElementById('user-email-display').innerText = data.email || 'Member';
@@ -1032,26 +1499,323 @@
                         const sDate = new Date(data.signupDate);
                         document.getElementById('profile-signup-date').innerText = sDate.toLocaleString('en-GB', { year: 'numeric', month: 'short', day: 'numeric' });
                     }
+
+                    const activeCount = data.activeReferralsCount || 0;
+                    const activeCountEl = document.getElementById('user-active-members-count');
+                    if (activeCountEl) activeCountEl.innerText = activeCount;
+
+                    checkDailyFreeSpin(data);
+                    updateWelcomeBonusUI(data);
+                    updateMilestonesUI(data);
                 }
             });
+            loadActivePackagesCount();
+        }
 
-            db.ref('investments').orderByChild('userId').equalTo(currentUser.uid).once('value', snap => {
-                let count = 0;
-                snap.forEach(() => count++);
-                document.getElementById('dash-active-packages').innerText = count;
+        function checkDailyFreeSpin(data) {
+            const todayStr = new Date().toISOString().slice(0, 10);
+            if (data.lastDailySpinDate !== todayStr) {
+                db.ref('users/' + currentUser.uid).transaction(u => {
+                    if (u && u.lastDailySpinDate !== todayStr) {
+                        u.lastDailySpinDate = todayStr;
+                        u.spinsAvailable = (u.spinsAvailable || 0) + 1;
+                    }
+                    return u;
+                });
+            } else {
+                const spinsCountEl = document.getElementById('user-spins-count');
+                if (spinsCountEl) spinsCountEl.innerText = data.spinsAvailable || 0;
+            }
+        }
+
+        function startSpinReminder() {
+            clearInterval(spinReminderInterval);
+            spinReminderInterval = setInterval(() => {
+                if (currentUserProfile && (currentUserProfile.spinsAvailable || 0) > 0) {
+                    showNotification("🎡 You have unused Free Spins! Spin now to win cash rewards!", "success");
+                }
+            }, 60000);
+        }
+
+        // --- Locked Welcome Bonus Functions ---
+        function updateWelcomeBonusUI(data) {
+            const box = document.getElementById('welcome-bonus-box');
+            if (data.welcomeBonusClaimed) {
+                if (box) box.style.display = 'none';
+                return;
+            }
+            if (box) box.style.display = 'flex';
+
+            const activeCount = data.activeReferralsCount || 0;
+            const progressCount = document.getElementById('bonus-progress-count');
+            const progressFill = document.getElementById('bonus-progress-fill');
+            const unlockBtn = document.getElementById('btn-unlock-bonus');
+            const statusBadge = document.getElementById('bonus-status-badge');
+
+            const pct = Math.min(100, Math.floor((activeCount / 15) * 100));
+            if (progressCount) progressCount.innerText = `${activeCount} / 15 Active`;
+            if (progressFill) progressFill.style.width = `${pct}%`;
+
+            if (activeCount >= 15) {
+                if (unlockBtn) {
+                    unlockBtn.disabled = false;
+                    unlockBtn.innerText = "Claim Rs. 100 to Main Balance ✓";
+                    unlockBtn.style.background = "linear-gradient(135deg, #10b981, #059669)";
+                }
+                if (statusBadge) {
+                    statusBadge.innerText = "Ready to Claim";
+                    statusBadge.style.background = "#dcfce7";
+                    statusBadge.style.color = "#059669";
+                }
+            } else {
+                if (unlockBtn) {
+                    unlockBtn.disabled = true;
+                    unlockBtn.innerText = `Unlock Rs. 100 (${activeCount}/15 Active Members)`;
+                }
+                if (statusBadge) {
+                    statusBadge.innerText = "Locked";
+                }
+            }
+        }
+
+        function claimLockedBonus() {
+            if (!currentUserProfile || (currentUserProfile.activeReferralsCount || 0) < 15) {
+                showNotification("15 Active Members required to unlock.", "danger");
+                return;
+            }
+            if (currentUserProfile.welcomeBonusClaimed) {
+                showNotification("Bonus already claimed.", "danger");
+                return;
+            }
+
+            const btn = document.getElementById('btn-unlock-bonus');
+            btn.disabled = true;
+            btn.innerText = "Transferring...";
+
+            db.ref('users/' + currentUser.uid).transaction(curr => {
+                if (curr && !curr.welcomeBonusClaimed && (curr.activeReferralsCount || 0) >= 15) {
+                    curr.balance = (curr.balance || 0) + 100;
+                    curr.welcomeBonusClaimed = true;
+                }
+                return curr;
+            }, (err, comm) => {
+                if (comm) {
+                    showNotification("Rs. 100 Welcome Bonus transferred to your Main Balance!");
+                    const box = document.getElementById('welcome-bonus-box');
+                    if (box) box.style.display = 'none';
+                } else {
+                    showNotification("Unable to claim bonus.", "danger");
+                }
             });
         }
 
-        // --- Authentication Actions ---
+        // --- Team Milestone Rewards Logic ---
+        function updateMilestonesUI(data) {
+            const activeCount = data.activeReferralsCount || 0;
+            const claimed = data.milestonesClaimed || {};
+
+            const updateButton = (id, target, reward) => {
+                const btn = document.getElementById(id);
+                if (!btn) return;
+
+                if (claimed['m' + target]) {
+                    btn.className = 'milestone-badge claimed';
+                    btn.innerText = 'Claimed ✓';
+                    btn.disabled = true;
+                } else if (activeCount >= target) {
+                    btn.className = 'milestone-badge claimable';
+                    btn.innerText = `Claim Rs. ${reward}`;
+                    btn.disabled = false;
+                } else {
+                    btn.className = 'milestone-badge locked';
+                    btn.innerText = `${activeCount} / ${target} Active`;
+                    btn.disabled = true;
+                }
+            };
+
+            updateButton('ms-btn-5', 5, 30);
+            updateButton('ms-btn-15', 15, 70);
+            updateButton('ms-btn-35', 35, 240);
+            updateButton('ms-btn-50', 50, 300);
+            updateButton('ms-btn-100', 100, 1000);
+        }
+
+        function claimMilestoneReward(targetCount, rewardAmount) {
+            if (!currentUserProfile) return;
+            const activeCount = currentUserProfile.activeReferralsCount || 0;
+            const claimed = currentUserProfile.milestonesClaimed || {};
+
+            if (activeCount < targetCount) {
+                showNotification(`Target incomplete. Needs ${targetCount} active members.`, "danger");
+                return;
+            }
+            if (claimed['m' + targetCount]) {
+                showNotification("Reward already claimed.", "danger");
+                return;
+            }
+
+            db.ref('users/' + currentUser.uid).transaction(curr => {
+                if (curr) {
+                    curr.milestonesClaimed = curr.milestonesClaimed || {};
+                    if (!curr.milestonesClaimed['m' + targetCount]) {
+                        curr.milestonesClaimed['m' + targetCount] = true;
+                        curr.balance = (curr.balance || 0) + rewardAmount;
+                    }
+                }
+                return curr;
+            }, (err, comm) => {
+                if (comm) {
+                    showNotification(`Milestone unlocked! Rs. ${rewardAmount} credited to balance!`);
+                } else {
+                    showNotification("Failed to claim milestone.", "danger");
+                }
+            });
+        }
+
+        // --- Lucky Spin Wheel (Slice Adjustments + 95% Controlled Probability) ---
+        const wheelSlices = [
+            { text: "Better Luck", color: "#64748b", value: 0 },
+            { text: "Rs. 5", color: "#10b981", value: 5 },
+            { text: "Rs. 10", color: "#4f46e5", value: 10 },
+            { text: "Rs. 300", color: "#d97706", value: 300 },
+            { text: "Rs. 500", color: "#8b5cf6", value: 500 },
+            { text: "Rs. 100", color: "#059669", value: 100 },
+            { text: "Rs. 50", color: "#dc2626", value: 50 },
+            { text: "Better Luck", color: "#475569", value: 0 }
+        ];
+
+        let currentRotationAngle = 0;
+        let isSpinning = false;
+
+        function initSpinWheel() { drawWheel(); }
+
+        function drawWheel() {
+            const canvas = document.getElementById('spinCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const numSlices = wheelSlices.length;
+            const arcSize = (2 * Math.PI) / numSlices;
+            const radius = canvas.width / 2;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            wheelSlices.forEach((slice, i) => {
+                const angle = i * arcSize;
+                ctx.beginPath();
+                ctx.fillStyle = slice.color;
+                ctx.moveTo(radius, radius);
+                ctx.arc(radius, radius, radius - 8, angle, angle + arcSize);
+                ctx.lineTo(radius, radius);
+                ctx.fill();
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                ctx.save();
+                ctx.translate(radius, radius);
+                ctx.rotate(angle + arcSize / 2);
+                ctx.textAlign = 'right';
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 13px "Plus Jakarta Sans", sans-serif';
+                ctx.fillText(slice.text, radius - 20, 5);
+                ctx.restore();
+            });
+
+            ctx.beginPath();
+            ctx.arc(radius, radius, 22, 0, 2 * Math.PI);
+            ctx.fillStyle = '#1e1b4b';
+            ctx.fill();
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 11px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('SPIN', radius, radius + 4);
+        }
+
+        function spinWheel() {
+            if (isSpinning) return;
+            if (!currentUserProfile) return;
+
+            const spins = currentUserProfile.spinsAvailable || 0;
+            if (spins <= 0) {
+                showNotification("No spins available! Daily 1 free spin or invite active members for more.", "danger");
+                return;
+            }
+
+            isSpinning = true;
+            const spinBtn = document.getElementById('btn-spin-now');
+            spinBtn.disabled = true;
+
+            const rand = Math.random() * 100;
+            let chosenIndex;
+
+            if (rand < 65) {
+                chosenIndex = Math.random() > 0.5 ? 0 : 7;
+            } else if (rand < 90) {
+                chosenIndex = 1;
+            } else if (rand < 95) {
+                chosenIndex = 2;
+            } else if (rand < 97.5) {
+                chosenIndex = 6;
+            } else if (rand < 99) {
+                chosenIndex = 5;
+            } else if (rand < 99.7) {
+                chosenIndex = 3;
+            } else {
+                chosenIndex = 4;
+            }
+
+            const sliceAngle = 360 / wheelSlices.length;
+            const targetSliceCenter = (chosenIndex * sliceAngle) + (sliceAngle / 2);
+            const stopAngle = (360 - targetSliceCenter + 270) % 360;
+            const extraRounds = 360 * 5;
+            currentRotationAngle += extraRounds + stopAngle - (currentRotationAngle % 360);
+
+            const canvas = document.getElementById('spinCanvas');
+            canvas.style.transform = `rotate(${currentRotationAngle}deg)`;
+
+            setTimeout(() => {
+                isSpinning = false;
+                spinBtn.disabled = false;
+                const wonItem = wheelSlices[chosenIndex];
+
+                db.ref('users/' + currentUser.uid).transaction(user => {
+                    if (user) {
+                        user.spinsAvailable = Math.max(0, (user.spinsAvailable || 0) - 1);
+                        if (wonItem.value > 0) {
+                            user.balance = (user.balance || 0) + wonItem.value;
+                        }
+                    }
+                    return user;
+                }).then(() => {
+                    if (wonItem.value > 0) {
+                        showNotification(`🎉 Congratulations! You won Rs. ${wonItem.value}!`, 'success');
+                    } else {
+                        showNotification("Better luck next time! Try again with your next spin.", 'danger');
+                    }
+                });
+            }, 4600);
+        }
+
+        // --- Multi-Tier Referral Sign Up (L1, L2, L3 Setup) ---
         function signupUser() {
             const btn = document.getElementById('btn-signup-submit');
             const email = document.getElementById('signup-email').value.trim();
-            const number = document.getElementById('signup-number').value.trim();
+            let rawNumber = document.getElementById('signup-number').value.trim();
             const password = document.getElementById('signup-password').value;
             const referralCode = document.getElementById('signup-referral').value.trim().toUpperCase();
+
+            const number = rawNumber.replace(/\D/g, '');
             
             if (!email || !number || !password) {
                 showNotification("Please complete all fields.", "danger");
+                return;
+            }
+            if (number.length !== 11) {
+                showNotification("Please enter a valid 11-digit phone number.", "danger");
                 return;
             }
 
@@ -1068,48 +1832,70 @@
                     balance: 0, 
                     referralCode: newReferralCode, 
                     referralEarnings: 0, 
-                    referredBy: 'none'
+                    referredBy: 'none',
+                    referrerL2: 'none',
+                    referrerL3: 'none',
+                    activeReferralsCount: 0,
+                    spinsAvailable: 1,
+                    welcomeBonusClaimed: false,
+                    milestonesClaimed: {},
+                    lastDailySpinDate: ''
+                };
+
+                const finalizeRegistration = () => {
+                    newUserRef.set(newUserData).then(() => {
+                        showNotification("Account created successfully!");
+                        document.getElementById('community-modal').classList.remove('hidden');
+                    });
                 };
 
                 if (referralCode) {
-                    const referrerQuery = db.ref('users').orderByChild('referralCode').equalTo(referralCode);
-                    referrerQuery.once('value', snapshot => {
+                    db.ref('users').orderByChild('referralCode').equalTo(referralCode).once('value', snapshot => {
                         if (snapshot.exists()) {
-                            let referrerUid;
-                            snapshot.forEach(child => { referrerUid = child.key; });
+                            let referrerUid, referrerData;
+                            snapshot.forEach(child => { 
+                                referrerUid = child.key; 
+                                referrerData = child.val();
+                            });
                             
-                            if (referrerUid === cred.user.uid) {
-                                newUserRef.set(newUserData).then(() => { 
-                                    showNotification("Self-referral is invalid. Account created."); 
-                                    toggleForms(); 
-                                });
-                                return;
-                            }
-
                             newUserData.referredBy = referrerUid;
-                            db.ref('users/' + referrerUid + '/team').push({
+
+                            // Level 1 Entry
+                            db.ref('users/' + referrerUid + '/teamL1').push({
                                 userId: cred.user.uid,
                                 email: email,
                                 number: number,
                                 joinedDate: new Date().toISOString()
                             });
 
-                            newUserRef.set(newUserData).then(() => { 
-                                showNotification("Account created with sponsor link!"); 
-                                toggleForms(); 
-                            });
-                        } else {
-                            newUserRef.set(newUserData).then(() => { 
-                                showNotification("Referral code invalid. Account created."); 
-                                toggleForms(); 
-                            });
+                            // Level 2 Entry
+                            if (referrerData && referrerData.referredBy && referrerData.referredBy !== 'none') {
+                                const l2Uid = referrerData.referredBy;
+                                newUserData.referrerL2 = l2Uid;
+                                db.ref('users/' + l2Uid + '/teamL2').push({
+                                    userId: cred.user.uid,
+                                    email: email,
+                                    number: number,
+                                    joinedDate: new Date().toISOString()
+                                });
+
+                                // Level 3 Entry
+                                if (referrerData.referrerL2 && referrerData.referrerL2 !== 'none') {
+                                    const l3Uid = referrerData.referrerL2;
+                                    newUserData.referrerL3 = l3Uid;
+                                    db.ref('users/' + l3Uid + '/teamL3').push({
+                                        userId: cred.user.uid,
+                                        email: email,
+                                        number: number,
+                                        joinedDate: new Date().toISOString()
+                                    });
+                                }
+                            }
                         }
+                        finalizeRegistration();
                     });
                 } else {
-                    newUserRef.set(newUserData).then(() => { 
-                        showNotification("Account created successfully!"); 
-                        toggleForms(); 
-                    });
+                    finalizeRegistration();
                 }
             }).catch(err => {
                 showNotification(err.message, "danger");
@@ -1119,12 +1905,70 @@
             });
         }
 
+        // --- Multi-Tier Referral Commission Handler (L1: 8%, L2: 3%, L3: 1%) ---
+        function handleMultiTierCommission(investmentAmount) {
+            const userRef = db.ref('users/' + currentUser.uid);
+            userRef.once('value', userSnap => {
+                const userData = userSnap.val();
+                if (!userData) return;
+
+                // Level 1: 8%
+                if (userData.referredBy && userData.referredBy !== 'none') {
+                    const commL1 = investmentAmount * 0.08;
+                    db.ref('users/' + userData.referredBy).transaction(curr => {
+                        if (curr) {
+                            curr.balance = (curr.balance || 0) + commL1;
+                            curr.referralEarnings = (curr.referralEarnings || 0) + commL1;
+                        }
+                        return curr;
+                    });
+                }
+
+                // Level 2: 3%
+                if (userData.referrerL2 && userData.referrerL2 !== 'none') {
+                    const commL2 = investmentAmount * 0.03;
+                    db.ref('users/' + userData.referrerL2).transaction(curr => {
+                        if (curr) {
+                            curr.balance = (curr.balance || 0) + commL2;
+                            curr.referralEarnings = (curr.referralEarnings || 0) + commL2;
+                        }
+                        return curr;
+                    });
+                }
+
+                // Level 3: 1%
+                if (userData.referrerL3 && userData.referrerL3 !== 'none') {
+                    const commL3 = investmentAmount * 0.01;
+                    db.ref('users/' + userData.referrerL3).transaction(curr => {
+                        if (curr) {
+                            curr.balance = (curr.balance || 0) + commL3;
+                            curr.referralEarnings = (curr.referralEarnings || 0) + commL3;
+                        }
+                        return curr;
+                    });
+                }
+            });
+        }
+
+        function joinCommunityAndSignIn() {
+            window.open('https://whatsapp.com/channel/0029VbDZFi69Gv7VYFfOEZ2q', '_blank');
+            closeCommunityModal();
+        }
+
+        function closeCommunityModal() {
+            document.getElementById('community-modal').classList.add('hidden');
+            toggleForms(false);
+        }
+
         function loginUser() {
             const btn = document.getElementById('btn-login-submit');
-            const number = document.getElementById('login-number').value.trim();
+            let rawNumber = document.getElementById('login-number').value.trim();
             const password = document.getElementById('login-password').value;
+            
+            const number = rawNumber.replace(/\D/g, '');
+
             if (!number || !password) {
-                showNotification("Please enter both phone and password.", "danger");
+                showNotification("Please enter phone and password.", "danger");
                 return;
             }
 
@@ -1147,12 +1991,23 @@
             
             db.ref('investments').orderByChild('userId').equalTo(currentUser.uid).once('value', snapshot => {
                 const activePlanNames = new Set();
-                snapshot.forEach(child => { activePlanNames.add(child.val().planName); });
-                container.innerHTML = '';
-                
+                const now = getExactTime();
+
+                snapshot.forEach(child => {
+                    const item = child.val();
+                    if (item.status === 'approved') {
+                        const invDate = new Date(item.date).getTime();
+                        const validityMs = (item.validity || 60) * 24 * 60 * 60 * 1000;
+                        if (now - invDate <= validityMs) {
+                            activePlanNames.add(item.planName);
+                        }
+                    }
+                });
+
+                let html = '';
                 investmentPlans.forEach(plan => {
                     const isInvested = activePlanNames.has(plan.name);
-                    container.innerHTML += `
+                    html += `
                         <div class="plan-card">
                             <div>
                                 <h3>${plan.name}</h3>
@@ -1168,17 +2023,8 @@
                         </div>
                     `;
                 });
+                container.innerHTML = html;
             });
-        }
-
-        function investNow(planId) {
-            const plan = investmentPlans.find(p => p.id == planId);
-            if (!plan) return;
-            
-            modalTitle.innerText = 'Confirm Activation';
-            modalText.innerHTML = `Confirm purchase of <strong>${plan.name}</strong> for <strong>Rs. ${plan.invest}</strong>.<br>Cost will be deducted from your wallet balance.`;
-            document.getElementById('modal-confirm-btn').dataset.planId = plan.id;
-            modal.classList.remove('hidden');
         }
 
         // --- Deposit & Withdrawal ---
@@ -1191,11 +2037,11 @@
             const amount = parseFloat(amountInput.value);
 
             if (isNaN(amount) || amount < 20) {
-                showNotification("Minimum wallet top-up is Rs. 20.", "danger");
+                showNotification("Minimum deposit is Rs. 20.", "danger");
                 return;
             }
             if (!tidInput.value.trim() || !numberInput.value.trim()) {
-                showNotification("Provide TRX ID and phone number.", "danger");
+                showNotification("Please provide TRX ID and sender mobile number.", "danger");
                 return;
             }
 
@@ -1213,16 +2059,16 @@
             };
 
             db.ref('deposits').push(depositData).then(() => {
-                showNotification("Top-up submitted. Verification in progress.");
+                showNotification("Deposit submitted for verification.");
                 amountInput.value = '';
                 tidInput.value = '';
                 numberInput.value = '';
                 showSection('history', document.querySelector("a[onclick*='history']"));
             }).catch(e => {
-                showNotification("Error submitting top-up: " + e.message, "danger");
+                showNotification("Error: " + e.message, "danger");
             }).finally(() => {
                 btn.disabled = false;
-                btn.innerText = "Submit Verification";
+                btn.innerText = "Submit Deposit";
             });
         }
 
@@ -1233,7 +2079,7 @@
             const account = document.getElementById('withdraw-account').value.trim();
 
             if (isNaN(amount) || amount <= 0) {
-                showNotification("Enter a valid payout amount.", "danger");
+                showNotification("Enter a valid withdrawal amount.", "danger");
                 return;
             }
             if (!account) {
@@ -1244,41 +2090,168 @@
             btn.disabled = true;
             btn.innerText = "Processing...";
 
-            const userRef = db.ref('users/' + currentUser.uid);
-            userRef.once('value').then(snapshot => {
-                const userData = snapshot.val();
-                const currentBalance = userData.balance || 0;
-                if (amount > currentBalance) {
-                    throw new Error("Insufficient wallet balance.");
+            const userBalRef = db.ref('users/' + currentUser.uid + '/balance');
+            userBalRef.transaction(currentBal => {
+                if (currentBal === null) return currentBal;
+                if ((currentBal || 0) >= amount) {
+                    return currentBal - amount;
                 }
-                const newBalance = currentBalance - amount;
-                const withdrawalData = {
-                    userId: currentUser.uid,
-                    amount: amount,
-                    method: method,
-                    account: account,
-                    status: 'processing',
-                    date: new Date().toISOString()
-                };
-                const newWithdrawalKey = db.ref('withdrawals').push().key;
-                let updates = {};
-                updates['/withdrawals/' + newWithdrawalKey] = withdrawalData;
-                updates['/users/' + currentUser.uid + '/balance'] = newBalance;
-                return db.ref().update(updates);
-            }).then(() => {
-                showNotification("Payout request has been queued.");
-                document.getElementById('withdraw-amount').value = '';
-                document.getElementById('withdraw-account').value = '';
-                showSection('history', document.querySelector("a[onclick*='history']"));
-            }).catch(error => {
-                showNotification(error.message || "An error occurred.", "danger");
-            }).finally(() => {
-                btn.disabled = false;
-                btn.innerText = "Submit Payout Request";
+                return;
+            }, (error, committed) => {
+                if (error) {
+                    btn.disabled = false;
+                    btn.innerText = "Submit Withdraw Request";
+                    showNotification("Transaction error: " + error.message, "danger");
+                } else if (committed) {
+                    const withdrawalData = {
+                        userId: currentUser.uid,
+                        amount: amount,
+                        method: method,
+                        account: account,
+                        status: 'processing',
+                        date: new Date().toISOString()
+                    };
+                    db.ref('withdrawals').push(withdrawalData).then(() => {
+                        showNotification("Withdrawal request queued.");
+                        document.getElementById('withdraw-amount').value = '';
+                        document.getElementById('withdraw-account').value = '';
+
+                        displayReceiptModal({
+                            amount: amount,
+                            method: method,
+                            account: account,
+                            date: new Date().toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' }),
+                            refCode: currentUserProfile ? currentUserProfile.referralCode : 'BENVIXA'
+                        });
+
+                    }).finally(() => {
+                        btn.disabled = false;
+                        btn.innerText = "Submit Withdraw Request";
+                    });
+                } else {
+                    btn.disabled = false;
+                    btn.innerText = "Submit Withdraw Request";
+                    showNotification("Insufficient wallet balance.", "danger");
+                }
             });
         }
 
-        // --- Tasks ---
+        // --- Auto Payment Receipt Functions ---
+        function displayReceiptModal(data) {
+            currentReceiptData = data;
+            document.getElementById('rcpt-amount').innerText = `Rs. ${parseFloat(data.amount).toLocaleString()}`;
+            document.getElementById('rcpt-method').innerText = data.method;
+            document.getElementById('rcpt-account').innerText = data.account;
+            document.getElementById('rcpt-date').innerText = data.date;
+            document.getElementById('rcpt-ref').innerText = data.refCode;
+            document.getElementById('receipt-modal').classList.remove('hidden');
+        }
+
+        function closeReceiptModal() {
+            document.getElementById('receipt-modal').classList.add('hidden');
+            showSection('history', document.querySelector("a[onclick*='history']"));
+        }
+
+        function downloadReceiptSlip() {
+            if (!currentReceiptData) return;
+            const canvas = document.createElement('canvas');
+            canvas.width = 460;
+            canvas.height = 640;
+            const ctx = canvas.getContext('2d');
+
+            ctx.fillStyle = '#f8fafc';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#4f46e5';
+            ctx.fillRect(0, 0, canvas.width, 110);
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 24px "Plus Jakarta Sans", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('Benvixa Digital Hub', canvas.width / 2, 45);
+
+            ctx.font = '14px sans-serif';
+            ctx.fillStyle = '#c7d2fe';
+            ctx.fillText('Official Payout Receipt', canvas.width / 2, 75);
+
+            ctx.fillStyle = '#ffffff';
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.roundRect(25, 130, 410, 420, 16);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = '#059669';
+            ctx.font = 'bold 36px "Plus Jakarta Sans", sans-serif';
+            ctx.fillText(`Rs. ${parseFloat(currentReceiptData.amount).toLocaleString()}`, canvas.width / 2, 195);
+
+            ctx.font = 'bold 13px sans-serif';
+            ctx.fillStyle = '#d97706';
+            ctx.fillText('• STATUS: PROCESSING (24H) •', canvas.width / 2, 225);
+
+            ctx.strokeStyle = '#f1f5f9';
+            ctx.beginPath();
+            ctx.moveTo(45, 245);
+            ctx.lineTo(415, 245);
+            ctx.stroke();
+
+            const drawRow = (label, val, y) => {
+                ctx.textAlign = 'left';
+                ctx.fillStyle = '#64748b';
+                ctx.font = '600 14px "Plus Jakarta Sans", sans-serif';
+                ctx.fillText(label, 50, y);
+
+                ctx.textAlign = 'right';
+                ctx.fillStyle = '#0f172a';
+                ctx.font = 'bold 14px "Plus Jakarta Sans", sans-serif';
+                ctx.fillText(val, 410, y);
+            };
+
+            drawRow('Payment Channel:', currentReceiptData.method, 280);
+            drawRow('Receiver Account:', currentReceiptData.account, 320);
+            drawRow('Transaction Date:', currentReceiptData.date, 360);
+            drawRow('Sponsor Code:', currentReceiptData.refCode, 400);
+
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.beginPath();
+            ctx.moveTo(45, 425);
+            ctx.lineTo(415, 425);
+            ctx.stroke();
+
+            ctx.textAlign = 'center';
+            ctx.fillStyle = '#4f46e5';
+            ctx.font = 'bold 15px "Plus Jakarta Sans", sans-serif';
+            ctx.fillText('Earn Rs. 300 - Rs. 1,000 Daily!', canvas.width / 2, 465);
+
+            ctx.fillStyle = '#64748b';
+            ctx.font = '12px sans-serif';
+            ctx.fillText(`Register with Code: ${currentReceiptData.refCode}`, canvas.width / 2, 492);
+            ctx.fillText('benvixahub.com', canvas.width / 2, 515);
+
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '11px sans-serif';
+            ctx.fillText('Verified Transaction Certificate', canvas.width / 2, 600);
+
+            const link = document.createElement('a');
+            link.download = `Benvixa_Receipt_${Date.now()}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            showNotification('Receipt downloaded! Share it on your status.');
+        }
+
+        function shareReceiptToWhatsApp() {
+            if (!currentReceiptData) return;
+            const refLink = `${window.location.origin}${window.location.pathname}?ref=${currentReceiptData.refCode}`;
+            const text = 
+                `💸 *Benvixa Payout Proof!*\n\n` +
+                `I just submitted a withdrawal of *Rs. ${currentReceiptData.amount}* via ${currentReceiptData.method}!\n\n` +
+                `Join Benvixa today, complete daily work tasks, and earn real daily payouts.\n\n` +
+                `👉 Register now using my official link:\n${refLink}`;
+            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
+        }
+
+        // --- Tasks Activities with Realistic Verification Progress ---
         function loadTasks() {
             const container = document.getElementById('task-list-container');
             container.innerHTML = '<p style="color:var(--text-muted);">Syncing tasks...</p>';
@@ -1290,7 +2263,7 @@
                 let hasTasks = false;
 
                 if (!snapshot.exists()) {
-                    container.innerHTML = "<p style='color:var(--text-muted);'>No active work packages found.</p>";
+                    container.innerHTML = "<p style='color:var(--text-muted);'>No active packages found.</p>";
                     return;
                 }
 
@@ -1305,7 +2278,7 @@
                         taskCard.innerHTML = `
                             <h3>${task.planName}</h3>
                             <p style="font-size: 13.5px; color: var(--text-muted); margin: 8px 0;">Daily Reward: <strong style="color:var(--text-main);">Rs. ${task.dailyEarning}</strong></p>
-                            <button class="btn-primary" id="btn-${key}" onclick="claimEarning('${key}')">Complete Task</button>
+                            <button class="btn-primary" id="btn-${key}" onclick="startTaskVerification('${key}')">Complete Task</button>
                             <p id="timer-${key}" class="mono" style="font-size:12px; color:var(--text-dim); margin-top:10px;"></p>
                         `;
                         container.appendChild(taskCard);
@@ -1323,11 +2296,12 @@
             const btn = document.getElementById(`btn-${key}`);
             const timer = document.getElementById(`timer-${key}`);
             if (!btn || !timer) return;
+            
             const twentyFourHours = 24 * 60 * 60 * 1000;
             const nextClaimTime = (lastClaimed || 0) + twentyFourHours;
 
             const runCountdown = () => {
-                const now = new Date().getTime();
+                const now = getExactTime();
                 const distance = nextClaimTime - now;
                 if (distance <= 0) {
                     timer.innerHTML = "<span style='color:var(--accent); font-weight:700;'>Ready to Claim</span>";
@@ -1350,10 +2324,39 @@
             countdownIntervals[key] = setInterval(runCountdown, 1000);
         }
 
-        function claimEarning(key) {
+        function startTaskVerification(key) {
             const btn = document.getElementById(`btn-${key}`);
             if (btn) btn.disabled = true;
 
+            const modal = document.getElementById('task-verify-modal');
+            const desc = document.getElementById('task-verify-desc');
+            const prog = document.getElementById('task-verify-progress');
+
+            modal.classList.remove('hidden');
+            prog.style.width = '15%';
+            desc.innerText = 'Connecting to task verification gateway...';
+
+            setTimeout(() => {
+                prog.style.width = '45%';
+                desc.innerText = 'Validating digital activity proof...';
+            }, 1800);
+
+            setTimeout(() => {
+                prog.style.width = '85%';
+                desc.innerText = 'Synchronizing earnings with ledger...';
+            }, 3600);
+
+            setTimeout(() => {
+                prog.style.width = '100%';
+                desc.innerText = 'Task Verified Successfully!';
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    claimEarning(key);
+                }, 800);
+            }, 5200);
+        }
+
+        function claimEarning(key) {
             const invRef = db.ref('investments/' + key);
             invRef.once('value').then(invSnap => {
                 const invData = invSnap.val();
@@ -1361,62 +2364,108 @@
                     throw new Error("Task record not found.");
                 }
 
-                const now = new Date().getTime();
+                const now = getExactTime();
                 const twentyFourHours = 24 * 60 * 60 * 1000;
                 if (now < (invData.lastClaimed || 0) + twentyFourHours) {
                     throw new Error("Task cooldown in progress.");
                 }
 
-                return db.ref('users/' + currentUser.uid + '/balance').transaction(curr => (curr || 0) + invData.dailyEarning)
-                    .then((tx) => {
-                        if (tx.committed) {
-                            return invRef.update({ lastClaimed: now }).then(() => {
-                                showNotification(`Reward credited: Rs. ${invData.dailyEarning}`);
-                                updateClaimButton(key, now);
-                            });
-                        }
-                    });
+                return invRef.update({ lastClaimed: now }).then(() => {
+                    return db.ref('users/' + currentUser.uid + '/balance').transaction(curr => (curr || 0) + invData.dailyEarning);
+                }).then(() => {
+                    showNotification(`Reward credited: Rs. ${invData.dailyEarning}`);
+                    updateClaimButton(key, now);
+                });
             }).catch(e => {
                 showNotification(e.message, "danger");
+                const btn = document.getElementById(`btn-${key}`);
                 if (btn) btn.disabled = false;
             });
         }
 
-        // --- History ---
+        // --- History (Responsive Card-based Layout, No Tables) ---
         function loadHistory() {
-            const depTable = document.getElementById('deposit-history-table');
-            const wthTable = document.getElementById('withdrawal-history-table');
+            const depCards = document.getElementById('deposit-history-cards');
+            const wthCards = document.getElementById('withdrawal-history-cards');
             const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
 
-            depTable.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">Loading deposits...</td></tr>';
-            wthTable.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">Loading payouts...</td></tr>';
+            depCards.innerHTML = '<p style="color:var(--text-muted); font-size:13px;">Loading deposits...</p>';
+            wthCards.innerHTML = '<p style="color:var(--text-muted); font-size:13px;">Loading withdrawals...</p>';
 
-            db.ref('deposits').orderByChild('userId').equalTo(currentUser.uid).once('value', snap => {
-                depTable.innerHTML = '';
+            db.ref('deposits').orderByChild('userId').equalTo(currentUser.uid).limitToLast(25).once('value', snap => {
                 if (!snap.exists()) {
-                    depTable.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">No deposits found.</td></tr>';
+                    depCards.innerHTML = '<p style="color:var(--text-muted); font-size:13px;">No deposits recorded yet.</p>';
                     return;
                 }
+                let cards = [];
                 snap.forEach(c => {
                     const d = c.val();
-                    depTable.innerHTML = `<tr><td>${new Date(d.date).toLocaleString('en-GB', options)}</td><td class="mono">Rs. ${d.amount}</td><td>${d.method}</td><td class="mono">${d.tid}</td><td><span style="font-weight:700; color: #d97706;">${d.status}</span></td></tr>` + depTable.innerHTML;
+                    const statusClass = (d.status || 'processing').toLowerCase();
+                    cards.unshift(`
+                        <div class="history-card">
+                            <div class="history-card-header">
+                                <span class="history-method-badge">${d.method}</span>
+                                <span class="history-status-badge ${statusClass}">${d.status}</span>
+                            </div>
+                            <div class="history-card-main">
+                                <span class="history-amount mono">Rs. ${d.amount}</span>
+                                <span class="history-target mono">TRX: ${d.tid}</span>
+                            </div>
+                            <div class="history-card-footer">
+                                <span>Sender: ${d.sendingNumber || '-'}</span>
+                                <span>${new Date(d.date).toLocaleString('en-GB', options)}</span>
+                            </div>
+                        </div>
+                    `);
                 });
+                depCards.innerHTML = cards.join('');
             });
 
-            db.ref('withdrawals').orderByChild('userId').equalTo(currentUser.uid).once('value', snap => {
-                wthTable.innerHTML = '';
+            db.ref('withdrawals').orderByChild('userId').equalTo(currentUser.uid).limitToLast(25).once('value', snap => {
                 if (!snap.exists()) {
-                    wthTable.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">No payouts found.</td></tr>';
+                    wthCards.innerHTML = '<p style="color:var(--text-muted); font-size:13px;">No withdrawals recorded yet.</p>';
                     return;
                 }
+                let cards = [];
                 snap.forEach(c => {
                     const d = c.val();
-                    wthTable.innerHTML = `<tr><td>${new Date(d.date).toLocaleString('en-GB', options)}</td><td class="mono">Rs. ${d.amount}</td><td>${d.method}</td><td class="mono">${d.account}</td><td><span style="font-weight:700; color: #4f46e5;">${d.status}</span></td></tr>` + wthTable.innerHTML;
+                    const statusClass = (d.status || 'processing').toLowerCase();
+                    cards.unshift(`
+                        <div class="history-card">
+                            <div class="history-card-header">
+                                <span class="history-method-badge">${d.method}</span>
+                                <span class="history-status-badge ${statusClass}">${d.status}</span>
+                            </div>
+                            <div class="history-card-main">
+                                <span class="history-amount mono" style="color:var(--primary);">Rs. ${d.amount}</span>
+                                <span class="history-target mono">${d.account}</span>
+                            </div>
+                            <div class="history-card-footer">
+                                <span>Direct Transfer</span>
+                                <span>${new Date(d.date).toLocaleString('en-GB', options)}</span>
+                            </div>
+                        </div>
+                    `);
                 });
+                wthCards.innerHTML = cards.join('');
             });
         }
 
-        // --- Team / Affiliate ---
+        // --- Multi-Level Team Tabs & Data ---
+        function switchTeamTab(level) {
+            ['l1', 'l2', 'l3'].forEach(lvl => {
+                const pane = document.getElementById(`team-tab-pane-${lvl}`);
+                const btn = document.getElementById(`tab-btn-${lvl}`);
+                if (lvl === level) {
+                    pane.classList.remove('hidden');
+                    btn.classList.add('active');
+                } else {
+                    pane.classList.add('hidden');
+                    btn.classList.remove('active');
+                }
+            });
+        }
+
         function loadTeamData() {
             const userRef = db.ref('users/' + currentUser.uid);
             userRef.once('value', snap => {
@@ -1428,50 +2477,166 @@
                     document.getElementById('user-referral-link').innerText = link;
                 }
                 document.getElementById('user-referral-earnings').innerText = `Rs. ${parseFloat(userData.referralEarnings || 0).toFixed(2)}`;
+                document.getElementById('user-active-members-count').innerText = userData.activeReferralsCount || 0;
                 
-                const teamTable = document.getElementById('team-members-table');
-                teamTable.innerHTML = '';
-                
-                if (userData.team) {
-                    let memberCount = 1;
-                    const teamMembers = Object.values(userData.team);
-                    teamMembers.forEach(member => {
-                        const dateStr = member.joinedDate ? new Date(member.joinedDate).toLocaleDateString('en-GB') : '-';
-                        const row = `<tr><td>${memberCount}</td><td>${member.email || 'Member'}</td><td class="mono">${maskNumber(member.number)}</td><td>${dateStr}</td></tr>`;
-                        teamTable.innerHTML += row;
-                        memberCount++;
-                    });
-                } else {
-                    teamTable.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--text-muted);">No members joined through your link yet.</td></tr>';
-                }
+                // Render Level 1
+                const l1Data = userData.teamL1 || userData.team || {};
+                renderTeamLevelCards('team-tab-pane-l1', l1Data, 'Level 1');
+
+                // Render Level 2
+                const l2Data = userData.teamL2 || {};
+                renderTeamLevelCards('team-tab-pane-l2', l2Data, 'Level 2');
+
+                // Render Level 3
+                const l3Data = userData.teamL3 || {};
+                renderTeamLevelCards('team-tab-pane-l3', l3Data, 'Level 3');
+
+                updateMilestonesUI(userData);
             });
+        }
+
+        function renderTeamLevelCards(containerId, teamObject, levelName) {
+            const container = document.getElementById(containerId);
+            const members = Object.values(teamObject);
+            if (!members || members.length === 0) {
+                container.innerHTML = `<p style="color:var(--text-muted); font-size:13px; text-align:center; padding:12px 0;">No ${levelName} members joined yet.</p>`;
+                return;
+            }
+
+            let html = '';
+            members.forEach(member => {
+                const dateStr = member.joinedDate ? new Date(member.joinedDate).toLocaleDateString('en-GB') : '-';
+                html += `
+                    <div class="member-card">
+                        <div class="member-info">
+                            <span class="member-email">${member.email || 'Member'}</span>
+                            <span class="member-contact mono">${maskNumber(member.number)}</span>
+                        </div>
+                        <span class="member-date">${dateStr}</span>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
         }
 
         function copyReferralLink() {
             const linkText = document.getElementById('user-referral-link').innerText;
             if (navigator.clipboard) {
-                navigator.clipboard.writeText(linkText).then(() => showNotification('Affiliate link copied!'));
+                navigator.clipboard.writeText(linkText).then(() => showNotification('Invite link copied!'));
             } else {
-                showNotification('Link copied!');
+                showNotification('Invite link copied!');
             }
         }
 
-        function handleReferralCommission(investmentAmount) {
-            const userRef = db.ref('users/' + currentUser.uid);
-            userRef.once('value', userSnap => {
-                const userData = userSnap.val();
-                if (userData && userData.referredBy && userData.referredBy !== 'none') {
-                    const referrerId = userData.referredBy;
-                    const commissionAmount = investmentAmount * 0.10;
-                    db.ref('users/' + referrerId).transaction(curr => {
-                        if (curr) {
-                            curr.balance = (curr.balance || 0) + commissionAmount;
-                            curr.referralEarnings = (curr.referralEarnings || 0) + commissionAmount;
-                        }
-                        return curr;
-                    });
-                }
-            });
+        function shareOnWhatsApp() {
+            const linkText = document.getElementById('user-referral-link').innerText;
+            if (!linkText || linkText === '- - -') {
+                showNotification("Generating link, please try again in a moment.", "danger");
+                return;
+            }
+
+            const message = 
+                `🚀 *Join Benvixa - Daily Digital Work & Tasks Hub!*\n\n` +
+                `Register now and get a *Rs. 100 Welcome Bonus* + *1 Free Spin*! Complete easy daily work tasks and withdraw your income instantly via *Easypaisa* or *JazzCash* 💸\n\n` +
+                `✅ 100% Active Payouts\n` +
+                `✅ Instant Task Confirmation\n` +
+                `✅ Multi-Tier Commissions\n\n` +
+                `👉 Register now using my official invite link:\n${linkText}`;
+
+            const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
+            window.open(waUrl, '_blank');
+        }
+
+        // --- English WhatsApp Status Poster Generator (Canvas) ---
+        function openPosterModal() {
+            if (!currentUserProfile) return;
+            const canvas = document.getElementById('posterCanvas');
+            const ctx = canvas.getContext('2d');
+            const refCode = currentUserProfile.referralCode || 'BENVIXA';
+
+            const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            grad.addColorStop(0, '#0f172a');
+            grad.addColorStop(0.5, '#1e1b4b');
+            grad.addColorStop(1, '#312e81');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
+            ctx.strokeStyle = '#4f46e5';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.roundRect(30, 30, canvas.width - 60, canvas.height - 60, 20);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '800 28px "Plus Jakarta Sans", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('BENVIXA DIGITAL HUB', canvas.width / 2, 85);
+
+            ctx.fillStyle = '#38bdf8';
+            ctx.font = '700 13px "Plus Jakarta Sans", sans-serif';
+            ctx.fillText('VERIFIED DIGITAL WORK NETWORK', canvas.width / 2, 110);
+
+            ctx.fillStyle = '#f59e0b';
+            ctx.beginPath();
+            ctx.roundRect(canvas.width / 2 - 140, 140, 280, 42, 50);
+            ctx.fill();
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '800 15px "Plus Jakarta Sans", sans-serif';
+            ctx.fillText('DAILY WORK & INSTANT PAYOUTS', canvas.width / 2, 166);
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '800 32px "Plus Jakarta Sans", sans-serif';
+            ctx.fillText('EARN RS. 500 - 1,500', canvas.width / 2, 235);
+            ctx.fillStyle = '#10b981';
+            ctx.font = '800 24px "Plus Jakarta Sans", sans-serif';
+            ctx.fillText('DAILY FROM MOBILE PHONE', canvas.width / 2, 270);
+
+            ctx.textAlign = 'left';
+            ctx.fillStyle = '#e2e8f0';
+            ctx.font = '600 14px "Plus Jakarta Sans", sans-serif';
+            ctx.fillText('✓ Rs. 100 Welcome Bonus on Register', 75, 325);
+            ctx.fillText('✓ Direct Easypaisa & JazzCash Withdrawals', 75, 360);
+            ctx.fillText('✓ 100% Active 24-Hour Payout Guarantee', 75, 395);
+            ctx.fillText('✓ Easy 2-Minute Daily Tasks from Home', 75, 430);
+
+            ctx.fillStyle = 'rgba(79, 70, 229, 0.4)';
+            ctx.strokeStyle = '#a5b4fc';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.roundRect(60, 465, canvas.width - 120, 60, 12);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.textAlign = 'center';
+            ctx.fillStyle = '#c7d2fe';
+            ctx.font = '600 11px sans-serif';
+            ctx.fillText('OFFICIAL SPONSOR INVITATION CODE', canvas.width / 2, 485);
+
+            ctx.fillStyle = '#fbbf24';
+            ctx.font = 'bold 22px "JetBrains Mono", monospace';
+            ctx.fillText(refCode, canvas.width / 2, 513);
+
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '500 12px sans-serif';
+            ctx.fillText('Register Online: benvixahub.com', canvas.width / 2, 555);
+
+            document.getElementById('poster-modal').classList.remove('hidden');
+        }
+
+        function closePosterModal() {
+            document.getElementById('poster-modal').classList.add('hidden');
+        }
+
+        function downloadPoster() {
+            const canvas = document.getElementById('posterCanvas');
+            const link = document.createElement('a');
+            link.download = `Benvixa_Promo_Poster_${Date.now()}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            showNotification('Status Poster Downloaded! Post it to WhatsApp.');
         }
 
         function checkForReferralCodeInURL() {
@@ -1480,13 +2645,71 @@
             if (refCode) {
                 const signupReferralInput = document.getElementById('signup-referral');
                 if (signupReferralInput) signupReferralInput.value = refCode;
-                const loginContainer = document.getElementById('login-container');
-                if (loginContainer && !loginContainer.classList.contains('hidden')) {
-                    toggleForms();
-                }
+                toggleForms(true);
             }
         }
-        window.addEventListener('load', checkForReferralCodeInURL);
+
+        // --- Live Ticker ---
+        const pakPrefixes = ['0300', '0301', '0302', '0303', '0306', '0311', '0312', '0315', '0321', '0322', '0324', '0331', '0332', '0333', '0334', '0342', '0345', '0346', '0347'];
+        const realisticAmounts = [120, 240, 350, 480, 520, 680, 850, 1100, 1450, 1750, 2100, 3200, 4600];
+        const tiers = [1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 15];
+        const timePhrases = ['Just now', '1 min ago', '2 mins ago', '3 mins ago'];
+
+        function getRandomItem(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+        function generateRandomPhone() {
+            const prefix = getRandomItem(pakPrefixes);
+            const suffix = Math.floor(100 + Math.random() * 900);
+            return `${prefix}****${suffix}`;
+        }
+
+        function showNextTickerItem() {
+            const tickerEl = document.getElementById('live-payout-ticker');
+            const iconEl = document.getElementById('ticker-icon');
+            const titleEl = document.getElementById('ticker-title');
+            const timeEl = document.getElementById('ticker-time');
+
+            if (!tickerEl) return;
+
+            const isWithdrawal = Math.random() > 0.32;
+            const phone = generateRandomPhone();
+            const timeText = getRandomItem(timePhrases);
+
+            if (isWithdrawal) {
+                const amount = getRandomItem(realisticAmounts);
+                const method = Math.random() > 0.5 ? 'Easypaisa' : 'JazzCash';
+                iconEl.className = 'ticker-badge wth';
+                iconEl.innerHTML = `<i class='bx bx-check-circle'></i>`;
+                titleEl.innerHTML = `${phone} withdrew <strong style="color:var(--accent);">Rs. ${amount.toLocaleString()}</strong>`;
+                timeEl.innerText = `${method} • ${timeText}`;
+            } else {
+                const tierNum = getRandomItem(tiers);
+                iconEl.className = 'ticker-badge act';
+                iconEl.innerHTML = `<i class='bx bx-layer'></i>`;
+                titleEl.innerHTML = `${phone} unlocked <strong>Tier ${tierNum} Task Pack</strong>`;
+                timeEl.innerText = `Work Package • ${timeText}`;
+            }
+
+            tickerEl.classList.add('show');
+            setTimeout(() => { tickerEl.classList.remove('show'); }, 4500);
+
+            const nextInterval = Math.floor(Math.random() * (19000 - 9000 + 1) + 9000);
+            tickerTimeoutId = setTimeout(showNextTickerItem, nextInterval);
+        }
+
+        function startSmartLiveTicker() {
+            stopSmartLiveTicker();
+            tickerTimeoutId = setTimeout(showNextTickerItem, 4500);
+        }
+
+        function stopSmartLiveTicker() {
+            if (tickerTimeoutId) {
+                clearTimeout(tickerTimeoutId);
+                tickerTimeoutId = null;
+            }
+            const tickerEl = document.getElementById('live-payout-ticker');
+            if (tickerEl) tickerEl.classList.remove('show');
+        }
     </script>
 </body>
 </html>
