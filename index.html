@@ -517,70 +517,115 @@
         .member-contact { font-size: 11.5px; color: var(--text-muted); }
         .member-date { font-size: 11px; font-weight: 600; color: var(--text-dim); }
 
-        /* Responsive History Cards (No Horizontal Sliding) */
+        /* Clean Minimal History Cards */
         .history-cards-container {
             display: flex;
             flex-direction: column;
             gap: 10px;
             margin-top: 10px;
         }
-        .history-card {
+        .history-card-item {
             background: var(--surface-card);
             border: 1px solid var(--border);
             border-radius: var(--radius-md);
-            padding: 14px 16px;
+            padding: 16px 18px;
             display: flex;
-            flex-direction: column;
-            gap: 8px;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
             transition: var(--transition);
+            user-select: none;
         }
-        .history-card:hover {
+        .history-card-item:hover {
             border-color: var(--primary);
             background: #ffffff;
-            box-shadow: var(--shadow-sm);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-1px);
         }
-        .history-card-header {
+        .history-card-left {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
+            gap: 4px;
         }
-        .history-method-badge {
-            font-size: 11.5px;
-            font-weight: 700;
-            padding: 3px 8px;
-            border-radius: 6px;
-            background: #e0e7ff;
-            color: var(--primary);
+        .history-card-amt {
+            font-size: 19px;
+            font-weight: 900;
+            color: var(--text-main);
+        }
+        .history-card-meta {
+            font-size: 12px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .history-card-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         .history-status-badge {
-            font-size: 11px;
-            font-weight: 700;
-            padding: 3px 8px;
+            font-size: 11.5px;
+            font-weight: 800;
+            padding: 5px 12px;
             border-radius: 20px;
             text-transform: capitalize;
+            letter-spacing: 0.3px;
         }
-        .history-status-badge.processing { background: #fef3c7; color: #d97706; }
+        .history-status-badge.processing { background: #fef3c7; color: #b45309; }
         .history-status-badge.approved, .history-status-badge.completed { background: #dcfce7; color: #059669; }
         .history-status-badge.rejected { background: #fee2e2; color: #dc2626; }
-        
-        .history-card-main {
+
+        /* Full Screen Mobile Slip / Receipt Modal */
+        #receipt-modal.modal-overlay {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(6px);
+            align-items: flex-end;
+        }
+        @media (min-width: 600px) {
+            #receipt-modal.modal-overlay {
+                align-items: center;
+            }
+        }
+        .receipt-modal-content {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            padding: 24px 20px;
+            border-radius: 24px 24px 0 0;
+            width: 100%;
+            max-width: 440px;
+            text-align: center;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.25);
+            max-height: 92vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        @media (min-width: 600px) {
+            .receipt-modal-content {
+                border-radius: var(--radius-xl);
+                padding: 28px 24px;
+            }
+        }
+
+        .receipt-card {
+            background: #f8fafc;
+            border: 1.5px dashed #cbd5e1;
+            border-radius: var(--radius-md);
+            padding: 16px 14px;
+            margin: 16px 0;
+            text-align: left;
+        }
+        .receipt-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            font-size: 13px;
+            padding: 7px 0;
+            border-bottom: 1px solid #e2e8f0;
         }
-        .history-amount { font-size: 18px; font-weight: 800; color: var(--text-main); }
-        .history-target { font-size: 12px; color: var(--text-muted); }
-        
-        .history-card-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 11.5px;
-            color: var(--text-dim);
-            border-top: 1px solid var(--border);
-            padding-top: 6px;
-            margin-top: 2px;
-        }
+        .receipt-row:last-child { border-bottom: none; }
+        .receipt-label { color: var(--text-muted); font-weight: 600; }
+        .receipt-val { font-weight: 700; color: var(--text-main); }
 
         /* Spin Wheel Widget */
         .spin-wheel-container { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px 0; }
@@ -683,13 +728,6 @@
         }
         @keyframes spinAnim { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* Payment Receipt Modal Styles */
-        .receipt-card { background: #ffffff; border: 1px dashed #cbd5e1; border-radius: var(--radius-md); padding: 18px 14px; margin: 14px 0; text-align: left; }
-        .receipt-row { display: flex; justify-content: space-between; align-items: center; font-size: 12.5px; padding: 6px 0; border-bottom: 1px solid #f1f5f9; }
-        .receipt-row:last-child { border-bottom: none; }
-        .receipt-label { color: var(--text-muted); font-weight: 600; }
-        .receipt-val { font-weight: 700; color: var(--text-main); }
-
         @media (max-width: 860px) {
             .sidebar {
                 position: fixed;
@@ -766,8 +804,8 @@
                         <h2 style="font-size: 22px; font-weight: 800; color: var(--text-main);">Sign in to Benvixa</h2>
                         <p style="color: var(--text-muted); font-size: 13.5px; margin-top: 4px;">Access your digital workspace</p>
                     </div>
-                    <label>Phone Number</label>
-                    <input type="tel" id="login-number" inputmode="numeric" placeholder="03XXXXXXXXX">
+                    <label>Phone Number or Email</label>
+                    <input type="text" id="login-number" placeholder="03XXXXXXXXX or Email">
                     <label>Password</label>
                     <input type="password" id="login-password" placeholder="••••••••">
                     <button class="btn-primary" id="btn-login-submit" onclick="loginUser()">Sign In</button>
@@ -787,7 +825,7 @@
                     <label>Phone Number</label>
                     <input type="tel" id="signup-number" inputmode="numeric" placeholder="03XXXXXXXXX">
                     <label>Password</label>
-                    <input type="password" id="signup-password" placeholder="Create strong password">
+                    <input type="password" id="signup-password" placeholder="Create strong password (min 6 chars)">
                     <label>Referral Sponsor ID (Optional)</label>
                     <input type="text" id="signup-referral" placeholder="Sponsor Code">
                     <button class="btn-primary" id="btn-signup-submit" onclick="signupUser()">Register Account</button>
@@ -833,7 +871,7 @@
                         </div>
                     </div>
 
-                    <!-- Locked Welcome Bonus Card (Placed Below Stats Grid) -->
+                    <!-- Locked Welcome Bonus Card -->
                     <div id="welcome-bonus-box" class="locked-bonus-card">
                         <div class="locked-bonus-header">
                             <div>
@@ -845,8 +883,8 @@
                             <span id="bonus-status-badge" style="font-size:11px; background:#fef3c7; color:#b45309; padding:4px 10px; border-radius:20px; font-weight:700;">Locked</span>
                         </div>
                         <div style="font-size:12.5px; color:#78350f; display:flex; justify-content:space-between;">
-                            <span>Requirement: <strong>15 Active Members</strong></span>
-                            <span id="bonus-progress-count" class="mono" style="font-weight:700;">0 / 15</span>
+                            <span>Requirement: <strong>Rs. 500 Investment</strong></span>
+                            <span id="bonus-progress-count" class="mono" style="font-weight:700;">Rs. 0 / Rs. 500</span>
                         </div>
                         <div class="locked-bonus-progress-wrap">
                             <div class="locked-bonus-progress-bar" id="bonus-progress-fill"></div>
@@ -890,7 +928,6 @@
                         <p>Transfer exact amount to the official account card below and submit your TRX ID.</p>
                     </div>
 
-                    <!-- Professional Bank Card Style Display -->
                     <div class="bank-card-container">
                         <div class="bank-card-header">
                             <div class="bank-chip"></div>
@@ -967,19 +1004,19 @@
                     </div>
                 </div>
 
-                <!-- History (Card-based Layout without Sliding Tables) -->
+                <!-- History -->
                 <div id="history-content" class="content-section hidden">
                     <div class="section-header">
-                        <h2>Activity History</h2>
-                        <p>Complete ledger of your deposits and withdrawal transactions.</p>
+                        <h2>Transaction History</h2>
+                        <p>Tap any transaction card below to view and download its official receipt slip.</p>
                     </div>
 
-                    <h3 style="font-size: 15px; margin: 18px 0 10px 0; color:var(--text-main);">Recent Deposits</h3>
+                    <h3 style="font-size: 15px; margin: 18px 0 10px 0; color:var(--text-main);">Deposits</h3>
                     <div id="deposit-history-cards" class="history-cards-container">
                         <p style="color:var(--text-muted); font-size:13px;">Loading deposits...</p>
                     </div>
 
-                    <h3 style="font-size: 15px; margin: 26px 0 10px 0; color:var(--text-main);">Recent Withdrawals</h3>
+                    <h3 style="font-size: 15px; margin: 26px 0 10px 0; color:var(--text-main);">Withdrawals</h3>
                     <div id="withdrawal-history-cards" class="history-cards-container">
                         <p style="color:var(--text-muted); font-size:13px;">Loading withdrawals...</p>
                     </div>
@@ -1023,7 +1060,7 @@
                         </button>
                     </div>
 
-                    <!-- Milestone Rewards Box (Positioned Below WhatsApp Button) -->
+                    <!-- Milestone Rewards Box -->
                     <div style="margin: 22px 0 16px 0; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px; background: #fff;">
                         <h3 style="font-size: 15.5px; font-weight: 800; color: var(--text-main); margin-bottom: 4px;">
                             🎯 Team Milestone Rewards
@@ -1147,46 +1184,50 @@
         </div>
     </div>
 
-    <!-- Auto Payment Receipt Modal -->
+    <!-- Full Screen Mobile Slip / Receipt Modal -->
     <div id="receipt-modal" class="modal-overlay hidden">
-        <div class="modal-content" style="max-width: 380px;">
-            <div style="display:inline-flex; align-items:center; justify-content:center; width:48px; height:48px; background:#dcfce7; color:#059669; border-radius:50%; margin-bottom:10px;">
-                <i class='bx bx-check-double' style="font-size: 30px;"></i>
+        <div class="receipt-modal-content">
+            <div id="rcpt-status-icon" style="display:inline-flex; align-items:center; justify-content:center; width:52px; height:52px; background:#dcfce7; color:#059669; border-radius:50%; margin-bottom:8px;">
+                <i class='bx bx-check-double' style="font-size: 32px;"></i>
             </div>
-            <h3 style="font-size: 19px; font-weight: 800; color:var(--text-main);">Withdrawal Receipt</h3>
-            <p style="font-size: 12.5px; color: var(--text-muted); margin-top: 2px;">Transaction Submitted Successfully</p>
+            
+            <h3 id="rcpt-header-type" style="font-size: 20px; font-weight: 800; color:var(--text-main);">Transaction Slip</h3>
+            <div id="rcpt-amount" class="mono" style="font-size: 28px; font-weight: 900; color: var(--text-main); margin: 6px 0 2px 0;">Rs. 0.00</div>
+            <span id="rcpt-status-tag" class="history-status-badge" style="font-size:12px; padding:4px 14px;">Processing</span>
             
             <div class="receipt-card">
                 <div class="receipt-row">
-                    <span class="receipt-label">Amount:</span>
-                    <span class="receipt-val mono" id="rcpt-amount" style="font-size: 15px; color: var(--accent);">Rs. 0.00</span>
+                    <span class="receipt-label">Transaction Type:</span>
+                    <span class="receipt-val" id="rcpt-type-title">Withdrawal</span>
                 </div>
                 <div class="receipt-row">
-                    <span class="receipt-label">Method:</span>
-                    <span class="receipt-val" id="rcpt-method">-</span>
+                    <span class="receipt-label">Payment Channel:</span>
+                    <span class="receipt-val" id="rcpt-method">Easypaisa</span>
                 </div>
-                <div class="receipt-row">
-                    <span class="receipt-label">Account:</span>
+                <div class="receipt-row" id="rcpt-target-row">
+                    <span class="receipt-label" id="rcpt-target-label">Account Number:</span>
                     <span class="receipt-val mono" id="rcpt-account">-</span>
                 </div>
-                <div class="receipt-row">
-                    <span class="receipt-label">Status:</span>
-                    <span class="receipt-val" style="color:var(--gold);">Processing (24H)</span>
+                <div class="receipt-row" id="rcpt-trx-row">
+                    <span class="receipt-label">TRX ID:</span>
+                    <span class="receipt-val mono" id="rcpt-trx-val" style="color:var(--primary); font-size:12px;">-</span>
                 </div>
                 <div class="receipt-row">
-                    <span class="receipt-label">Date:</span>
+                    <span class="receipt-label">Date & Time:</span>
                     <span class="receipt-val" id="rcpt-date">-</span>
                 </div>
                 <div class="receipt-row">
-                    <span class="receipt-label">Referral ID:</span>
+                    <span class="receipt-label">Member Sponsor ID:</span>
                     <span class="receipt-val mono" id="rcpt-ref" style="color: var(--primary);">-</span>
                 </div>
             </div>
 
-            <p style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 12px;">Share your proof on WhatsApp Status to invite new friends!</p>
+            <p style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 14px;">
+                Verified Certificate from Benvixa Work Network. Share on WhatsApp status to invite friends!
+            </p>
 
             <button class="btn-primary" onclick="downloadReceiptSlip()" style="margin-bottom: 8px;">
-                <i class='bx bx-download'></i> Download Status Slip
+                <i class='bx bx-download'></i> Download Slip Image
             </button>
             <button class="btn-whatsapp-share" onclick="shareReceiptToWhatsApp()" style="margin-top: 0; margin-bottom: 10px;">
                 <i class='bx bxl-whatsapp'></i> Share to WhatsApp Status
@@ -1208,7 +1249,7 @@
             <button class="btn-whatsapp-share" onclick="joinCommunityAndSignIn()" style="margin-top:0; margin-bottom: 10px;">
                 <i class='bx bxl-whatsapp'></i> Join Official Channel
             </button>
-            <button class="modal-btn cancel btn-primary" onclick="closeCommunityModal()">Continue to Sign In</button>
+            <button class="modal-btn cancel btn-primary" onclick="closeCommunityModal()">Continue to Dashboard</button>
         </div>
     </div>
 
@@ -1305,6 +1346,20 @@
             return number.substring(0, 4) + '****' + number.substring(8);
         }
 
+        // Clean & Format Pakistani Phone Numbers (Supports 03.., +92.., 92.., 3..)
+        function sanitizePhoneNumber(raw) {
+            if (!raw) return '';
+            let num = raw.toString().trim();
+            if (num.includes('@')) return num;
+            num = num.replace(/\D/g, '');
+            if (num.startsWith('92') && num.length === 12) {
+                num = '0' + num.slice(2);
+            } else if (num.length === 10 && num.startsWith('3')) {
+                num = '0' + num;
+            }
+            return num;
+        }
+
         function copyDepositNumber() {
             navigator.clipboard.writeText("03262550724").then(() => {
                 showNotification("Account Number (03262550724) Copied!");
@@ -1378,6 +1433,7 @@
                 if (currentData === null) return currentData;
                 if (currentData.balance >= plan.invest) {
                     currentData.balance -= plan.invest;
+                    currentData.totalInvested = (currentData.totalInvested || 0) + plan.invest;
                     return currentData;
                 }
                 return;
@@ -1433,7 +1489,7 @@
             notificationBox.innerHTML = `<i class='bx ${type==='success'?'bx-check-circle':'bx-error-circle'}'></i> ${message}`;
             notificationBox.className = type;
             notificationBox.classList.remove('hidden');
-            setTimeout(() => { notificationBox.classList.add('hidden'); }, 3200);
+            setTimeout(() => { notificationBox.classList.add('hidden'); }, 3500);
         }
 
         function showSection(sectionId, navLink) {
@@ -1537,7 +1593,7 @@
             }, 60000);
         }
 
-        // --- Locked Welcome Bonus Functions ---
+        // --- Locked Welcome Bonus (Unlocked with Rs. 500 Personal Investment) ---
         function updateWelcomeBonusUI(data) {
             const box = document.getElementById('welcome-bonus-box');
             if (data.welcomeBonusClaimed) {
@@ -1546,17 +1602,17 @@
             }
             if (box) box.style.display = 'flex';
 
-            const activeCount = data.activeReferralsCount || 0;
+            const invested = data.totalInvested || 0;
             const progressCount = document.getElementById('bonus-progress-count');
             const progressFill = document.getElementById('bonus-progress-fill');
             const unlockBtn = document.getElementById('btn-unlock-bonus');
             const statusBadge = document.getElementById('bonus-status-badge');
 
-            const pct = Math.min(100, Math.floor((activeCount / 15) * 100));
-            if (progressCount) progressCount.innerText = `${activeCount} / 15 Active`;
+            const pct = Math.min(100, Math.floor((invested / 500) * 100));
+            if (progressCount) progressCount.innerText = `Rs. ${invested} / Rs. 500 Invested`;
             if (progressFill) progressFill.style.width = `${pct}%`;
 
-            if (activeCount >= 15) {
+            if (invested >= 500) {
                 if (unlockBtn) {
                     unlockBtn.disabled = false;
                     unlockBtn.innerText = "Claim Rs. 100 to Main Balance ✓";
@@ -1570,17 +1626,20 @@
             } else {
                 if (unlockBtn) {
                     unlockBtn.disabled = true;
-                    unlockBtn.innerText = `Unlock Rs. 100 (${activeCount}/15 Active Members)`;
+                    unlockBtn.innerText = `Unlock Rs. 100 (Progress: Rs. ${invested} / Rs. 500)`;
+                    unlockBtn.style.background = "linear-gradient(135deg, #f59e0b, #d97706)";
                 }
                 if (statusBadge) {
                     statusBadge.innerText = "Locked";
+                    statusBadge.style.background = "#fef3c7";
+                    statusBadge.style.color = "#b45309";
                 }
             }
         }
 
         function claimLockedBonus() {
-            if (!currentUserProfile || (currentUserProfile.activeReferralsCount || 0) < 15) {
-                showNotification("15 Active Members required to unlock.", "danger");
+            if (!currentUserProfile || (currentUserProfile.totalInvested || 0) < 500) {
+                showNotification("Rs. 500 investment required in work packages to unlock bonus.", "danger");
                 return;
             }
             if (currentUserProfile.welcomeBonusClaimed) {
@@ -1593,7 +1652,7 @@
             btn.innerText = "Transferring...";
 
             db.ref('users/' + currentUser.uid).transaction(curr => {
-                if (curr && !curr.welcomeBonusClaimed && (curr.activeReferralsCount || 0) >= 15) {
+                if (curr && !curr.welcomeBonusClaimed && (curr.totalInvested || 0) >= 500) {
                     curr.balance = (curr.balance || 0) + 100;
                     curr.welcomeBonusClaimed = true;
                 }
@@ -1672,7 +1731,7 @@
             });
         }
 
-        // --- Lucky Spin Wheel (Slice Adjustments + 95% Controlled Probability) ---
+        // --- Lucky Spin Wheel ---
         const wheelSlices = [
             { text: "Better Luck", color: "#64748b", value: 0 },
             { text: "Rs. 5", color: "#10b981", value: 5 },
@@ -1800,22 +1859,26 @@
             }, 4600);
         }
 
-        // --- Multi-Tier Referral Sign Up (L1, L2, L3 Setup) ---
+        // --- Multi-Tier Referral Sign Up ---
         function signupUser() {
             const btn = document.getElementById('btn-signup-submit');
             const email = document.getElementById('signup-email').value.trim();
-            let rawNumber = document.getElementById('signup-number').value.trim();
+            const rawNumber = document.getElementById('signup-number').value.trim();
             const password = document.getElementById('signup-password').value;
             const referralCode = document.getElementById('signup-referral').value.trim().toUpperCase();
 
-            const number = rawNumber.replace(/\D/g, '');
+            const number = sanitizePhoneNumber(rawNumber);
             
             if (!email || !number || !password) {
-                showNotification("Please complete all fields.", "danger");
+                showNotification("Please complete all required fields.", "danger");
                 return;
             }
             if (number.length !== 11) {
-                showNotification("Please enter a valid 11-digit phone number.", "danger");
+                showNotification("Please enter a valid 11-digit phone number (e.g. 03XXXXXXXXX).", "danger");
+                return;
+            }
+            if (password.length < 6) {
+                showNotification("Password must be at least 6 characters long.", "danger");
                 return;
             }
 
@@ -1823,13 +1886,15 @@
             btn.innerText = "Creating Account...";
 
             const newReferralCode = Math.random().toString(36).substring(2, 8).toUpperCase();
-            auth.createUserWithEmailAndPassword(`${number}@benvixahub.com`, password).then(cred => {
+            
+            auth.createUserWithEmailAndPassword(`${number}@benvixa.vercel.app`, password).then(cred => {
                 const newUserRef = db.ref('users/' + cred.user.uid);
                 let newUserData = { 
                     email: email, 
                     number: number, 
                     signupDate: new Date().toISOString(), 
                     balance: 0, 
+                    totalInvested: 0,
                     referralCode: newReferralCode, 
                     referralEarnings: 0, 
                     referredBy: 'none',
@@ -1898,7 +1963,15 @@
                     finalizeRegistration();
                 }
             }).catch(err => {
-                showNotification(err.message, "danger");
+                if (err.code === 'auth/email-already-in-use') {
+                    showNotification("This phone number is already registered. Please sign in.", "danger");
+                    toggleForms(false);
+                    document.getElementById('login-number').value = number;
+                } else if (err.code === 'auth/weak-password') {
+                    showNotification("Password is too weak. Please use at least 6 characters.", "danger");
+                } else {
+                    showNotification(err.message || "Registration failed. Please try again.", "danger");
+                }
             }).finally(() => {
                 btn.disabled = false;
                 btn.innerText = "Register Account";
@@ -1957,30 +2030,115 @@
 
         function closeCommunityModal() {
             document.getElementById('community-modal').classList.add('hidden');
-            toggleForms(false);
+            if (currentUser) {
+                authContainer.classList.add('hidden');
+                dashboardContainer.classList.remove('hidden');
+                appHeader.classList.remove('hidden');
+                sidebar.classList.remove('hidden');
+                showSection('home', document.querySelector('.sidebar a'));
+            } else {
+                toggleForms(false);
+            }
         }
 
-        function loginUser() {
+        // --- Multi-Identifier Robust Login (Fixed & Auto-Fallbacks) ---
+        async function loginUser() {
             const btn = document.getElementById('btn-login-submit');
-            let rawNumber = document.getElementById('login-number').value.trim();
+            const rawInput = document.getElementById('login-number').value.trim();
             const password = document.getElementById('login-password').value;
-            
-            const number = rawNumber.replace(/\D/g, '');
 
-            if (!number || !password) {
-                showNotification("Please enter phone and password.", "danger");
+            if (!rawInput || !password) {
+                showNotification("Please enter both phone number/email and password.", "danger");
                 return;
             }
 
             btn.disabled = true;
             btn.innerText = "Signing In...";
-            auth.signInWithEmailAndPassword(`${number}@benvixahub.com`, password)
-                .catch(err => showNotification(err.message, "danger"))
-                .finally(() => {
+
+            let candidates = [];
+
+            if (rawInput.includes('@')) {
+                // Input is directly an email
+                candidates.push(rawInput);
+                try {
+                    const snap = await db.ref('users').orderByChild('email').equalTo(rawInput).once('value');
+                    if (snap.exists()) {
+                        snap.forEach(child => {
+                            const u = child.val();
+                            if (u && u.number) {
+                                candidates.push(`${u.number}@benvixa.vercel.app`);
+                                candidates.push(`${u.number}@benvixahub.com`);
+                                candidates.push(`${u.number}@benvixa.com`);
+                            }
+                        });
+                    }
+                } catch (e) {
+                    // Ignore background lookup errors
+                }
+            } else {
+                // Input is a phone number
+                const number = sanitizePhoneNumber(rawInput);
+                if (number.length !== 11) {
                     btn.disabled = false;
                     btn.innerText = "Sign In";
-                });
+                    showNotification("Please enter a valid 11-digit phone number (e.g. 03XXXXXXXXX).", "danger");
+                    return;
+                }
+
+                candidates.push(`${number}@benvixa.vercel.app`);
+                candidates.push(`${number}@benvixahub.com`);
+                candidates.push(`${number}@benvixa.com`);
+
+                try {
+                    const snap = await db.ref('users').orderByChild('number').equalTo(number).once('value');
+                    if (snap.exists()) {
+                        snap.forEach(child => {
+                            const u = child.val();
+                            if (u && u.email && u.email.includes('@')) {
+                                candidates.push(u.email);
+                            }
+                        });
+                    }
+                } catch (e) {
+                    // Ignore background lookup errors
+                }
+            }
+
+            // Remove duplicate candidate strings
+            candidates = [...new Set(candidates)];
+
+            let loggedIn = false;
+            let lastError = null;
+
+            for (const emailToTry of candidates) {
+                try {
+                    await auth.signInWithEmailAndPassword(emailToTry, password);
+                    loggedIn = true;
+                    break;
+                } catch (err) {
+                    lastError = err;
+                }
+            }
+
+            btn.disabled = false;
+            btn.innerText = "Sign In";
+
+            if (!loggedIn) {
+                if (lastError && lastError.code === 'auth/too-many-requests') {
+                    showNotification("Too many failed attempts. Please wait a moment before trying again.", "danger");
+                } else {
+                    showNotification("Incorrect phone number/email or password. Please try again.", "danger");
+                }
+            }
         }
+
+        // Allow pressing Enter key in password field to submit
+        document.getElementById('login-password').addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') loginUser();
+        });
+        document.getElementById('signup-password').addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') signupUser();
+        });
 
         function logoutUser() { auth.signOut(); }
 
@@ -2117,9 +2275,11 @@
                         document.getElementById('withdraw-account').value = '';
 
                         displayReceiptModal({
+                            type: 'Withdrawal',
                             amount: amount,
                             method: method,
                             account: account,
+                            status: 'processing',
                             date: new Date().toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' }),
                             refCode: currentUserProfile ? currentUserProfile.referralCode : 'BENVIXA'
                         });
@@ -2136,20 +2296,67 @@
             });
         }
 
-        // --- Auto Payment Receipt Functions ---
+        // --- Full Screen Mobile Slip / Receipt View Functions ---
         function displayReceiptModal(data) {
             currentReceiptData = data;
+            const isDeposit = (data.type || '').toLowerCase() === 'deposit';
+            
+            document.getElementById('rcpt-header-type').innerText = isDeposit ? 'Deposit Receipt' : 'Withdrawal Receipt';
+            document.getElementById('rcpt-type-title').innerText = isDeposit ? 'Deposit Funds' : 'Payout Withdrawal';
             document.getElementById('rcpt-amount').innerText = `Rs. ${parseFloat(data.amount).toLocaleString()}`;
             document.getElementById('rcpt-method').innerText = data.method;
-            document.getElementById('rcpt-account').innerText = data.account;
             document.getElementById('rcpt-date').innerText = data.date;
-            document.getElementById('rcpt-ref').innerText = data.refCode;
+            document.getElementById('rcpt-ref').innerText = data.refCode || (currentUserProfile ? currentUserProfile.referralCode : 'BENVIXA');
+
+            // Status Styling
+            const statusTag = document.getElementById('rcpt-status-tag');
+            const statusIcon = document.getElementById('rcpt-status-icon');
+            const statusStr = (data.status || 'processing').toLowerCase();
+
+            statusTag.innerText = data.status.toUpperCase();
+            statusTag.className = `history-status-badge ${statusStr}`;
+
+            if (statusStr === 'approved' || statusStr === 'completed') {
+                statusIcon.style.background = '#dcfce7';
+                statusIcon.style.color = '#059669';
+                statusIcon.innerHTML = `<i class='bx bx-check-double' style="font-size:32px;"></i>`;
+            } else if (statusStr === 'rejected') {
+                statusIcon.style.background = '#fee2e2';
+                statusIcon.style.color = '#dc2626';
+                statusIcon.innerHTML = `<i class='bx bx-x' style="font-size:32px;"></i>`;
+            } else {
+                statusIcon.style.background = '#fef3c7';
+                statusIcon.style.color = '#d97706';
+                statusIcon.innerHTML = `<i class='bx bx-time' style="font-size:32px;"></i>`;
+            }
+
+            // Target / TRX details
+            const targetLabel = document.getElementById('rcpt-target-label');
+            const targetVal = document.getElementById('rcpt-account');
+            const trxRow = document.getElementById('rcpt-trx-row');
+            const trxVal = document.getElementById('rcpt-trx-val');
+
+            if (isDeposit) {
+                targetLabel.innerText = 'Sender Mobile:';
+                targetVal.innerText = data.sendingNumber || '-';
+                trxRow.style.display = 'flex';
+                trxVal.innerText = data.tid || '-';
+            } else {
+                targetLabel.innerText = 'Receiver Account:';
+                targetVal.innerText = data.account || '-';
+                if (data.tid) {
+                    trxRow.style.display = 'flex';
+                    trxVal.innerText = data.tid;
+                } else {
+                    trxRow.style.display = 'none';
+                }
+            }
+
             document.getElementById('receipt-modal').classList.remove('hidden');
         }
 
         function closeReceiptModal() {
             document.getElementById('receipt-modal').classList.add('hidden');
-            showSection('history', document.querySelector("a[onclick*='history']"));
         }
 
         function downloadReceiptSlip() {
@@ -2158,11 +2365,13 @@
             canvas.width = 460;
             canvas.height = 640;
             const ctx = canvas.getContext('2d');
+            const isDeposit = (currentReceiptData.type || '').toLowerCase() === 'deposit';
 
             ctx.fillStyle = '#f8fafc';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            ctx.fillStyle = '#4f46e5';
+            // Header Banner
+            ctx.fillStyle = isDeposit ? '#059669' : '#4f46e5';
             ctx.fillRect(0, 0, canvas.width, 110);
 
             ctx.fillStyle = '#ffffff';
@@ -2171,9 +2380,10 @@
             ctx.fillText('Benvixa Digital Hub', canvas.width / 2, 45);
 
             ctx.font = '14px sans-serif';
-            ctx.fillStyle = '#c7d2fe';
-            ctx.fillText('Official Payout Receipt', canvas.width / 2, 75);
+            ctx.fillStyle = isDeposit ? '#a7f3d0' : '#c7d2fe';
+            ctx.fillText(isDeposit ? 'Official Deposit Confirmation' : 'Official Payout Receipt', canvas.width / 2, 75);
 
+            // Inner Card
             ctx.fillStyle = '#ffffff';
             ctx.strokeStyle = '#e2e8f0';
             ctx.lineWidth = 2;
@@ -2182,13 +2392,14 @@
             ctx.fill();
             ctx.stroke();
 
-            ctx.fillStyle = '#059669';
+            ctx.fillStyle = '#0f172a';
             ctx.font = 'bold 36px "Plus Jakarta Sans", sans-serif';
             ctx.fillText(`Rs. ${parseFloat(currentReceiptData.amount).toLocaleString()}`, canvas.width / 2, 195);
 
+            const st = (currentReceiptData.status || 'processing').toUpperCase();
             ctx.font = 'bold 13px sans-serif';
-            ctx.fillStyle = '#d97706';
-            ctx.fillText('• STATUS: PROCESSING (24H) •', canvas.width / 2, 225);
+            ctx.fillStyle = (st === 'APPROVED' || st === 'COMPLETED') ? '#059669' : '#d97706';
+            ctx.fillText(`• STATUS: ${st} •`, canvas.width / 2, 225);
 
             ctx.strokeStyle = '#f1f5f9';
             ctx.beginPath();
@@ -2209,9 +2420,9 @@
             };
 
             drawRow('Payment Channel:', currentReceiptData.method, 280);
-            drawRow('Receiver Account:', currentReceiptData.account, 320);
-            drawRow('Transaction Date:', currentReceiptData.date, 360);
-            drawRow('Sponsor Code:', currentReceiptData.refCode, 400);
+            drawRow(isDeposit ? 'Sender Phone:' : 'Receiver Account:', isDeposit ? currentReceiptData.sendingNumber : currentReceiptData.account, 320);
+            drawRow(isDeposit ? 'TRX ID:' : 'Transaction ID:', currentReceiptData.tid || 'In Queue', 360);
+            drawRow('Sponsor Code:', currentReceiptData.refCode || 'BENVIXA', 400);
 
             ctx.strokeStyle = '#e2e8f0';
             ctx.beginPath();
@@ -2226,26 +2437,26 @@
 
             ctx.fillStyle = '#64748b';
             ctx.font = '12px sans-serif';
-            ctx.fillText(`Register with Code: ${currentReceiptData.refCode}`, canvas.width / 2, 492);
-            ctx.fillText('benvixahub.com', canvas.width / 2, 515);
+            ctx.fillText(`Register with Code: ${currentReceiptData.refCode || 'BENVIXA'}`, canvas.width / 2, 492);
+            ctx.fillText('benvixa.vercel.app', canvas.width / 2, 515);
 
             ctx.fillStyle = '#94a3b8';
             ctx.font = '11px sans-serif';
             ctx.fillText('Verified Transaction Certificate', canvas.width / 2, 600);
 
             const link = document.createElement('a');
-            link.download = `Benvixa_Receipt_${Date.now()}.png`;
+            link.download = `Benvixa_${currentReceiptData.type}_${Date.now()}.png`;
             link.href = canvas.toDataURL('image/png');
             link.click();
-            showNotification('Receipt downloaded! Share it on your status.');
+            showNotification('Slip downloaded successfully!');
         }
 
         function shareReceiptToWhatsApp() {
             if (!currentReceiptData) return;
-            const refLink = `${window.location.origin}${window.location.pathname}?ref=${currentReceiptData.refCode}`;
+            const refLink = `${window.location.origin}${window.location.pathname}?ref=${currentReceiptData.refCode || ''}`;
             const text = 
-                `💸 *Benvixa Payout Proof!*\n\n` +
-                `I just submitted a withdrawal of *Rs. ${currentReceiptData.amount}* via ${currentReceiptData.method}!\n\n` +
+                `💸 *Benvixa Payment Verification!*\n\n` +
+                `Transaction for *Rs. ${currentReceiptData.amount}* via ${currentReceiptData.method} is ${currentReceiptData.status.toUpperCase()}!\n\n` +
                 `Join Benvixa today, complete daily work tasks, and earn real daily payouts.\n\n` +
                 `👉 Register now using my official link:\n${refLink}`;
             window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
@@ -2383,7 +2594,10 @@
             });
         }
 
-        // --- History (Responsive Card-based Layout, No Tables) ---
+        // --- History ---
+        let currentLoadedDeposits = {};
+        let currentLoadedWithdrawals = {};
+
         function loadHistory() {
             const depCards = document.getElementById('deposit-history-cards');
             const wthCards = document.getElementById('withdrawal-history-cards');
@@ -2392,28 +2606,30 @@
             depCards.innerHTML = '<p style="color:var(--text-muted); font-size:13px;">Loading deposits...</p>';
             wthCards.innerHTML = '<p style="color:var(--text-muted); font-size:13px;">Loading withdrawals...</p>';
 
+            // Load Deposits
             db.ref('deposits').orderByChild('userId').equalTo(currentUser.uid).limitToLast(25).once('value', snap => {
                 if (!snap.exists()) {
                     depCards.innerHTML = '<p style="color:var(--text-muted); font-size:13px;">No deposits recorded yet.</p>';
                     return;
                 }
                 let cards = [];
+                currentLoadedDeposits = {};
                 snap.forEach(c => {
+                    const key = c.key;
                     const d = c.val();
+                    currentLoadedDeposits[key] = d;
                     const statusClass = (d.status || 'processing').toLowerCase();
+                    const formattedDate = new Date(d.date).toLocaleString('en-GB', options);
+
                     cards.unshift(`
-                        <div class="history-card">
-                            <div class="history-card-header">
-                                <span class="history-method-badge">${d.method}</span>
+                        <div class="history-card-item" onclick="openDepositSlip('${key}')">
+                            <div class="history-card-left">
+                                <span class="history-card-amt mono">Rs. ${parseFloat(d.amount).toLocaleString()}</span>
+                                <span class="history-card-meta">${d.method} • ${formattedDate}</span>
+                            </div>
+                            <div class="history-card-right">
                                 <span class="history-status-badge ${statusClass}">${d.status}</span>
-                            </div>
-                            <div class="history-card-main">
-                                <span class="history-amount mono">Rs. ${d.amount}</span>
-                                <span class="history-target mono">TRX: ${d.tid}</span>
-                            </div>
-                            <div class="history-card-footer">
-                                <span>Sender: ${d.sendingNumber || '-'}</span>
-                                <span>${new Date(d.date).toLocaleString('en-GB', options)}</span>
+                                <i class='bx bx-chevron-right' style="font-size:22px; color:var(--text-dim);"></i>
                             </div>
                         </div>
                     `);
@@ -2421,33 +2637,65 @@
                 depCards.innerHTML = cards.join('');
             });
 
+            // Load Withdrawals
             db.ref('withdrawals').orderByChild('userId').equalTo(currentUser.uid).limitToLast(25).once('value', snap => {
                 if (!snap.exists()) {
                     wthCards.innerHTML = '<p style="color:var(--text-muted); font-size:13px;">No withdrawals recorded yet.</p>';
                     return;
                 }
                 let cards = [];
+                currentLoadedWithdrawals = {};
                 snap.forEach(c => {
+                    const key = c.key;
                     const d = c.val();
+                    currentLoadedWithdrawals[key] = d;
                     const statusClass = (d.status || 'processing').toLowerCase();
+                    const formattedDate = new Date(d.date).toLocaleString('en-GB', options);
+
                     cards.unshift(`
-                        <div class="history-card">
-                            <div class="history-card-header">
-                                <span class="history-method-badge">${d.method}</span>
+                        <div class="history-card-item" onclick="openWithdrawalSlip('${key}')">
+                            <div class="history-card-left">
+                                <span class="history-card-amt mono" style="color:var(--primary);">Rs. ${parseFloat(d.amount).toLocaleString()}</span>
+                                <span class="history-card-meta">${d.method} • ${formattedDate}</span>
+                            </div>
+                            <div class="history-card-right">
                                 <span class="history-status-badge ${statusClass}">${d.status}</span>
-                            </div>
-                            <div class="history-card-main">
-                                <span class="history-amount mono" style="color:var(--primary);">Rs. ${d.amount}</span>
-                                <span class="history-target mono">${d.account}</span>
-                            </div>
-                            <div class="history-card-footer">
-                                <span>Direct Transfer</span>
-                                <span>${new Date(d.date).toLocaleString('en-GB', options)}</span>
+                                <i class='bx bx-chevron-right' style="font-size:22px; color:var(--text-dim);"></i>
                             </div>
                         </div>
                     `);
                 });
                 wthCards.innerHTML = cards.join('');
+            });
+        }
+
+        function openDepositSlip(key) {
+            const item = currentLoadedDeposits[key];
+            if (!item) return;
+            displayReceiptModal({
+                type: 'Deposit',
+                amount: item.amount,
+                method: item.method,
+                sendingNumber: item.sendingNumber,
+                tid: item.tid,
+                status: item.status || 'processing',
+                date: new Date(item.date).toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' }),
+                refCode: currentUserProfile ? currentUserProfile.referralCode : 'BENVIXA'
+            });
+        }
+
+        function openWithdrawalSlip(key) {
+            const item = currentLoadedWithdrawals[key];
+            if (!item) return;
+            displayReceiptModal({
+                type: 'Withdrawal',
+                amount: item.amount,
+                method: item.method,
+                account: item.account,
+                tid: item.tid || '',
+                status: item.status || 'processing',
+                date: new Date(item.date).toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' }),
+                refCode: currentUserProfile ? currentUserProfile.referralCode : 'BENVIXA'
             });
         }
 
@@ -2547,7 +2795,7 @@
             window.open(waUrl, '_blank');
         }
 
-        // --- English WhatsApp Status Poster Generator (Canvas) ---
+        // --- English WhatsApp Status Poster Generator ---
         function openPosterModal() {
             if (!currentUserProfile) return;
             const canvas = document.getElementById('posterCanvas');
@@ -2620,8 +2868,8 @@
             ctx.fillText(refCode, canvas.width / 2, 513);
 
             ctx.fillStyle = '#94a3b8';
-            ctx.font = '500 12px sans-serif';
-            ctx.fillText('Register Online: benvixahub.com', canvas.width / 2, 555);
+            ctx.font = '600 13px sans-serif';
+            ctx.fillText('Register Online: benvixa.vercel.app', canvas.width / 2, 555);
 
             document.getElementById('poster-modal').classList.remove('hidden');
         }
