@@ -44,7 +44,7 @@
             --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
             --shadow-md: 0 4px 14px rgba(0,0,0,0.06);
-            --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,10.1);
         }
 
         * {
@@ -393,6 +393,27 @@
         .locked-bonus-progress-wrap { background: #e2e8f0; border-radius: 50px; height: 9px; overflow: hidden; width: 100%; }
         .locked-bonus-progress-bar { background: linear-gradient(90deg, #f59e0b, #10b981); height: 100%; width: 0%; transition: width 0.4s ease; }
 
+        /* Spin Status Card */
+        .spin-status-box {
+            background: #f8fafc;
+            border: 1.5px dashed #cbd5e1;
+            border-radius: var(--radius-lg);
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            text-align: left;
+        }
+        .spin-status-box.locked {
+            background: #fff1f2;
+            border-color: #fda4af;
+        }
+        .spin-status-box.unlocked {
+            background: #f0fdf4;
+            border-color: #86efac;
+        }
+
         /* Bank Card Deposit Design */
         .bank-card-container {
             background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
@@ -576,7 +597,7 @@
         .history-status-badge.approved, .history-status-badge.completed { background: #dcfce7; color: #059669; }
         .history-status-badge.rejected { background: #fee2e2; color: #dc2626; }
 
-        /* Full Screen Mobile Slip / Receipt Modal */
+        /* Slip / Receipt Modal */
         #receipt-modal.modal-overlay {
             background: rgba(15, 23, 42, 0.75);
             backdrop-filter: blur(6px);
@@ -818,7 +839,7 @@
                     <div style="text-align: center; margin-bottom: 20px;">
                         <img src="https://i.ibb.co/YB5jfT2h/file-0000000088a8820bbb937594adec6c09.png" alt="Logo" style="width: 55px; height: 55px; border-radius: 50%; border: 2px solid var(--primary); margin-bottom: 8px;">
                         <h2 style="font-size: 22px; font-weight: 800; color: var(--text-main);">Create Member Account</h2>
-                        <p style="color: var(--text-muted); font-size: 13.5px; margin-top: 4px;">Join & get Rs. 100 Welcome Bonus + 1 Free Spin</p>
+                        <p style="color: var(--text-muted); font-size: 13.5px; margin-top: 4px;">Join & get Rs. 5,000 Welcome Bonus Escrow</p>
                     </div>
                     <label>Email Address</label>
                     <input type="email" id="signup-email" placeholder="name@example.com">
@@ -871,35 +892,57 @@
                         </div>
                     </div>
 
-                    <!-- Locked Welcome Bonus Card -->
+                    <!-- Locked Welcome Bonus Card (Rs. 5,000 Bonus / Rs. 15,000 Investment) -->
                     <div id="welcome-bonus-box" class="locked-bonus-card">
                         <div class="locked-bonus-header">
                             <div>
                                 <span style="font-size:11.5px; font-weight:800; color:#b45309; text-transform:uppercase; letter-spacing:0.5px;">
                                     <i class='bx bx-lock-alt'></i> Welcome Bonus Escrow
                                 </span>
-                                <h3 style="font-size:18px; font-weight:800; color:#92400e; margin-top:2px;">Rs. 100.00 Locked Bonus</h3>
+                                <h3 style="font-size:18px; font-weight:800; color:#92400e; margin-top:2px;">Rs. 5,000.00 Locked Bonus</h3>
                             </div>
                             <span id="bonus-status-badge" style="font-size:11px; background:#fef3c7; color:#b45309; padding:4px 10px; border-radius:20px; font-weight:700;">Locked</span>
                         </div>
                         <div style="font-size:12.5px; color:#78350f; display:flex; justify-content:space-between;">
-                            <span>Requirement: <strong>Rs. 500 Investment</strong></span>
-                            <span id="bonus-progress-count" class="mono" style="font-weight:700;">Rs. 0 / Rs. 500</span>
+                            <span>Requirement: <strong>Rs. 15,000 Investment</strong></span>
+                            <span id="bonus-progress-count" class="mono" style="font-weight:700;">Rs. 0 / Rs. 15,000</span>
                         </div>
                         <div class="locked-bonus-progress-wrap">
                             <div class="locked-bonus-progress-bar" id="bonus-progress-fill"></div>
                         </div>
                         <button class="btn-primary" id="btn-unlock-bonus" onclick="claimLockedBonus()" style="background:linear-gradient(135deg, #f59e0b, #d97706); padding:9px; font-size:13px;" disabled>
-                            Unlock Rs. 100 to Main Balance
+                            Unlock Rs. 5,000 to Main Balance
                         </button>
                     </div>
                 </div>
 
-                <!-- Lucky Spin Wheel Section -->
+                <!-- Lucky Spin Wheel Section (Locked until Rs. 500 Investment) -->
                 <div id="spin-content" class="content-section hidden">
                     <div class="section-header" style="text-align: center;">
                         <h2>🎡 Lucky Spin & Win</h2>
-                        <p>Spin the lucky wheel! Daily 1 Free Spin + extra spins on every active referral.</p>
+                        <p>Spin the lucky wheel! Unlock access by investing Rs. 500 + earn bonus spins on active referrals.</p>
+                    </div>
+
+                    <!-- Spin Lock / Status Overview Card -->
+                    <div id="spin-lock-status-card" class="spin-status-box locked">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span id="spin-badge-label" style="font-size:12px; font-weight:800; text-transform:uppercase; color:#b91c1c;">
+                                <i class='bx bx-lock-alt'></i> Spin Status: Locked
+                            </span>
+                            <span id="spin-lock-badge" style="font-size:11.5px; background:#fee2e2; color:#b91c1c; padding:3px 10px; border-radius:20px; font-weight:800;">
+                                Requires Rs. 500
+                            </span>
+                        </div>
+                        <p id="spin-lock-desc" style="font-size:13px; color:#475569; margin: 2px 0;">
+                            Lucky Spin is currently locked. You need to invest at least <strong>Rs. 500</strong> in work packages to unlock the Lucky Wheel.
+                        </p>
+                        <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:700; color:#334155;">
+                            <span>Investment Progress</span>
+                            <span id="spin-invest-progress-txt" class="mono">Rs. 0 / Rs. 500</span>
+                        </div>
+                        <div class="locked-bonus-progress-wrap">
+                            <div class="locked-bonus-progress-bar" id="spin-invest-progress-fill"></div>
+                        </div>
                     </div>
 
                     <div class="spin-wheel-container">
@@ -907,7 +950,7 @@
                             Available Spins: <span id="user-spins-count" class="mono" style="color: var(--primary); font-size: 17px;">0</span>
                         </div>
                         <div style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 12px;">
-                            (Includes 1 Daily Free Spin + Spins on Active Members)
+                            (Requires Rs. 500 Investment to Unlock + Extra Spins on Active Members)
                         </div>
 
                         <div class="wheel-wrapper">
@@ -915,7 +958,7 @@
                             <canvas id="spinCanvas" width="300" height="300"></canvas>
                         </div>
 
-                        <button class="btn-primary" id="btn-spin-now" onclick="spinWheel()" style="max-width: 250px; font-size: 15px; padding: 13px; margin-top: 10px;">
+                        <button class="btn-primary" id="btn-spin-now" onclick="spinWheel()" style="max-width: 280px; font-size: 15px; padding: 13px; margin-top: 10px;">
                             SPIN NOW
                         </button>
                     </div>
@@ -1145,7 +1188,7 @@
         </section>
     </div>
 
-    <!-- Realistic Task Verification Modal -->
+    <!-- Task Verification Modal -->
     <div id="task-verify-modal" class="modal-overlay hidden">
         <div class="modal-content" style="max-width: 360px;">
             <div class="task-verify-box">
@@ -1184,7 +1227,7 @@
         </div>
     </div>
 
-    <!-- Full Screen Mobile Slip / Receipt Modal -->
+    <!-- Receipt Modal -->
     <div id="receipt-modal" class="modal-overlay hidden">
         <div class="receipt-modal-content">
             <div id="rcpt-status-icon" style="display:inline-flex; align-items:center; justify-content:center; width:52px; height:52px; background:#dcfce7; color:#059669; border-radius:50%; margin-bottom:8px;">
@@ -1236,7 +1279,7 @@
         </div>
     </div>
 
-    <!-- Auto-Redirect Community Modal on Signup -->
+    <!-- Community Modal on Signup -->
     <div id="community-modal" class="modal-overlay hidden">
         <div class="modal-content" style="max-width: 370px;">
             <div style="display:inline-flex; align-items:center; justify-content:center; width:52px; height:52px; background:#ecfdf5; color:#059669; border-radius:50%; margin-bottom:12px;">
@@ -1244,7 +1287,7 @@
             </div>
             <h3 style="font-size: 20px; font-weight: 800; color:var(--text-main);">Welcome to Benvixa!</h3>
             <p style="font-size: 13px; color: var(--text-muted); margin: 8px 0 18px 0; line-height: 1.5;">
-                Your account has been registered! You received a <strong>Rs. 100 Welcome Bonus</strong> + <strong>1 Free Spin</strong>. Join our official WhatsApp Channel for daily updates.
+                Your account has been registered! You received a <strong>Rs. 5,000 Welcome Bonus Escrow</strong>. Join our official WhatsApp Channel for daily updates.
             </p>
             <button class="btn-whatsapp-share" onclick="joinCommunityAndSignIn()" style="margin-top:0; margin-bottom: 10px;">
                 <i class='bx bxl-whatsapp'></i> Join Official Channel
@@ -1280,7 +1323,6 @@
         let serverTimeOffset = 0;
         let tickerTimeoutId = null;
         let currentReceiptData = null;
-        let spinReminderInterval = null;
 
         // Synchronize with Firebase Server Time
         db.ref(".info/serverTimeOffset").on("value", function(snap) {
@@ -1346,7 +1388,6 @@
             return number.substring(0, 4) + '****' + number.substring(8);
         }
 
-        // Clean & Format Pakistani Phone Numbers (Supports 03.., +92.., 92.., 3..)
         function sanitizePhoneNumber(raw) {
             if (!raw) return '';
             let num = raw.toString().trim();
@@ -1380,7 +1421,6 @@
                 loadUserData();
                 startSmartLiveTicker();
                 initSpinWheel();
-                startSpinReminder();
             } else {
                 currentUser = null;
                 currentUserProfile = null;
@@ -1395,7 +1435,6 @@
                 Object.values(countdownIntervals).forEach(clearInterval);
                 countdownIntervals = {};
                 stopSmartLiveTicker();
-                clearInterval(spinReminderInterval);
                 checkForReferralCodeInURL();
             }
         });
@@ -1433,7 +1472,15 @@
                 if (currentData === null) return currentData;
                 if (currentData.balance >= plan.invest) {
                     currentData.balance -= plan.invest;
-                    currentData.totalInvested = (currentData.totalInvested || 0) + plan.invest;
+                    const prevInvested = currentData.totalInvested || 0;
+                    currentData.totalInvested = prevInvested + plan.invest;
+
+                    // Automatically unlock Lucky Spin when total investment reaches Rs. 500 for the first time
+                    if (currentData.totalInvested >= 500 && !currentData.spinUnlocked) {
+                        currentData.spinUnlocked = true;
+                        currentData.spinsAvailable = (currentData.spinsAvailable || 0) + 1; // 1 free spin upon unlock
+                    }
+
                     return currentData;
                 }
                 return;
@@ -1467,7 +1514,10 @@
                                 db.ref('users/' + currentUserProfile.referredBy).transaction(refUser => {
                                     if (refUser) {
                                         refUser.activeReferralsCount = (refUser.activeReferralsCount || 0) + 1;
-                                        refUser.spinsAvailable = (refUser.spinsAvailable || 0) + 1;
+                                        // Give extra spin to sponsor on active referral only if sponsor has spin unlocked
+                                        if (refUser.spinUnlocked) {
+                                            refUser.spinsAvailable = (refUser.spinsAvailable || 0) + 1;
+                                        }
                                     }
                                     return refUser;
                                 });
@@ -1505,7 +1555,10 @@
             if (sectionId === 'history') loadHistory();
             if (sectionId === 'team') loadTeamData();
             if (sectionId === 'home') loadActivePackagesCount();
-            if (sectionId === 'spin') drawWheel();
+            if (sectionId === 'spin') {
+                drawWheel();
+                if (currentUserProfile) updateSpinLockUI(currentUserProfile);
+            }
         }
 
         function toggleForms(showSignup) {
@@ -1560,40 +1613,15 @@
                     const activeCountEl = document.getElementById('user-active-members-count');
                     if (activeCountEl) activeCountEl.innerText = activeCount;
 
-                    checkDailyFreeSpin(data);
                     updateWelcomeBonusUI(data);
                     updateMilestonesUI(data);
+                    updateSpinLockUI(data);
                 }
             });
             loadActivePackagesCount();
         }
 
-        function checkDailyFreeSpin(data) {
-            const todayStr = new Date().toISOString().slice(0, 10);
-            if (data.lastDailySpinDate !== todayStr) {
-                db.ref('users/' + currentUser.uid).transaction(u => {
-                    if (u && u.lastDailySpinDate !== todayStr) {
-                        u.lastDailySpinDate = todayStr;
-                        u.spinsAvailable = (u.spinsAvailable || 0) + 1;
-                    }
-                    return u;
-                });
-            } else {
-                const spinsCountEl = document.getElementById('user-spins-count');
-                if (spinsCountEl) spinsCountEl.innerText = data.spinsAvailable || 0;
-            }
-        }
-
-        function startSpinReminder() {
-            clearInterval(spinReminderInterval);
-            spinReminderInterval = setInterval(() => {
-                if (currentUserProfile && (currentUserProfile.spinsAvailable || 0) > 0) {
-                    showNotification("🎡 You have unused Free Spins! Spin now to win cash rewards!", "success");
-                }
-            }, 60000);
-        }
-
-        // --- Locked Welcome Bonus (Unlocked with Rs. 500 Personal Investment) ---
+        // --- Locked Welcome Bonus (Rs. 5,000 Bonus / Rs. 15,000 Investment) ---
         function updateWelcomeBonusUI(data) {
             const box = document.getElementById('welcome-bonus-box');
             if (data.welcomeBonusClaimed) {
@@ -1603,19 +1631,20 @@
             if (box) box.style.display = 'flex';
 
             const invested = data.totalInvested || 0;
+            const target = 15000;
             const progressCount = document.getElementById('bonus-progress-count');
             const progressFill = document.getElementById('bonus-progress-fill');
             const unlockBtn = document.getElementById('btn-unlock-bonus');
             const statusBadge = document.getElementById('bonus-status-badge');
 
-            const pct = Math.min(100, Math.floor((invested / 500) * 100));
-            if (progressCount) progressCount.innerText = `Rs. ${invested} / Rs. 500 Invested`;
+            const pct = Math.min(100, Math.floor((invested / target) * 100));
+            if (progressCount) progressCount.innerText = `Rs. ${invested.toLocaleString()} / Rs. ${target.toLocaleString()} Invested`;
             if (progressFill) progressFill.style.width = `${pct}%`;
 
-            if (invested >= 500) {
+            if (invested >= target) {
                 if (unlockBtn) {
                     unlockBtn.disabled = false;
-                    unlockBtn.innerText = "Claim Rs. 100 to Main Balance ✓";
+                    unlockBtn.innerText = "Claim Rs. 5,000 to Main Balance ✓";
                     unlockBtn.style.background = "linear-gradient(135deg, #10b981, #059669)";
                 }
                 if (statusBadge) {
@@ -1626,7 +1655,7 @@
             } else {
                 if (unlockBtn) {
                     unlockBtn.disabled = true;
-                    unlockBtn.innerText = `Unlock Rs. 100 (Progress: Rs. ${invested} / Rs. 500)`;
+                    unlockBtn.innerText = `Unlock Rs. 5,000 (Progress: Rs. ${invested.toLocaleString()} / Rs. ${target.toLocaleString()})`;
                     unlockBtn.style.background = "linear-gradient(135deg, #f59e0b, #d97706)";
                 }
                 if (statusBadge) {
@@ -1638,8 +1667,8 @@
         }
 
         function claimLockedBonus() {
-            if (!currentUserProfile || (currentUserProfile.totalInvested || 0) < 500) {
-                showNotification("Rs. 500 investment required in work packages to unlock bonus.", "danger");
+            if (!currentUserProfile || (currentUserProfile.totalInvested || 0) < 15000) {
+                showNotification("Rs. 15,000 investment required in work packages to unlock bonus.", "danger");
                 return;
             }
             if (currentUserProfile.welcomeBonusClaimed) {
@@ -1652,20 +1681,71 @@
             btn.innerText = "Transferring...";
 
             db.ref('users/' + currentUser.uid).transaction(curr => {
-                if (curr && !curr.welcomeBonusClaimed && (curr.totalInvested || 0) >= 500) {
-                    curr.balance = (curr.balance || 0) + 100;
+                if (curr && !curr.welcomeBonusClaimed && (curr.totalInvested || 0) >= 15000) {
+                    curr.balance = (curr.balance || 0) + 5000;
                     curr.welcomeBonusClaimed = true;
                 }
                 return curr;
             }, (err, comm) => {
                 if (comm) {
-                    showNotification("Rs. 100 Welcome Bonus transferred to your Main Balance!");
+                    showNotification("Rs. 5,000 Welcome Bonus credited to your Main Balance!");
                     const box = document.getElementById('welcome-bonus-box');
                     if (box) box.style.display = 'none';
                 } else {
                     showNotification("Unable to claim bonus.", "danger");
                 }
             });
+        }
+
+        // --- Lucky Spin Lock UI Handling (Rs. 500 Investment Required) ---
+        function updateSpinLockUI(data) {
+            const invested = data.totalInvested || 0;
+            const isUnlocked = invested >= 500;
+            const spins = isUnlocked ? (data.spinsAvailable || 0) : 0;
+
+            const spinsCountEl = document.getElementById('user-spins-count');
+            if (spinsCountEl) spinsCountEl.innerText = spins;
+
+            const card = document.getElementById('spin-lock-status-card');
+            const badgeLabel = document.getElementById('spin-badge-label');
+            const lockBadge = document.getElementById('spin-lock-badge');
+            const desc = document.getElementById('spin-lock-desc');
+            const progressTxt = document.getElementById('spin-invest-progress-txt');
+            const progressFill = document.getElementById('spin-invest-progress-fill');
+            const spinBtn = document.getElementById('btn-spin-now');
+
+            const pct = Math.min(100, Math.floor((invested / 500) * 100));
+
+            if (isUnlocked) {
+                if (card) { card.className = 'spin-status-box unlocked'; }
+                if (badgeLabel) { badgeLabel.innerHTML = "<i class='bx bx-check-circle'></i> Spin Status: Unlocked"; badgeLabel.style.color = "#047857"; }
+                if (lockBadge) { lockBadge.innerText = "Active"; lockBadge.style.background = "#dcfce7"; lockBadge.style.color = "#047857"; }
+                if (desc) { desc.innerHTML = "🎉 Congratulations! You have invested Rs. 500+ and unlocked the Lucky Wheel. Spin to win prizes!"; }
+                if (progressTxt) { progressTxt.innerText = `Rs. ${invested.toLocaleString()} / Rs. 500 (Unlocked)`; }
+                if (progressFill) { progressFill.style.width = '100%'; progressFill.style.background = '#10b981'; }
+
+                if (spinBtn && !isSpinning) {
+                    if (spins > 0) {
+                        spinBtn.disabled = false;
+                        spinBtn.innerText = "SPIN NOW";
+                    } else {
+                        spinBtn.disabled = true;
+                        spinBtn.innerText = "NO SPINS LEFT (Invite Active Members)";
+                    }
+                }
+            } else {
+                if (card) { card.className = 'spin-status-box locked'; }
+                if (badgeLabel) { badgeLabel.innerHTML = "<i class='bx bx-lock-alt'></i> Spin Status: Locked"; badgeLabel.style.color = "#b91c1c"; }
+                if (lockBadge) { lockBadge.innerText = "Locked"; lockBadge.style.background = "#fee2e2"; lockBadge.style.color = "#b91c1c"; }
+                if (desc) { desc.innerHTML = "🔒 <strong>Lucky Spin is Locked!</strong> To unlock the lucky wheel, you must make a minimum total investment of <strong>Rs. 500</strong> in work packages. Daily free spins are not available without unlocking."; }
+                if (progressTxt) { progressTxt.innerText = `Rs. ${invested.toLocaleString()} / Rs. 500`; }
+                if (progressFill) { progressFill.style.width = `${pct}%`; progressFill.style.background = 'linear-gradient(90deg, #f59e0b, #ef4444)'; }
+
+                if (spinBtn && !isSpinning) {
+                    spinBtn.disabled = true;
+                    spinBtn.innerText = "LOCKED (Invest Rs. 500 to Unlock)";
+                }
+            }
         }
 
         // --- Team Milestone Rewards Logic ---
@@ -1731,16 +1811,16 @@
             });
         }
 
-        // --- Lucky Spin Wheel ---
+        // --- Lucky Spin Wheel Definition ---
         const wheelSlices = [
-            { text: "Better Luck", color: "#64748b", value: 0 },
-            { text: "Rs. 5", color: "#10b981", value: 5 },
-            { text: "Rs. 10", color: "#4f46e5", value: 10 },
-            { text: "Rs. 300", color: "#d97706", value: 300 },
-            { text: "Rs. 500", color: "#8b5cf6", value: 500 },
-            { text: "Rs. 100", color: "#059669", value: 100 },
-            { text: "Rs. 50", color: "#dc2626", value: 50 },
-            { text: "Better Luck", color: "#475569", value: 0 }
+            { text: "Better Luck", color: "#64748b", value: 0 },   // index 0
+            { text: "Rs. 5", color: "#10b981", value: 5 },          // index 1
+            { text: "Rs. 10", color: "#4f46e5", value: 10 },        // index 2
+            { text: "Rs. 300", color: "#d97706", value: 300 },      // index 3
+            { text: "Rs. 500", color: "#8b5cf6", value: 500 },      // index 4
+            { text: "Rs. 100", color: "#059669", value: 100 },      // index 5
+            { text: "Rs. 50", color: "#dc2626", value: 50 },        // index 6
+            { text: "Better Luck", color: "#475569", value: 0 }     // index 7
         ];
 
         let currentRotationAngle = 0;
@@ -1794,13 +1874,21 @@
             ctx.fillText('SPIN', radius, radius + 4);
         }
 
+        // --- Controlled Lucky Spin Engine (100% Guaranteed Better Luck or Rs. 5) ---
         function spinWheel() {
             if (isSpinning) return;
             if (!currentUserProfile) return;
 
+            // Check if user has invested at least Rs. 500
+            const invested = currentUserProfile.totalInvested || 0;
+            if (invested < 500) {
+                showNotification("Lucky Spin is locked! Minimum Rs. 500 investment in work packages required.", "danger");
+                return;
+            }
+
             const spins = currentUserProfile.spinsAvailable || 0;
             if (spins <= 0) {
-                showNotification("No spins available! Daily 1 free spin or invite active members for more.", "danger");
+                showNotification("No spins available! Invite active members to earn more spins.", "danger");
                 return;
             }
 
@@ -1808,23 +1896,15 @@
             const spinBtn = document.getElementById('btn-spin-now');
             spinBtn.disabled = true;
 
-            const rand = Math.random() * 100;
+            // 100% STRICT RIGGED SELECTION: Only Index 0 ("Better Luck"), Index 7 ("Better Luck"), or Index 1 ("Rs. 5")
+            const rand = Math.random();
             let chosenIndex;
-
-            if (rand < 65) {
+            if (rand < 0.65) {
+                // Lands on "Better Luck" (Index 0 or 7)
                 chosenIndex = Math.random() > 0.5 ? 0 : 7;
-            } else if (rand < 90) {
-                chosenIndex = 1;
-            } else if (rand < 95) {
-                chosenIndex = 2;
-            } else if (rand < 97.5) {
-                chosenIndex = 6;
-            } else if (rand < 99) {
-                chosenIndex = 5;
-            } else if (rand < 99.7) {
-                chosenIndex = 3;
             } else {
-                chosenIndex = 4;
+                // Lands on "Rs. 5" (Index 1)
+                chosenIndex = 1;
             }
 
             const sliceAngle = 360 / wheelSlices.length;
@@ -1838,7 +1918,6 @@
 
             setTimeout(() => {
                 isSpinning = false;
-                spinBtn.disabled = false;
                 const wonItem = wheelSlices[chosenIndex];
 
                 db.ref('users/' + currentUser.uid).transaction(user => {
@@ -1855,11 +1934,12 @@
                     } else {
                         showNotification("Better luck next time! Try again with your next spin.", 'danger');
                     }
+                    updateSpinLockUI(currentUserProfile || {});
                 });
             }, 4600);
         }
 
-        // --- Multi-Tier Referral Sign Up ---
+        // --- Multi-Tier Referral Sign Up (Rs. 5,000 Bonus / No Daily Spins) ---
         function signupUser() {
             const btn = document.getElementById('btn-signup-submit');
             const email = document.getElementById('signup-email').value.trim();
@@ -1901,10 +1981,10 @@
                     referrerL2: 'none',
                     referrerL3: 'none',
                     activeReferralsCount: 0,
-                    spinsAvailable: 1,
+                    spinsAvailable: 0, // Starts with 0 spins until Rs. 500 is invested
+                    spinUnlocked: false, // Locked until Rs. 500 invested
                     welcomeBonusClaimed: false,
-                    milestonesClaimed: {},
-                    lastDailySpinDate: new Date().toISOString().slice(0, 10)
+                    milestonesClaimed: {}
                 };
 
                 const finalizeRegistration = () => {
@@ -2041,7 +2121,7 @@
             }
         }
 
-        // --- Multi-Identifier Robust Login (Fixed & Auto-Fallbacks) ---
+        // --- Multi-Identifier Robust Login ---
         async function loginUser() {
             const btn = document.getElementById('btn-login-submit');
             const rawInput = document.getElementById('login-number').value.trim();
@@ -2058,7 +2138,6 @@
             let candidates = [];
 
             if (rawInput.includes('@')) {
-                // Input is directly an email
                 candidates.push(rawInput);
                 try {
                     const snap = await db.ref('users').orderByChild('email').equalTo(rawInput).once('value');
@@ -2072,11 +2151,8 @@
                             }
                         });
                     }
-                } catch (e) {
-                    // Ignore background lookup errors
-                }
+                } catch (e) {}
             } else {
-                // Input is a phone number
                 const number = sanitizePhoneNumber(rawInput);
                 if (number.length !== 11) {
                     btn.disabled = false;
@@ -2099,14 +2175,10 @@
                             }
                         });
                     }
-                } catch (e) {
-                    // Ignore background lookup errors
-                }
+                } catch (e) {}
             }
 
-            // Remove duplicate candidate strings
             candidates = [...new Set(candidates)];
-
             let loggedIn = false;
             let lastError = null;
 
@@ -2132,7 +2204,6 @@
             }
         }
 
-        // Allow pressing Enter key in password field to submit
         document.getElementById('login-password').addEventListener('keyup', function(e) {
             if (e.key === 'Enter') loginUser();
         });
@@ -2296,7 +2367,7 @@
             });
         }
 
-        // --- Full Screen Mobile Slip / Receipt View Functions ---
+        // --- Receipt Slip Modal ---
         function displayReceiptModal(data) {
             currentReceiptData = data;
             const isDeposit = (data.type || '').toLowerCase() === 'deposit';
@@ -2308,7 +2379,6 @@
             document.getElementById('rcpt-date').innerText = data.date;
             document.getElementById('rcpt-ref').innerText = data.refCode || (currentUserProfile ? currentUserProfile.referralCode : 'BENVIXA');
 
-            // Status Styling
             const statusTag = document.getElementById('rcpt-status-tag');
             const statusIcon = document.getElementById('rcpt-status-icon');
             const statusStr = (data.status || 'processing').toLowerCase();
@@ -2330,7 +2400,6 @@
                 statusIcon.innerHTML = `<i class='bx bx-time' style="font-size:32px;"></i>`;
             }
 
-            // Target / TRX details
             const targetLabel = document.getElementById('rcpt-target-label');
             const targetVal = document.getElementById('rcpt-account');
             const trxRow = document.getElementById('rcpt-trx-row');
@@ -2370,7 +2439,6 @@
             ctx.fillStyle = '#f8fafc';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Header Banner
             ctx.fillStyle = isDeposit ? '#059669' : '#4f46e5';
             ctx.fillRect(0, 0, canvas.width, 110);
 
@@ -2383,7 +2451,6 @@
             ctx.fillStyle = isDeposit ? '#a7f3d0' : '#c7d2fe';
             ctx.fillText(isDeposit ? 'Official Deposit Confirmation' : 'Official Payout Receipt', canvas.width / 2, 75);
 
-            // Inner Card
             ctx.fillStyle = '#ffffff';
             ctx.strokeStyle = '#e2e8f0';
             ctx.lineWidth = 2;
@@ -2462,7 +2529,7 @@
             window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
         }
 
-        // --- Tasks Activities with Realistic Verification Progress ---
+        // --- Tasks Activities ---
         function loadTasks() {
             const container = document.getElementById('task-list-container');
             container.innerHTML = '<p style="color:var(--text-muted);">Syncing tasks...</p>';
@@ -2727,15 +2794,12 @@
                 document.getElementById('user-referral-earnings').innerText = `Rs. ${parseFloat(userData.referralEarnings || 0).toFixed(2)}`;
                 document.getElementById('user-active-members-count').innerText = userData.activeReferralsCount || 0;
                 
-                // Render Level 1
                 const l1Data = userData.teamL1 || userData.team || {};
                 renderTeamLevelCards('team-tab-pane-l1', l1Data, 'Level 1');
 
-                // Render Level 2
                 const l2Data = userData.teamL2 || {};
                 renderTeamLevelCards('team-tab-pane-l2', l2Data, 'Level 2');
 
-                // Render Level 3
                 const l3Data = userData.teamL3 || {};
                 renderTeamLevelCards('team-tab-pane-l3', l3Data, 'Level 3');
 
@@ -2785,7 +2849,7 @@
 
             const message = 
                 `🚀 *Join Benvixa - Daily Digital Work & Tasks Hub!*\n\n` +
-                `Register now and get a *Rs. 100 Welcome Bonus* + *1 Free Spin*! Complete easy daily work tasks and withdraw your income instantly via *Easypaisa* or *JazzCash* 💸\n\n` +
+                `Register now and get a *Rs. 5,000 Welcome Bonus Escrow*! Complete easy daily work tasks and withdraw your earnings directly via *Easypaisa* or *JazzCash* 💸\n\n` +
                 `✅ 100% Active Payouts\n` +
                 `✅ Instant Task Confirmation\n` +
                 `✅ Multi-Tier Commissions\n\n` +
@@ -2845,7 +2909,7 @@
             ctx.textAlign = 'left';
             ctx.fillStyle = '#e2e8f0';
             ctx.font = '600 14px "Plus Jakarta Sans", sans-serif';
-            ctx.fillText('✓ Rs. 100 Welcome Bonus on Register', 75, 325);
+            ctx.fillText('✓ Rs. 5,000 Welcome Bonus Escrow', 75, 325);
             ctx.fillText('✓ Direct Easypaisa & JazzCash Withdrawals', 75, 360);
             ctx.fillText('✓ 100% Active 24-Hour Payout Guarantee', 75, 395);
             ctx.fillText('✓ Easy 2-Minute Daily Tasks from Home', 75, 430);
