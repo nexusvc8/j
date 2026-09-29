@@ -405,14 +405,8 @@
             gap: 10px;
             text-align: left;
         }
-        .spin-status-box.locked {
-            background: #fff1f2;
-            border-color: #fda4af;
-        }
-        .spin-status-box.unlocked {
-            background: #f0fdf4;
-            border-color: #86efac;
-        }
+        .spin-status-box.locked { background: #fff1f2; border-color: #fda4af; }
+        .spin-status-box.unlocked { background: #f0fdf4; border-color: #86efac; }
 
         /* Bank Card Deposit Design */
         .bank-card-container {
@@ -563,28 +557,10 @@
             box-shadow: var(--shadow-md);
             transform: translateY(-1px);
         }
-        .history-card-left {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-        .history-card-amt {
-            font-size: 19px;
-            font-weight: 900;
-            color: var(--text-main);
-        }
-        .history-card-meta {
-            font-size: 12px;
-            color: var(--text-muted);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .history-card-right {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .history-card-left { display: flex; flex-direction: column; gap: 4px; }
+        .history-card-amt { font-size: 19px; font-weight: 900; color: var(--text-main); }
+        .history-card-meta { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
+        .history-card-right { display: flex; align-items: center; gap: 10px; }
         .history-status-badge {
             font-size: 11.5px;
             font-weight: 800;
@@ -604,9 +580,7 @@
             align-items: flex-end;
         }
         @media (min-width: 600px) {
-            #receipt-modal.modal-overlay {
-                align-items: center;
-            }
+            #receipt-modal.modal-overlay { align-items: center; }
         }
         .receipt-modal-content {
             background: #ffffff;
@@ -622,10 +596,7 @@
             position: relative;
         }
         @media (min-width: 600px) {
-            .receipt-modal-content {
-                border-radius: var(--radius-xl);
-                padding: 28px 24px;
-            }
+            .receipt-modal-content { border-radius: var(--radius-xl); padding: 28px 24px; }
         }
 
         .receipt-card {
@@ -679,10 +650,27 @@
             justify-content: space-between;
             transition: var(--transition);
             box-shadow: var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
         }
         .plan-card:hover, .task-card:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: var(--shadow-md); }
         .plan-card h3, .task-card h3 { font-size: 16px; font-weight: 700; color: var(--text-main); margin-bottom: 6px; }
-        .plan-price { font-size: 26px; font-weight: 900; color: var(--primary); margin: 8px 0; }
+        .plan-price-wrap { margin: 8px 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .plan-price { font-size: 26px; font-weight: 900; color: var(--primary); }
+        .plan-original-price { font-size: 14px; text-decoration: line-through; color: var(--text-dim); margin-bottom: 2px; }
+        .discount-badge-card {
+            position: absolute;
+            top: 12px;
+            right: -28px;
+            background: #ef4444;
+            color: #fff;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 4px 30px;
+            transform: rotate(45deg);
+            box-shadow: 0 2px 6px rgba(239, 68, 68, 0.4);
+            letter-spacing: 0.5px;
+        }
         .plan-meta { font-size: 12.5px; color: var(--text-muted); margin-bottom: 16px; line-height: 1.6; }
 
         /* Referral Box */
@@ -727,7 +715,18 @@
             max-width: 400px;
             text-align: center;
             box-shadow: 0 20px 40px rgba(0,0,0,0.18);
+            position: relative;
         }
+        .modal-close-icon {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            font-size: 22px;
+            color: var(--text-dim);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .modal-close-icon:hover { color: var(--danger); }
         .modal-buttons { display: flex; gap: 10px; margin-top: 18px; }
         .modal-btn.cancel { background: #94a3b8; color: #fff; }
 
@@ -892,7 +891,7 @@
                         </div>
                     </div>
 
-                    <!-- Locked Welcome Bonus Card (Rs. 5,000 Bonus / Rs. 15,000 Investment) -->
+                    <!-- Locked Welcome Bonus Card -->
                     <div id="welcome-bonus-box" class="locked-bonus-card">
                         <div class="locked-bonus-header">
                             <div>
@@ -916,14 +915,13 @@
                     </div>
                 </div>
 
-                <!-- Lucky Spin Wheel Section (Locked until Rs. 500 Investment) -->
+                <!-- Lucky Spin Wheel Section -->
                 <div id="spin-content" class="content-section hidden">
                     <div class="section-header" style="text-align: center;">
                         <h2>🎡 Lucky Spin & Win</h2>
                         <p>Spin the lucky wheel! Unlock access by investing Rs. 500 + earn bonus spins on active referrals.</p>
                     </div>
 
-                    <!-- Spin Lock / Status Overview Card -->
                     <div id="spin-lock-status-card" class="spin-status-box locked">
                         <div style="display:flex; justify-content:space-between; align-items:center;">
                             <span id="spin-badge-label" style="font-size:12px; font-weight:800; text-transform:uppercase; color:#b91c1c;">
@@ -964,7 +962,7 @@
                     </div>
                 </div>
 
-                <!-- Deposit (Bank Card Design with Taufeeq Ahmed) -->
+                <!-- Deposit -->
                 <div id="deposit-content" class="content-section hidden">
                     <div class="section-header">
                         <h2>Deposit Funds</h2>
@@ -1005,7 +1003,7 @@
                     <button class="btn-primary" id="btn-deposit-submit" onclick="submitDeposit()">Submit Deposit</button>
                 </div>
 
-                <!-- Packages -->
+                <!-- Packages (Now Fully Dynamic from Firebase) -->
                 <div id="invest-content" class="content-section hidden">
                     <div class="section-header">
                         <h2>Work & Task Packages</h2>
@@ -1023,7 +1021,7 @@
                     <div id="task-list-container" class="task-list"></div>
                 </div>
 
-                <!-- Withdraw -->
+                <!-- Withdraw (Now Dynamic Methods from Firebase) -->
                 <div id="send-content" class="content-section hidden">
                     <div class="section-header">
                         <h2>Withdraw Funds</h2>
@@ -1033,8 +1031,7 @@
                     <input type="number" id="withdraw-amount" inputmode="decimal" placeholder="Amount">
                     <label>Withdraw Method</label>
                     <select id="withdraw-method">
-                        <option>Easypaisa</option>
-                        <option>Jazzcash</option>
+                        <option value="">Loading methods...</option>
                     </select>
                     <label>Account / Mobile Number</label>
                     <input type="tel" id="withdraw-account" inputmode="numeric" placeholder="Account Number">
@@ -1090,13 +1087,11 @@
                             <button class="btn-primary" onclick="copyReferralLink()">Copy Link</button>
                         </div>
                         
-                        <!-- 1-Click WhatsApp Share -->
                         <button class="btn-whatsapp-share" onclick="shareOnWhatsApp()">
                             <i class='bx bxl-whatsapp' style="font-size: 20px;"></i>
                             Share on WhatsApp (1-Click)
                         </button>
 
-                        <!-- Personalized WhatsApp Status Poster Button -->
                         <button class="btn-poster" onclick="openPosterModal()">
                             <i class='bx bx-image' style="font-size: 20px;"></i>
                             Generate HD Status Poster (English)
@@ -1279,20 +1274,21 @@
         </div>
     </div>
 
-    <!-- Community Modal on Signup -->
-    <div id="community-modal" class="modal-overlay hidden">
-        <div class="modal-content" style="max-width: 370px;">
-            <div style="display:inline-flex; align-items:center; justify-content:center; width:52px; height:52px; background:#ecfdf5; color:#059669; border-radius:50%; margin-bottom:12px;">
-                <i class='bx bxl-whatsapp' style="font-size: 34px;"></i>
+    <!-- WhatsApp Channel Popup (Always Shows on Refresh with Cut Option) -->
+    <div id="community-modal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 380px;">
+            <i class='bx bx-x modal-close-icon' onclick="closeCommunityModal()" title="Close"></i>
+            <div style="display:inline-flex; align-items:center; justify-content:center; width:56px; height:56px; background:#ecfdf5; color:#059669; border-radius:50%; margin-bottom:12px;">
+                <i class='bx bxl-whatsapp' style="font-size: 36px;"></i>
             </div>
-            <h3 style="font-size: 20px; font-weight: 800; color:var(--text-main);">Welcome to Benvixa!</h3>
+            <h3 style="font-size: 20px; font-weight: 800; color:var(--text-main);">Join Official WhatsApp</h3>
             <p style="font-size: 13px; color: var(--text-muted); margin: 8px 0 18px 0; line-height: 1.5;">
-                Your account has been registered! You received a <strong>Rs. 5,000 Welcome Bonus Escrow</strong>. Join our official WhatsApp Channel for daily updates.
+                Get daily new tasks updates, fast payout notifications, and exclusive announcements by joining our official channel.
             </p>
             <button class="btn-whatsapp-share" onclick="joinCommunityAndSignIn()" style="margin-top:0; margin-bottom: 10px;">
-                <i class='bx bxl-whatsapp'></i> Join Official Channel
+                <i class='bx bxl-whatsapp'></i> Join WhatsApp Channel
             </button>
-            <button class="modal-btn cancel btn-primary" onclick="closeCommunityModal()">Continue to Dashboard</button>
+            <button class="modal-btn cancel btn-primary" onclick="closeCommunityModal()">Continue to Website</button>
         </div>
     </div>
 
@@ -1324,6 +1320,10 @@
         let tickerTimeoutId = null;
         let currentReceiptData = null;
 
+        // Dynamic Data holders
+        let dynamicInvestmentPlans = [];
+        let dynamicWithdrawalMethods = [];
+
         // Synchronize with Firebase Server Time
         db.ref(".info/serverTimeOffset").on("value", function(snap) {
             serverTimeOffset = snap.val() || 0;
@@ -1333,40 +1333,107 @@
             return Date.now() + serverTimeOffset;
         }
 
-        const investmentPlans = [
-            { id: 1, name: "Tier 1 Task Pack", invest: 20, daily: 2.1, validity: 60 },
-            { id: 2, name: "Tier 2 Task Pack", invest: 50, daily: 4.1, validity: 60 },
-            { id: 3, name: "Tier 3 Task Pack", invest: 70, daily: 5.9, validity: 60 },
-            { id: 4, name: "Tier 4 Task Pack", invest: 100, daily: 7.7, validity: 60 },
-            { id: 5, name: "Tier 5 Task Pack", invest: 130, daily: 10.1, validity: 60 },
-            { id: 6, name: "Tier 6 Task Pack", invest: 150, daily: 11.1, validity: 60 },
-            { id: 7, name: "Tier 7 Task Pack", invest: 170, daily: 12.3, validity: 60 },
-            { id: 8, name: "Tier 8 Task Pack", invest: 200, daily: 14.3, validity: 60 },
-            { id: 9, name: "Tier 9 Task Pack", invest: 250, daily: 17.9, validity: 60 },
-            { id: 10, name: "Tier 10 Task Pack", invest: 300, daily: 21.4, validity: 60 },
-            { id: 11, name: "Tier 11 Task Pack", invest: 350, daily: 25.1, validity: 60 },
-            { id: 12, name: "Tier 12 Task Pack", invest: 380, daily: 28.1, validity: 60 },
-            { id: 13, name: "Tier 13 Task Pack", invest: 400, daily: 29.1, validity: 60 },
-            { id: 14, name: "Tier 14 Task Pack", invest: 450, daily: 32.1, validity: 60 },
-            { id: 15, name: "Tier 15 Task Pack", invest: 500, daily: 35.7, validity: 60 },
-            { id: 16, name: "Tier 16 Task Pack", invest: 550, daily: 39.3, validity: 60 },
-            { id: 17, name: "Tier 17 Task Pack", invest: 600, daily: 42.9, validity: 60 },
-            { id: 18, name: "Tier 18 Task Pack", invest: 700, daily: 50.1, validity: 60 },
-            { id: 19, name: "Tier 19 Task Pack", invest: 800, daily: 57.2, validity: 60 },
-            { id: 20, name: "Tier 20 Task Pack", invest: 900, daily: 64.3, validity: 60 },
-            { id: 21, name: "Tier 21 Task Pack", invest: 1000, daily: 71.4, validity: 60 },
-            { id: 22, name: "Tier 22 Task Pack", invest: 1200, daily: 85.7, validity: 60 },
-            { id: 23, name: "Tier 23 Task Pack", invest: 1400, daily: 99.9, validity: 60 },
-            { id: 24, name: "Tier 24 Task Pack", invest: 1600, daily: 114.3, validity: 60 },
-            { id: 25, name: "Tier 25 Task Pack", invest: 1800, daily: 128.6, validity: 60 },
-            { id: 26, name: "Tier 26 Task Pack", invest: 2000, daily: 142.9, validity: 60 },
-            { id: 27, name: "Tier 27 Task Pack", invest: 2500, daily: 178.6, validity: 60 },
-            { id: 28, name: "Tier 28 Task Pack", invest: 3000, daily: 214.3, validity: 60 },
-            { id: 29, name: "Tier 29 Task Pack", invest: 4000, daily: 285.8, validity: 60 },
-            { id: 30, name: "Tier 30 Task Pack", invest: 5000, daily: 357.2, validity: 60 },
-            { id: 31, name: "Tier 31 Task Pack", invest: 7000, daily: 500.1, validity: 60 },
-            { id: 32, name: "Tier 32 Task Pack", invest: 9000, daily: 642.9, validity: 60 }
+        // --- Default 32 Packages for Auto-Seeding Firebase if empty ---
+        const default32Plans = [
+            { id: "tier_1", name: "Tier 1 Task Pack", invest: 20, daily: 2.1, validity: 60, discountPercent: 0, order: 1 },
+            { id: "tier_2", name: "Tier 2 Task Pack", invest: 50, daily: 4.1, validity: 60, discountPercent: 0, order: 2 },
+            { id: "tier_3", name: "Tier 3 Task Pack", invest: 70, daily: 5.9, validity: 60, discountPercent: 0, order: 3 },
+            { id: "tier_4", name: "Tier 4 Task Pack", invest: 100, daily: 7.7, validity: 60, discountPercent: 0, order: 4 },
+            { id: "tier_5", name: "Tier 5 Task Pack", invest: 130, daily: 10.1, validity: 60, discountPercent: 0, order: 5 },
+            { id: "tier_6", name: "Tier 6 Task Pack", invest: 150, daily: 11.1, validity: 60, discountPercent: 0, order: 6 },
+            { id: "tier_7", name: "Tier 7 Task Pack", invest: 170, daily: 12.3, validity: 60, discountPercent: 0, order: 7 },
+            { id: "tier_8", name: "Tier 8 Task Pack", invest: 200, daily: 14.3, validity: 60, discountPercent: 0, order: 8 },
+            { id: "tier_9", name: "Tier 9 Task Pack", invest: 250, daily: 17.9, validity: 60, discountPercent: 0, order: 9 },
+            { id: "tier_10", name: "Tier 10 Task Pack", invest: 300, daily: 21.4, validity: 60, discountPercent: 0, order: 10 },
+            { id: "tier_11", name: "Tier 11 Task Pack", invest: 350, daily: 25.1, validity: 60, discountPercent: 0, order: 11 },
+            { id: "tier_12", name: "Tier 12 Task Pack", invest: 380, daily: 28.1, validity: 60, discountPercent: 0, order: 12 },
+            { id: "tier_13", name: "Tier 13 Task Pack", invest: 400, daily: 29.1, validity: 60, discountPercent: 0, order: 13 },
+            { id: "tier_14", name: "Tier 14 Task Pack", invest: 450, daily: 32.1, validity: 60, discountPercent: 0, order: 14 },
+            { id: "tier_15", name: "Tier 15 Task Pack", invest: 500, daily: 35.7, validity: 60, discountPercent: 0, order: 15 },
+            { id: "tier_16", name: "Tier 16 Task Pack", invest: 550, daily: 39.3, validity: 60, discountPercent: 0, order: 16 },
+            { id: "tier_17", name: "Tier 17 Task Pack", invest: 600, daily: 42.9, validity: 60, discountPercent: 0, order: 17 },
+            { id: "tier_18", name: "Tier 18 Task Pack", invest: 700, daily: 50.1, validity: 60, discountPercent: 0, order: 18 },
+            { id: "tier_19", name: "Tier 19 Task Pack", invest: 800, daily: 57.2, validity: 60, discountPercent: 0, order: 19 },
+            { id: "tier_20", name: "Tier 20 Task Pack", invest: 900, daily: 64.3, validity: 60, discountPercent: 0, order: 20 },
+            { id: "tier_21", name: "Tier 21 Task Pack", invest: 1000, daily: 71.4, validity: 60, discountPercent: 0, order: 21 },
+            { id: "tier_22", name: "Tier 22 Task Pack", invest: 1200, daily: 85.7, validity: 60, discountPercent: 0, order: 22 },
+            { id: "tier_23", name: "Tier 23 Task Pack", invest: 1400, daily: 99.9, validity: 60, discountPercent: 0, order: 23 },
+            { id: "tier_24", name: "Tier 24 Task Pack", invest: 1600, daily: 114.3, validity: 60, discountPercent: 0, order: 24 },
+            { id: "tier_25", name: "Tier 25 Task Pack", invest: 1800, daily: 128.6, validity: 60, discountPercent: 0, order: 25 },
+            { id: "tier_26", name: "Tier 26 Task Pack", invest: 2000, daily: 142.9, validity: 60, discountPercent: 0, order: 26 },
+            { id: "tier_27", name: "Tier 27 Task Pack", invest: 2500, daily: 178.6, validity: 60, discountPercent: 0, order: 27 },
+            { id: "tier_28", name: "Tier 28 Task Pack", invest: 3000, daily: 214.3, validity: 60, discountPercent: 0, order: 28 },
+            { id: "tier_29", name: "Tier 29 Task Pack", invest: 4000, daily: 285.8, validity: 60, discountPercent: 0, order: 29 },
+            { id: "tier_30", name: "Tier 30 Task Pack", invest: 5000, daily: 357.2, validity: 60, discountPercent: 0, order: 30 },
+            { id: "tier_31", name: "Tier 31 Task Pack", invest: 7000, daily: 500.1, validity: 60, discountPercent: 0, order: 31 },
+            { id: "tier_32", name: "Tier 32 Task Pack", invest: 9000, daily: 642.9, validity: 60, discountPercent: 0, order: 32 }
         ];
+
+        // --- FIREBASE SYNC: PACKAGES & WITHDRAW METHODS ---
+        function initFirebaseDynamicConfigs() {
+            // Listen to packages
+            db.ref('packages').on('value', snapshot => {
+                if (!snapshot.exists()) {
+                    // Seed initial 32 packages into Firebase once
+                    const seedData = {};
+                    default32Plans.forEach(p => { seedData[p.id] = p; });
+                    db.ref('packages').set(seedData);
+                } else {
+                    const data = snapshot.val();
+                    dynamicInvestmentPlans = Object.keys(data).map(key => {
+                        const item = data[key];
+                        return {
+                            id: key,
+                            name: item.name || "Task Package",
+                            invest: parseFloat(item.invest || item.price || 0),
+                            daily: parseFloat(item.daily || item.dailyReward || 0),
+                            validity: parseInt(item.validity || 60),
+                            discountPercent: parseFloat(item.discountPercent || 0),
+                            order: item.order || 999
+                        };
+                    }).sort((a, b) => (a.order !== b.order ? a.order - b.order : a.invest - b.invest));
+
+                    const container = document.getElementById('invest-content');
+                    if (container && !container.classList.contains('hidden')) {
+                        loadInvestmentPlans();
+                    }
+                }
+            });
+
+            // Listen to withdrawal methods
+            db.ref('withdrawalMethods').on('value', snapshot => {
+                if (!snapshot.exists()) {
+                    db.ref('withdrawalMethods').set({
+                        "easypaisa": { name: "Easypaisa", active: true },
+                        "jazzcash": { name: "Jazzcash", active: true }
+                    });
+                } else {
+                    const methods = snapshot.val();
+                    const select = document.getElementById('withdraw-method');
+                    if (select) {
+                        select.innerHTML = '';
+                        dynamicWithdrawalMethods = [];
+                        Object.keys(methods).forEach(key => {
+                            const m = methods[key];
+                            const name = typeof m === 'string' ? m : (m.name || key);
+                            const isActive = m.active !== false;
+                            if (isActive) {
+                                dynamicWithdrawalMethods.push(name);
+                                const opt = document.createElement('option');
+                                opt.value = name;
+                                opt.innerText = name;
+                                select.appendChild(opt);
+                            }
+                        });
+                        if (select.children.length === 0) {
+                            select.innerHTML = '<option value="Easypaisa">Easypaisa</option><option value="Jazzcash">Jazzcash</option>';
+                        }
+                    }
+                }
+            });
+        }
+
+        initFirebaseDynamicConfigs();
 
         const appHeader = document.getElementById('app-header');
         const sidebar = document.getElementById('main-sidebar');
@@ -1450,19 +1517,31 @@
             selectedPlanIdToInvest = null;
         }
 
+        function calculatePlanFinalPrice(plan) {
+            const original = parseFloat(plan.invest || 0);
+            const discount = parseFloat(plan.discountPercent || 0);
+            if (discount > 0 && discount <= 100) {
+                return Math.max(1, Math.round(original - (original * (discount / 100))));
+            }
+            return original;
+        }
+
         function investNow(planId) {
-            const plan = investmentPlans.find(p => p.id == planId);
+            const plan = dynamicInvestmentPlans.find(p => p.id == planId);
             if (!plan) return;
             selectedPlanIdToInvest = plan.id;
+            const finalPrice = calculatePlanFinalPrice(plan);
             modalTitle.innerText = 'Confirm Activation';
-            modalText.innerHTML = `Confirm purchase of <strong>${plan.name}</strong> for <strong>Rs. ${plan.invest}</strong>.<br>Amount will be deducted from your wallet balance.`;
+            modalText.innerHTML = `Confirm purchase of <strong>${plan.name}</strong> for <strong>Rs. ${finalPrice.toLocaleString()}</strong>${plan.discountPercent > 0 ? ` <span style="color:var(--accent); font-weight:800;">(${plan.discountPercent}% Discount Applied)</span>` : ''}.<br>Amount will be deducted from your wallet balance.`;
             modal.classList.remove('hidden');
         }
 
         function executePlanPurchase() {
             if (!selectedPlanIdToInvest) return;
-            const plan = investmentPlans.find(p => p.id == selectedPlanIdToInvest);
+            const plan = dynamicInvestmentPlans.find(p => p.id == selectedPlanIdToInvest);
             if (!plan) return;
+
+            const finalPrice = calculatePlanFinalPrice(plan);
 
             modalConfirmBtn.disabled = true;
             modalConfirmBtn.innerText = "Activating...";
@@ -1470,10 +1549,10 @@
             const userRef = db.ref('users/' + currentUser.uid);
             userRef.transaction(currentData => {
                 if (currentData === null) return currentData;
-                if (currentData.balance >= plan.invest) {
-                    currentData.balance -= plan.invest;
+                if (currentData.balance >= finalPrice) {
+                    currentData.balance -= finalPrice;
                     const prevInvested = currentData.totalInvested || 0;
-                    currentData.totalInvested = prevInvested + plan.invest;
+                    currentData.totalInvested = prevInvested + finalPrice;
 
                     // Automatically unlock Lucky Spin when total investment reaches Rs. 500 for the first time
                     if (currentData.totalInvested >= 500 && !currentData.spinUnlocked) {
@@ -1497,8 +1576,9 @@
 
                         const invData = { 
                             userId: currentUser.uid, 
+                            planId: plan.id,
                             planName: plan.name, 
-                            amount: plan.invest, 
+                            amount: finalPrice, 
                             dailyEarning: plan.daily, 
                             validity: plan.validity, 
                             status: 'approved', 
@@ -1508,13 +1588,12 @@
 
                         db.ref('investments').push(invData).then(() => {
                             showNotification("Package activated successfully!");
-                            handleMultiTierCommission(plan.invest);
+                            handleMultiTierCommission(finalPrice);
                             
                             if (isFirstActivation && currentUserProfile && currentUserProfile.referredBy && currentUserProfile.referredBy !== 'none') {
                                 db.ref('users/' + currentUserProfile.referredBy).transaction(refUser => {
                                     if (refUser) {
                                         refUser.activeReferralsCount = (refUser.activeReferralsCount || 0) + 1;
-                                        // Give extra spin to sponsor on active referral only if sponsor has spin unlocked
                                         if (refUser.spinUnlocked) {
                                             refUser.spinsAvailable = (refUser.spinsAvailable || 0) + 1;
                                         }
@@ -1697,7 +1776,7 @@
             });
         }
 
-        // --- Lucky Spin Lock UI Handling (Rs. 500 Investment Required) ---
+        // --- Lucky Spin Lock UI Handling ---
         function updateSpinLockUI(data) {
             const invested = data.totalInvested || 0;
             const isUnlocked = invested >= 500;
@@ -1813,14 +1892,14 @@
 
         // --- Lucky Spin Wheel Definition ---
         const wheelSlices = [
-            { text: "Better Luck", color: "#64748b", value: 0 },   // index 0
-            { text: "Rs. 5", color: "#10b981", value: 5 },          // index 1
-            { text: "Rs. 10", color: "#4f46e5", value: 10 },        // index 2
-            { text: "Rs. 300", color: "#d97706", value: 300 },      // index 3
-            { text: "Rs. 500", color: "#8b5cf6", value: 500 },      // index 4
-            { text: "Rs. 100", color: "#059669", value: 100 },      // index 5
-            { text: "Rs. 50", color: "#dc2626", value: 50 },        // index 6
-            { text: "Better Luck", color: "#475569", value: 0 }     // index 7
+            { text: "Better Luck", color: "#64748b", value: 0 },
+            { text: "Rs. 5", color: "#10b981", value: 5 },
+            { text: "Rs. 10", color: "#4f46e5", value: 10 },
+            { text: "Rs. 300", color: "#d97706", value: 300 },
+            { text: "Rs. 500", color: "#8b5cf6", value: 500 },
+            { text: "Rs. 100", color: "#059669", value: 100 },
+            { text: "Rs. 50", color: "#dc2626", value: 50 },
+            { text: "Better Luck", color: "#475569", value: 0 }
         ];
 
         let currentRotationAngle = 0;
@@ -1874,12 +1953,10 @@
             ctx.fillText('SPIN', radius, radius + 4);
         }
 
-        // --- Controlled Lucky Spin Engine (100% Guaranteed Better Luck or Rs. 5) ---
         function spinWheel() {
             if (isSpinning) return;
             if (!currentUserProfile) return;
 
-            // Check if user has invested at least Rs. 500
             const invested = currentUserProfile.totalInvested || 0;
             if (invested < 500) {
                 showNotification("Lucky Spin is locked! Minimum Rs. 500 investment in work packages required.", "danger");
@@ -1896,14 +1973,11 @@
             const spinBtn = document.getElementById('btn-spin-now');
             spinBtn.disabled = true;
 
-            // 100% STRICT RIGGED SELECTION: Only Index 0 ("Better Luck"), Index 7 ("Better Luck"), or Index 1 ("Rs. 5")
             const rand = Math.random();
             let chosenIndex;
             if (rand < 0.65) {
-                // Lands on "Better Luck" (Index 0 or 7)
                 chosenIndex = Math.random() > 0.5 ? 0 : 7;
             } else {
-                // Lands on "Rs. 5" (Index 1)
                 chosenIndex = 1;
             }
 
@@ -1939,7 +2013,7 @@
             }, 4600);
         }
 
-        // --- Multi-Tier Referral Sign Up (Rs. 5,000 Bonus / No Daily Spins) ---
+        // --- Multi-Tier Referral Sign Up ---
         function signupUser() {
             const btn = document.getElementById('btn-signup-submit');
             const email = document.getElementById('signup-email').value.trim();
@@ -1981,8 +2055,8 @@
                     referrerL2: 'none',
                     referrerL3: 'none',
                     activeReferralsCount: 0,
-                    spinsAvailable: 0, // Starts with 0 spins until Rs. 500 is invested
-                    spinUnlocked: false, // Locked until Rs. 500 invested
+                    spinsAvailable: 0,
+                    spinUnlocked: false,
                     welcomeBonusClaimed: false,
                     milestonesClaimed: {}
                 };
@@ -2005,7 +2079,6 @@
                             
                             newUserData.referredBy = referrerUid;
 
-                            // Level 1 Entry
                             db.ref('users/' + referrerUid + '/teamL1').push({
                                 userId: cred.user.uid,
                                 email: email,
@@ -2013,7 +2086,6 @@
                                 joinedDate: new Date().toISOString()
                             });
 
-                            // Level 2 Entry
                             if (referrerData && referrerData.referredBy && referrerData.referredBy !== 'none') {
                                 const l2Uid = referrerData.referredBy;
                                 newUserData.referrerL2 = l2Uid;
@@ -2024,7 +2096,6 @@
                                     joinedDate: new Date().toISOString()
                                 });
 
-                                // Level 3 Entry
                                 if (referrerData.referrerL2 && referrerData.referrerL2 !== 'none') {
                                     const l3Uid = referrerData.referrerL2;
                                     newUserData.referrerL3 = l3Uid;
@@ -2058,14 +2129,13 @@
             });
         }
 
-        // --- Multi-Tier Referral Commission Handler (L1: 8%, L2: 3%, L3: 1%) ---
+        // --- Multi-Tier Commission ---
         function handleMultiTierCommission(investmentAmount) {
             const userRef = db.ref('users/' + currentUser.uid);
             userRef.once('value', userSnap => {
                 const userData = userSnap.val();
                 if (!userData) return;
 
-                // Level 1: 8%
                 if (userData.referredBy && userData.referredBy !== 'none') {
                     const commL1 = investmentAmount * 0.08;
                     db.ref('users/' + userData.referredBy).transaction(curr => {
@@ -2077,7 +2147,6 @@
                     });
                 }
 
-                // Level 2: 3%
                 if (userData.referrerL2 && userData.referrerL2 !== 'none') {
                     const commL2 = investmentAmount * 0.03;
                     db.ref('users/' + userData.referrerL2).transaction(curr => {
@@ -2089,7 +2158,6 @@
                     });
                 }
 
-                // Level 3: 1%
                 if (userData.referrerL3 && userData.referrerL3 !== 'none') {
                     const commL3 = investmentAmount * 0.01;
                     db.ref('users/' + userData.referrerL3).transaction(curr => {
@@ -2110,15 +2178,6 @@
 
         function closeCommunityModal() {
             document.getElementById('community-modal').classList.add('hidden');
-            if (currentUser) {
-                authContainer.classList.add('hidden');
-                dashboardContainer.classList.remove('hidden');
-                appHeader.classList.remove('hidden');
-                sidebar.classList.remove('hidden');
-                showSection('home', document.querySelector('.sidebar a'));
-            } else {
-                toggleForms(false);
-            }
         }
 
         // --- Multi-Identifier Robust Login ---
@@ -2213,11 +2272,14 @@
 
         function logoutUser() { auth.signOut(); }
 
-        // --- Work Packages ---
+        // --- Work Packages (Render Dynamic Packages with Discounts) ---
         function loadInvestmentPlans() {
             const container = document.getElementById('investment-plans-container');
+            if (!container) return;
             container.innerHTML = '<p style="color:var(--text-muted);">Loading packages...</p>';
             
+            if (!currentUser) return;
+
             db.ref('investments').orderByChild('userId').equalTo(currentUser.uid).once('value', snapshot => {
                 const activePlanNames = new Set();
                 const now = getExactTime();
@@ -2233,21 +2295,33 @@
                     }
                 });
 
+                if (dynamicInvestmentPlans.length === 0) {
+                    container.innerHTML = '<p style="color:var(--text-muted);">No packages available right now.</p>';
+                    return;
+                }
+
                 let html = '';
-                investmentPlans.forEach(plan => {
+                dynamicInvestmentPlans.forEach(plan => {
                     const isInvested = activePlanNames.has(plan.name);
+                    const finalPrice = calculatePlanFinalPrice(plan);
+                    const hasDiscount = plan.discountPercent > 0;
+
                     html += `
                         <div class="plan-card">
+                            ${hasDiscount ? `<div class="discount-badge-card">${plan.discountPercent}% OFF</div>` : ''}
                             <div>
                                 <h3>${plan.name}</h3>
-                                <div class="plan-price mono">Rs. ${plan.invest.toLocaleString()}</div>
+                                <div class="plan-price-wrap">
+                                    ${hasDiscount ? `<div class="plan-original-price mono">Rs. ${plan.invest.toLocaleString()}</div>` : ''}
+                                    <div class="plan-price mono">Rs. ${finalPrice.toLocaleString()}</div>
+                                </div>
                                 <div class="plan-meta">
-                                    <div>Daily Reward: <strong>Rs. ${plan.daily}</strong></div>
+                                    <div>Daily Reward: <strong style="color:var(--accent);">Rs. ${plan.daily}</strong></div>
                                     <div>Duration: ${plan.validity} Days</div>
                                 </div>
                             </div>
-                            <button class="btn-primary" onclick="investNow(${plan.id})" ${isInvested ? 'disabled' : ''}>
-                                ${isInvested ? 'Active Package' : 'Unlock Package'}
+                            <button class="btn-primary" onclick="investNow('${plan.id}')" ${isInvested ? 'disabled' : ''}>
+                                ${isInvested ? 'Active Package' : (hasDiscount ? `Unlock (${plan.discountPercent}% Off)` : 'Unlock Package')}
                             </button>
                         </div>
                     `;
@@ -2309,6 +2383,10 @@
 
             if (isNaN(amount) || amount <= 0) {
                 showNotification("Enter a valid withdrawal amount.", "danger");
+                return;
+            }
+            if (!method) {
+                showNotification("Please select a withdrawal method.", "danger");
                 return;
             }
             if (!account) {
@@ -2555,7 +2633,7 @@
                         taskCard.id = `task-${key}`;
                         taskCard.innerHTML = `
                             <h3>${task.planName}</h3>
-                            <p style="font-size: 13.5px; color: var(--text-muted); margin: 8px 0;">Daily Reward: <strong style="color:var(--text-main);">Rs. ${task.dailyEarning}</strong></p>
+                            <p style="font-size: 13.5px; color: var(--text-muted); margin: 8px 0;">Daily Reward: <strong style="color:var(--accent);">Rs. ${task.dailyEarning}</strong></p>
                             <button class="btn-primary" id="btn-${key}" onclick="startTaskVerification('${key}')">Complete Task</button>
                             <p id="timer-${key}" class="mono" style="font-size:12px; color:var(--text-dim); margin-top:10px;"></p>
                         `;
@@ -2673,7 +2751,6 @@
             depCards.innerHTML = '<p style="color:var(--text-muted); font-size:13px;">Loading deposits...</p>';
             wthCards.innerHTML = '<p style="color:var(--text-muted); font-size:13px;">Loading withdrawals...</p>';
 
-            // Load Deposits
             db.ref('deposits').orderByChild('userId').equalTo(currentUser.uid).limitToLast(25).once('value', snap => {
                 if (!snap.exists()) {
                     depCards.innerHTML = '<p style="color:var(--text-muted); font-size:13px;">No deposits recorded yet.</p>';
@@ -2704,7 +2781,6 @@
                 depCards.innerHTML = cards.join('');
             });
 
-            // Load Withdrawals
             db.ref('withdrawals').orderByChild('userId').equalTo(currentUser.uid).limitToLast(25).once('value', snap => {
                 if (!snap.exists()) {
                     wthCards.innerHTML = '<p style="color:var(--text-muted); font-size:13px;">No withdrawals recorded yet.</p>';
