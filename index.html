@@ -44,7 +44,7 @@
             --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
             --shadow-md: 0 4px 14px rgba(0,0,0,0.06);
-            --shadow-lg: 0 10px 25px rgba(0,0,0,10.1);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
         }
 
         * {
@@ -406,7 +406,6 @@
             text-align: left;
         }
         .spin-status-box.locked { background: #fff1f2; border-color: #fda4af; }
-        .spin-status-box.unlocked { background: #f0fdf4; border-color: #86efac; }
 
         /* Bank Card Deposit Design */
         .bank-card-container {
@@ -919,9 +918,10 @@
                 <div id="spin-content" class="content-section hidden">
                     <div class="section-header" style="text-align: center;">
                         <h2>🎡 Lucky Spin & Win</h2>
-                        <p>Spin the lucky wheel! Unlock access by investing Rs. 500 + earn bonus spins on active referrals.</p>
+                        <p>Unlock access by investing min Rs. 500. Get 1 Daily Free Spin (resets every 24h) or spin for <span id="spin-cost-label">Rs. 20</span>!</p>
                     </div>
 
+                    <!-- Lock Box (Only shows when < Rs. 500 invested) -->
                     <div id="spin-lock-status-card" class="spin-status-box locked">
                         <div style="display:flex; justify-content:space-between; align-items:center;">
                             <span id="spin-badge-label" style="font-size:12px; font-weight:800; text-transform:uppercase; color:#b91c1c;">
@@ -943,12 +943,10 @@
                         </div>
                     </div>
 
+                    <!-- Clean Wheel Container -->
                     <div class="spin-wheel-container">
                         <div style="font-size: 14px; font-weight: 800; margin-bottom: 6px; color: var(--text-main);">
-                            Available Spins: <span id="user-spins-count" class="mono" style="color: var(--primary); font-size: 17px;">0</span>
-                        </div>
-                        <div style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 12px;">
-                            (Requires Rs. 500 Investment to Unlock + Extra Spins on Active Members)
+                            Daily Free Spin: <span id="user-daily-spin-status" class="mono" style="color: var(--accent); font-weight: 800;">1 Available</span>
                         </div>
 
                         <div class="wheel-wrapper">
@@ -1003,7 +1001,7 @@
                     <button class="btn-primary" id="btn-deposit-submit" onclick="submitDeposit()">Submit Deposit</button>
                 </div>
 
-                <!-- Packages (Now Fully Dynamic from Firebase) -->
+                <!-- Packages Dynamic -->
                 <div id="invest-content" class="content-section hidden">
                     <div class="section-header">
                         <h2>Work & Task Packages</h2>
@@ -1021,7 +1019,7 @@
                     <div id="task-list-container" class="task-list"></div>
                 </div>
 
-                <!-- Withdraw (Now Dynamic Methods from Firebase) -->
+                <!-- Withdraw -->
                 <div id="send-content" class="content-section hidden">
                     <div class="section-header">
                         <h2>Withdraw Funds</h2>
@@ -1062,11 +1060,11 @@
                     </div>
                 </div>
 
-                <!-- Invite (Affiliate & Milestones with 3-Level Tabs) -->
+                <!-- Invite (Affiliate & Milestones Dynamic) -->
                 <div id="team-content" class="content-section hidden">
                     <div class="section-header">
                         <h2>Invite & Multi-Tier Affiliate</h2>
-                        <p>Receive <strong>Level 1: 8%</strong>, <strong>Level 2: 3%</strong>, and <strong>Level 3: 1%</strong> lifetime commissions!</p>
+                        <p id="affiliate-commission-desc">Receive <strong>Level 1: 8%</strong>, <strong>Level 2: 3%</strong>, and <strong>Level 3: 1%</strong> lifetime commissions!</p>
                     </div>
 
                     <div class="stats-grid">
@@ -1098,7 +1096,7 @@
                         </button>
                     </div>
 
-                    <!-- Milestone Rewards Box -->
+                    <!-- Dynamic Milestone Rewards Container -->
                     <div style="margin: 22px 0 16px 0; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px; background: #fff;">
                         <h3 style="font-size: 15.5px; font-weight: 800; color: var(--text-main); margin-bottom: 4px;">
                             🎯 Team Milestone Rewards
@@ -1106,45 +1104,8 @@
                         <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;">
                             Achieve active member targets to claim instant cash prizes directly into your wallet.
                         </p>
-
-                        <div class="milestone-item">
-                            <div>
-                                <strong style="font-size:13.5px; color:var(--text-main);">5 Active Members</strong>
-                                <div style="font-size:12px; color:var(--accent); font-weight:700;">Bonus: Rs. 30.00</div>
-                            </div>
-                            <button id="ms-btn-5" class="milestone-badge locked" onclick="claimMilestoneReward(5, 30)">0 / 5 Active</button>
-                        </div>
-
-                        <div class="milestone-item">
-                            <div>
-                                <strong style="font-size:13.5px; color:var(--text-main);">15 Active Members</strong>
-                                <div style="font-size:12px; color:var(--accent); font-weight:700;">Bonus: Rs. 70.00</div>
-                            </div>
-                            <button id="ms-btn-15" class="milestone-badge locked" onclick="claimMilestoneReward(15, 70)">0 / 15 Active</button>
-                        </div>
-
-                        <div class="milestone-item">
-                            <div>
-                                <strong style="font-size:13.5px; color:var(--text-main);">35 Active Members</strong>
-                                <div style="font-size:12px; color:var(--accent); font-weight:700;">Bonus: Rs. 240.00</div>
-                            </div>
-                            <button id="ms-btn-35" class="milestone-badge locked" onclick="claimMilestoneReward(35, 240)">0 / 35 Active</button>
-                        </div>
-
-                        <div class="milestone-item">
-                            <div>
-                                <strong style="font-size:13.5px; color:var(--text-main);">50 Active Members</strong>
-                                <div style="font-size:12px; color:var(--accent); font-weight:700;">Bonus: Rs. 300.00</div>
-                            </div>
-                            <button id="ms-btn-50" class="milestone-badge locked" onclick="claimMilestoneReward(50, 300)">0 / 50 Active</button>
-                        </div>
-
-                        <div class="milestone-item">
-                            <div>
-                                <strong style="font-size:13.5px; color:var(--text-main);">100 Active Members (VIP)</strong>
-                                <div style="font-size:12px; color:var(--gold); font-weight:700;">Bonus: Rs. 1,000.00</div>
-                            </div>
-                            <button id="ms-btn-100" class="milestone-badge locked" onclick="claimMilestoneReward(100, 1000)">0 / 100 Active</button>
+                        <div id="dynamic-milestones-list">
+                            <p style="color:var(--text-muted); font-size:13px;">Loading rewards...</p>
                         </div>
                     </div>
 
@@ -1274,7 +1235,7 @@
         </div>
     </div>
 
-    <!-- WhatsApp Channel Popup (Always Shows on Refresh with Cut Option) -->
+    <!-- WhatsApp Channel Popup -->
     <div id="community-modal" class="modal-overlay">
         <div class="modal-content" style="max-width: 380px;">
             <i class='bx bx-x modal-close-icon' onclick="closeCommunityModal()" title="Close"></i>
@@ -1323,8 +1284,43 @@
         // Dynamic Data holders
         let dynamicInvestmentPlans = [];
         let dynamicWithdrawalMethods = [];
+        let dynamicMilestones = [];
+        let dynamicSpinSettings = {
+            extraSpinCost: 20,
+            minInvestToUnlock: 500,
+            slices: [
+                { text: "Better Luck", color: "#64748b", value: 0, chance: 45 },
+                { text: "Rs. 5", color: "#10b981", value: 5, chance: 30 },
+                { text: "Rs. 10", color: "#4f46e5", value: 10, chance: 15 },
+                { text: "Rs. 50", color: "#dc2626", value: 50, chance: 6 },
+                { text: "Rs. 100", color: "#059669", value: 100, chance: 3 },
+                { text: "Rs. 300", color: "#d97706", value: 300, chance: 0.8 },
+                { text: "Rs. 500", color: "#8b5cf6", value: 500, chance: 0.2 },
+                { text: "Better Luck", color: "#475569", value: 0, chance: 0 }
+            ]
+        };
 
-        // Synchronize with Firebase Server Time
+        // --- Persistent Device Fingerprint (Self-Referral Anti-Fraud) ---
+        function getDeviceFingerprint() {
+            let dId = localStorage.getItem('bv_device_fingerprint');
+            if (!dId) {
+                const nav = window.navigator;
+                const scr = window.screen;
+                const raw = (nav.userAgent || '') + (scr.colorDepth || '') + (scr.width || '') + (scr.height || '') + Math.random().toString(36);
+                let hash = 0;
+                for (let i = 0; i < raw.length; i++) {
+                    hash = ((hash << 5) - hash) + raw.charCodeAt(i);
+                    hash |= 0;
+                }
+                dId = 'DEV_' + Math.abs(hash) + '_' + Math.random().toString(36).substring(2, 9);
+                localStorage.setItem('bv_device_fingerprint', dId);
+            }
+            return dId;
+        }
+
+        const currentDeviceFingerprint = getDeviceFingerprint();
+
+        // Server Time sync
         db.ref(".info/serverTimeOffset").on("value", function(snap) {
             serverTimeOffset = snap.val() || 0;
         });
@@ -1333,48 +1329,26 @@
             return Date.now() + serverTimeOffset;
         }
 
-        // --- Default 32 Packages for Auto-Seeding Firebase if empty ---
-        const default32Plans = [
-            { id: "tier_1", name: "Tier 1 Task Pack", invest: 20, daily: 2.1, validity: 60, discountPercent: 0, order: 1 },
-            { id: "tier_2", name: "Tier 2 Task Pack", invest: 50, daily: 4.1, validity: 60, discountPercent: 0, order: 2 },
-            { id: "tier_3", name: "Tier 3 Task Pack", invest: 70, daily: 5.9, validity: 60, discountPercent: 0, order: 3 },
-            { id: "tier_4", name: "Tier 4 Task Pack", invest: 100, daily: 7.7, validity: 60, discountPercent: 0, order: 4 },
-            { id: "tier_5", name: "Tier 5 Task Pack", invest: 130, daily: 10.1, validity: 60, discountPercent: 0, order: 5 },
-            { id: "tier_6", name: "Tier 6 Task Pack", invest: 150, daily: 11.1, validity: 60, discountPercent: 0, order: 6 },
-            { id: "tier_7", name: "Tier 7 Task Pack", invest: 170, daily: 12.3, validity: 60, discountPercent: 0, order: 7 },
-            { id: "tier_8", name: "Tier 8 Task Pack", invest: 200, daily: 14.3, validity: 60, discountPercent: 0, order: 8 },
-            { id: "tier_9", name: "Tier 9 Task Pack", invest: 250, daily: 17.9, validity: 60, discountPercent: 0, order: 9 },
-            { id: "tier_10", name: "Tier 10 Task Pack", invest: 300, daily: 21.4, validity: 60, discountPercent: 0, order: 10 },
-            { id: "tier_11", name: "Tier 11 Task Pack", invest: 350, daily: 25.1, validity: 60, discountPercent: 0, order: 11 },
-            { id: "tier_12", name: "Tier 12 Task Pack", invest: 380, daily: 28.1, validity: 60, discountPercent: 0, order: 12 },
-            { id: "tier_13", name: "Tier 13 Task Pack", invest: 400, daily: 29.1, validity: 60, discountPercent: 0, order: 13 },
-            { id: "tier_14", name: "Tier 14 Task Pack", invest: 450, daily: 32.1, validity: 60, discountPercent: 0, order: 14 },
-            { id: "tier_15", name: "Tier 15 Task Pack", invest: 500, daily: 35.7, validity: 60, discountPercent: 0, order: 15 },
-            { id: "tier_16", name: "Tier 16 Task Pack", invest: 550, daily: 39.3, validity: 60, discountPercent: 0, order: 16 },
-            { id: "tier_17", name: "Tier 17 Task Pack", invest: 600, daily: 42.9, validity: 60, discountPercent: 0, order: 17 },
-            { id: "tier_18", name: "Tier 18 Task Pack", invest: 700, daily: 50.1, validity: 60, discountPercent: 0, order: 18 },
-            { id: "tier_19", name: "Tier 19 Task Pack", invest: 800, daily: 57.2, validity: 60, discountPercent: 0, order: 19 },
-            { id: "tier_20", name: "Tier 20 Task Pack", invest: 900, daily: 64.3, validity: 60, discountPercent: 0, order: 20 },
-            { id: "tier_21", name: "Tier 21 Task Pack", invest: 1000, daily: 71.4, validity: 60, discountPercent: 0, order: 21 },
-            { id: "tier_22", name: "Tier 22 Task Pack", invest: 1200, daily: 85.7, validity: 60, discountPercent: 0, order: 22 },
-            { id: "tier_23", name: "Tier 23 Task Pack", invest: 1400, daily: 99.9, validity: 60, discountPercent: 0, order: 23 },
-            { id: "tier_24", name: "Tier 24 Task Pack", invest: 1600, daily: 114.3, validity: 60, discountPercent: 0, order: 24 },
-            { id: "tier_25", name: "Tier 25 Task Pack", invest: 1800, daily: 128.6, validity: 60, discountPercent: 0, order: 25 },
-            { id: "tier_26", name: "Tier 26 Task Pack", invest: 2000, daily: 142.9, validity: 60, discountPercent: 0, order: 26 },
-            { id: "tier_27", name: "Tier 27 Task Pack", invest: 2500, daily: 178.6, validity: 60, discountPercent: 0, order: 27 },
-            { id: "tier_28", name: "Tier 28 Task Pack", invest: 3000, daily: 214.3, validity: 60, discountPercent: 0, order: 28 },
-            { id: "tier_29", name: "Tier 29 Task Pack", invest: 4000, daily: 285.8, validity: 60, discountPercent: 0, order: 29 },
-            { id: "tier_30", name: "Tier 30 Task Pack", invest: 5000, daily: 357.2, validity: 60, discountPercent: 0, order: 30 },
-            { id: "tier_31", name: "Tier 31 Task Pack", invest: 7000, daily: 500.1, validity: 60, discountPercent: 0, order: 31 },
-            { id: "tier_32", name: "Tier 32 Task Pack", invest: 9000, daily: 642.9, validity: 60, discountPercent: 0, order: 32 }
-        ];
+        function getTodayDateString() {
+            const d = new Date(getExactTime());
+            return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        }
 
-        // --- FIREBASE SYNC: PACKAGES & WITHDRAW METHODS ---
+        // --- Dynamic Milestones & Spin Settings Realtime Listeners ---
         function initFirebaseDynamicConfigs() {
-            // Listen to packages
+            // Packages sync
             db.ref('packages').on('value', snapshot => {
                 if (!snapshot.exists()) {
-                    // Seed initial 32 packages into Firebase once
+                    // Seed initial default packages
+                    const default32Plans = [
+                        { id: "tier_1", name: "Tier 1 Task Pack", invest: 20, daily: 2.1, validity: 60, discountPercent: 0, order: 1 },
+                        { id: "tier_2", name: "Tier 2 Task Pack", invest: 50, daily: 4.1, validity: 60, discountPercent: 0, order: 2 },
+                        { id: "tier_3", name: "Tier 3 Task Pack", invest: 70, daily: 5.9, validity: 60, discountPercent: 0, order: 3 },
+                        { id: "tier_4", name: "Tier 4 Task Pack", invest: 100, daily: 7.7, validity: 60, discountPercent: 0, order: 4 },
+                        { id: "tier_5", name: "Tier 5 Task Pack", invest: 130, daily: 10.1, validity: 60, discountPercent: 0, order: 5 },
+                        { id: "tier_6", name: "Tier 6 Task Pack", invest: 150, daily: 11.1, validity: 60, discountPercent: 0, order: 6 },
+                        { id: "tier_15", name: "Tier 15 Task Pack", invest: 500, daily: 35.7, validity: 60, discountPercent: 0, order: 15 }
+                    ];
                     const seedData = {};
                     default32Plans.forEach(p => { seedData[p.id] = p; });
                     db.ref('packages').set(seedData);
@@ -1400,7 +1374,7 @@
                 }
             });
 
-            // Listen to withdrawal methods
+            // Withdrawal methods sync
             db.ref('withdrawalMethods').on('value', snapshot => {
                 if (!snapshot.exists()) {
                     db.ref('withdrawalMethods').set({
@@ -1429,6 +1403,51 @@
                             select.innerHTML = '<option value="Easypaisa">Easypaisa</option><option value="Jazzcash">Jazzcash</option>';
                         }
                     }
+                }
+            });
+
+            // Milestones Sync (Can be Added, Edited, Deleted from Firebase)
+            db.ref('milestones').on('value', snapshot => {
+                if (!snapshot.exists()) {
+                    const defaultMilestones = {
+                        "ms_5": { target: 5, reward: 30, title: "5 Active Members", order: 1 },
+                        "ms_15": { target: 15, reward: 70, title: "15 Active Members", order: 2 },
+                        "ms_35": { target: 35, reward: 240, title: "35 Active Members", order: 3 },
+                        "ms_50": { target: 50, reward: 300, title: "50 Active Members", order: 4 },
+                        "ms_100": { target: 100, reward: 1000, title: "100 Active Members (VIP)", order: 5 }
+                    };
+                    db.ref('milestones').set(defaultMilestones);
+                } else {
+                    const data = snapshot.val();
+                    dynamicMilestones = Object.keys(data).map(key => ({
+                        id: key,
+                        target: parseInt(data[key].target || 0),
+                        reward: parseFloat(data[key].reward || 0),
+                        title: data[key].title || `${data[key].target} Active Members`,
+                        order: data[key].order || 999
+                    })).sort((a, b) => a.order !== b.order ? a.order - b.order : a.target - b.target);
+
+                    if (currentUserProfile) {
+                        updateMilestonesUI(currentUserProfile);
+                    }
+                }
+            });
+
+            // Spin Settings Sync (Cost, Prizes, Chances % from Firebase)
+            db.ref('spinSettings').on('value', snapshot => {
+                if (!snapshot.exists()) {
+                    db.ref('spinSettings').set(dynamicSpinSettings);
+                } else {
+                    const val = snapshot.val();
+                    if (val.extraSpinCost !== undefined) dynamicSpinSettings.extraSpinCost = parseFloat(val.extraSpinCost);
+                    if (val.minInvestToUnlock !== undefined) dynamicSpinSettings.minInvestToUnlock = parseFloat(val.minInvestToUnlock);
+                    if (val.slices && Array.isArray(val.slices)) {
+                        dynamicSpinSettings.slices = val.slices;
+                    }
+                    const costLabel = document.getElementById('spin-cost-label');
+                    if (costLabel) costLabel.innerText = `Rs. ${dynamicSpinSettings.extraSpinCost}`;
+                    drawWheel();
+                    if (currentUserProfile) updateSpinLockUI(currentUserProfile);
                 }
             });
         }
@@ -1487,7 +1506,7 @@
                 showSection('home', document.querySelector('.sidebar a'));
                 loadUserData();
                 startSmartLiveTicker();
-                initSpinWheel();
+                drawWheel();
             } else {
                 currentUser = null;
                 currentUserProfile = null;
@@ -1554,10 +1573,9 @@
                     const prevInvested = currentData.totalInvested || 0;
                     currentData.totalInvested = prevInvested + finalPrice;
 
-                    // Automatically unlock Lucky Spin when total investment reaches Rs. 500 for the first time
-                    if (currentData.totalInvested >= 500 && !currentData.spinUnlocked) {
+                    // Automatically unlock Lucky Spin when total investment reaches Rs. 500
+                    if (currentData.totalInvested >= (dynamicSpinSettings.minInvestToUnlock || 500)) {
                         currentData.spinUnlocked = true;
-                        currentData.spinsAvailable = (currentData.spinsAvailable || 0) + 1; // 1 free spin upon unlock
                     }
 
                     return currentData;
@@ -1590,13 +1608,11 @@
                             showNotification("Package activated successfully!");
                             handleMultiTierCommission(finalPrice);
                             
+                            // Increase active referrals counter for referrer if it's user's first activation
                             if (isFirstActivation && currentUserProfile && currentUserProfile.referredBy && currentUserProfile.referredBy !== 'none') {
                                 db.ref('users/' + currentUserProfile.referredBy).transaction(refUser => {
                                     if (refUser) {
                                         refUser.activeReferralsCount = (refUser.activeReferralsCount || 0) + 1;
-                                        if (refUser.spinUnlocked) {
-                                            refUser.spinsAvailable = (refUser.spinsAvailable || 0) + 1;
-                                        }
                                     }
                                     return refUser;
                                 });
@@ -1695,9 +1711,30 @@
                     updateWelcomeBonusUI(data);
                     updateMilestonesUI(data);
                     updateSpinLockUI(data);
+                    updateUserCustomCommissionUI(data);
                 }
             });
             loadActivePackagesCount();
+        }
+
+        // --- User Specific Commission Display UI ---
+        function updateUserCustomCommissionUI(userData) {
+            const l1 = userData.customCommissionL1 !== undefined ? parseFloat(userData.customCommissionL1) : 8;
+            const l2 = userData.customCommissionL2 !== undefined ? parseFloat(userData.customCommissionL2) : 3;
+            const l3 = userData.customCommissionL3 !== undefined ? parseFloat(userData.customCommissionL3) : 1;
+
+            const desc = document.getElementById('affiliate-commission-desc');
+            if (desc) {
+                desc.innerHTML = `Receive <strong>Level 1: ${l1}%</strong>, <strong>Level 2: ${l2}%</strong>, and <strong>Level 3: ${l3}%</strong> lifetime commissions!`;
+            }
+
+            const btn1 = document.getElementById('tab-btn-l1');
+            const btn2 = document.getElementById('tab-btn-l2');
+            const btn3 = document.getElementById('tab-btn-l3');
+
+            if (btn1) btn1.innerText = `Level 1 (${l1}%)`;
+            if (btn2) btn2.innerText = `Level 2 (${l2}%)`;
+            if (btn3) btn3.innerText = `Level 3 (${l3}%)`;
         }
 
         // --- Locked Welcome Bonus (Rs. 5,000 Bonus / Rs. 15,000 Investment) ---
@@ -1776,98 +1813,130 @@
             });
         }
 
-        // --- Lucky Spin Lock UI Handling ---
+        // --- Lucky Spin: Clean UI when Unlocked & Daily Free/Paid Management ---
         function updateSpinLockUI(data) {
             const invested = data.totalInvested || 0;
-            const isUnlocked = invested >= 500;
-            const spins = isUnlocked ? (data.spinsAvailable || 0) : 0;
-
-            const spinsCountEl = document.getElementById('user-spins-count');
-            if (spinsCountEl) spinsCountEl.innerText = spins;
+            const minRequired = dynamicSpinSettings.minInvestToUnlock || 500;
+            const isUnlocked = invested >= minRequired;
+            const todayStr = getTodayDateString();
+            const hasDailyFree = data.lastDailyFreeSpinDate !== todayStr;
 
             const card = document.getElementById('spin-lock-status-card');
-            const badgeLabel = document.getElementById('spin-badge-label');
-            const lockBadge = document.getElementById('spin-lock-badge');
-            const desc = document.getElementById('spin-lock-desc');
-            const progressTxt = document.getElementById('spin-invest-progress-txt');
-            const progressFill = document.getElementById('spin-invest-progress-fill');
             const spinBtn = document.getElementById('btn-spin-now');
-
-            const pct = Math.min(100, Math.floor((invested / 500) * 100));
+            const dailyStatusEl = document.getElementById('user-daily-spin-status');
 
             if (isUnlocked) {
-                if (card) { card.className = 'spin-status-box unlocked'; }
-                if (badgeLabel) { badgeLabel.innerHTML = "<i class='bx bx-check-circle'></i> Spin Status: Unlocked"; badgeLabel.style.color = "#047857"; }
-                if (lockBadge) { lockBadge.innerText = "Active"; lockBadge.style.background = "#dcfce7"; lockBadge.style.color = "#047857"; }
-                if (desc) { desc.innerHTML = "🎉 Congratulations! You have invested Rs. 500+ and unlocked the Lucky Wheel. Spin to win prizes!"; }
-                if (progressTxt) { progressTxt.innerText = `Rs. ${invested.toLocaleString()} / Rs. 500 (Unlocked)`; }
-                if (progressFill) { progressFill.style.width = '100%'; progressFill.style.background = '#10b981'; }
+                // HIDE the entire lock box completely so page is 100% clean
+                if (card) card.style.display = 'none';
 
-                if (spinBtn && !isSpinning) {
-                    if (spins > 0) {
+                if (hasDailyFree) {
+                    if (dailyStatusEl) {
+                        dailyStatusEl.innerText = "1 Available (Free)";
+                        dailyStatusEl.style.color = "var(--accent)";
+                    }
+                    if (spinBtn && !isSpinning) {
                         spinBtn.disabled = false;
-                        spinBtn.innerText = "SPIN NOW";
-                    } else {
-                        spinBtn.disabled = true;
-                        spinBtn.innerText = "NO SPINS LEFT (Invite Active Members)";
+                        spinBtn.innerText = "SPIN NOW (FREE)";
+                        spinBtn.style.background = "linear-gradient(135deg, #059669, #047857)";
+                    }
+                } else {
+                    const cost = dynamicSpinSettings.extraSpinCost || 20;
+                    if (dailyStatusEl) {
+                        dailyStatusEl.innerText = "Used Today (Next free tomorrow)";
+                        dailyStatusEl.style.color = "var(--text-muted)";
+                    }
+                    if (spinBtn && !isSpinning) {
+                        spinBtn.disabled = false;
+                        spinBtn.innerText = `SPIN (Rs. ${cost})`;
+                        spinBtn.style.background = "linear-gradient(135deg, var(--primary), var(--primary-hover))";
                     }
                 }
             } else {
-                if (card) { card.className = 'spin-status-box locked'; }
+                // Show locked card and progress if not unlocked
+                if (card) {
+                    card.style.display = 'flex';
+                    card.className = 'spin-status-box locked';
+                }
+                const badgeLabel = document.getElementById('spin-badge-label');
+                const lockBadge = document.getElementById('spin-lock-badge');
+                const desc = document.getElementById('spin-lock-desc');
+                const progressTxt = document.getElementById('spin-invest-progress-txt');
+                const progressFill = document.getElementById('spin-invest-progress-fill');
+
                 if (badgeLabel) { badgeLabel.innerHTML = "<i class='bx bx-lock-alt'></i> Spin Status: Locked"; badgeLabel.style.color = "#b91c1c"; }
-                if (lockBadge) { lockBadge.innerText = "Locked"; lockBadge.style.background = "#fee2e2"; lockBadge.style.color = "#b91c1c"; }
-                if (desc) { desc.innerHTML = "🔒 <strong>Lucky Spin is Locked!</strong> To unlock the lucky wheel, you must make a minimum total investment of <strong>Rs. 500</strong> in work packages. Daily free spins are not available without unlocking."; }
-                if (progressTxt) { progressTxt.innerText = `Rs. ${invested.toLocaleString()} / Rs. 500`; }
+                if (lockBadge) { lockBadge.innerText = `Requires Rs. ${minRequired}`; }
+                if (desc) { desc.innerHTML = `Lucky Spin is locked. You need to invest at least <strong>Rs. ${minRequired}</strong> in work packages to unlock the Lucky Wheel.`; }
+                if (progressTxt) { progressTxt.innerText = `Rs. ${invested.toLocaleString()} / Rs. ${minRequired}`; }
+                const pct = Math.min(100, Math.floor((invested / minRequired) * 100));
                 if (progressFill) { progressFill.style.width = `${pct}%`; progressFill.style.background = 'linear-gradient(90deg, #f59e0b, #ef4444)'; }
+
+                if (dailyStatusEl) {
+                    dailyStatusEl.innerText = "Locked";
+                    dailyStatusEl.style.color = "var(--danger)";
+                }
 
                 if (spinBtn && !isSpinning) {
                     spinBtn.disabled = true;
-                    spinBtn.innerText = "LOCKED (Invest Rs. 500 to Unlock)";
+                    spinBtn.innerText = `LOCKED (Invest Rs. ${minRequired})`;
+                    spinBtn.style.background = "#cbd5e1";
                 }
             }
         }
 
-        // --- Team Milestone Rewards Logic ---
+        // --- Dynamic Team Milestone Rewards Render & Claim ---
         function updateMilestonesUI(data) {
+            const container = document.getElementById('dynamic-milestones-list');
+            if (!container) return;
+
+            if (dynamicMilestones.length === 0) {
+                container.innerHTML = '<p style="color:var(--text-muted); font-size:13px;">No active milestone rewards available.</p>';
+                return;
+            }
+
             const activeCount = data.activeReferralsCount || 0;
             const claimed = data.milestonesClaimed || {};
 
-            const updateButton = (id, target, reward) => {
-                const btn = document.getElementById(id);
-                if (!btn) return;
-
-                if (claimed['m' + target]) {
-                    btn.className = 'milestone-badge claimed';
-                    btn.innerText = 'Claimed ✓';
-                    btn.disabled = true;
-                } else if (activeCount >= target) {
-                    btn.className = 'milestone-badge claimable';
-                    btn.innerText = `Claim Rs. ${reward}`;
-                    btn.disabled = false;
+            let html = '';
+            dynamicMilestones.forEach(ms => {
+                const isClaimed = !!claimed[ms.id];
+                const isEligible = activeCount >= ms.target;
+                
+                let btnHtml = '';
+                if (isClaimed) {
+                    btnHtml = `<button class="milestone-badge claimed" disabled>Claimed ✓</button>`;
+                } else if (isEligible) {
+                    btnHtml = `<button class="milestone-badge claimable" onclick="claimDynamicMilestone('${ms.id}')">Claim Rs. ${ms.reward}</button>`;
                 } else {
-                    btn.className = 'milestone-badge locked';
-                    btn.innerText = `${activeCount} / ${target} Active`;
-                    btn.disabled = true;
+                    btnHtml = `<button class="milestone-badge locked" disabled>${activeCount} / ${ms.target} Active</button>`;
                 }
-            };
 
-            updateButton('ms-btn-5', 5, 30);
-            updateButton('ms-btn-15', 15, 70);
-            updateButton('ms-btn-35', 35, 240);
-            updateButton('ms-btn-50', 50, 300);
-            updateButton('ms-btn-100', 100, 1000);
+                html += `
+                    <div class="milestone-item">
+                        <div>
+                            <strong style="font-size:13.5px; color:var(--text-main);">${ms.title}</strong>
+                            <div style="font-size:12px; color:var(--accent); font-weight:700;">Bonus: Rs. ${ms.reward.toLocaleString()}</div>
+                        </div>
+                        ${btnHtml}
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
         }
 
-        function claimMilestoneReward(targetCount, rewardAmount) {
+        function claimDynamicMilestone(milestoneId) {
             if (!currentUserProfile) return;
+            const ms = dynamicMilestones.find(m => m.id === milestoneId);
+            if (!ms) return;
+
             const activeCount = currentUserProfile.activeReferralsCount || 0;
             const claimed = currentUserProfile.milestonesClaimed || {};
 
-            if (activeCount < targetCount) {
-                showNotification(`Target incomplete. Needs ${targetCount} active members.`, "danger");
+            if (activeCount < ms.target) {
+                showNotification(`Target incomplete. Needs ${ms.target} active members.`, "danger");
                 return;
             }
-            if (claimed['m' + targetCount]) {
+            if (claimed[ms.id]) {
                 showNotification("Reward already claimed.", "danger");
                 return;
             }
@@ -1875,52 +1944,42 @@
             db.ref('users/' + currentUser.uid).transaction(curr => {
                 if (curr) {
                     curr.milestonesClaimed = curr.milestonesClaimed || {};
-                    if (!curr.milestonesClaimed['m' + targetCount]) {
-                        curr.milestonesClaimed['m' + targetCount] = true;
-                        curr.balance = (curr.balance || 0) + rewardAmount;
+                    if (!curr.milestonesClaimed[ms.id]) {
+                        curr.milestonesClaimed[ms.id] = true;
+                        curr.balance = (curr.balance || 0) + ms.reward;
                     }
                 }
                 return curr;
             }, (err, comm) => {
                 if (comm) {
-                    showNotification(`Milestone unlocked! Rs. ${rewardAmount} credited to balance!`);
+                    showNotification(`Milestone unlocked! Rs. ${ms.reward} credited to balance!`);
                 } else {
                     showNotification("Failed to claim milestone.", "danger");
                 }
             });
         }
 
-        // --- Lucky Spin Wheel Definition ---
-        const wheelSlices = [
-            { text: "Better Luck", color: "#64748b", value: 0 },
-            { text: "Rs. 5", color: "#10b981", value: 5 },
-            { text: "Rs. 10", color: "#4f46e5", value: 10 },
-            { text: "Rs. 300", color: "#d97706", value: 300 },
-            { text: "Rs. 500", color: "#8b5cf6", value: 500 },
-            { text: "Rs. 100", color: "#059669", value: 100 },
-            { text: "Rs. 50", color: "#dc2626", value: 50 },
-            { text: "Better Luck", color: "#475569", value: 0 }
-        ];
-
+        // --- Lucky Spin Wheel Dynamic Rendering & Percentage Selection ---
         let currentRotationAngle = 0;
         let isSpinning = false;
-
-        function initSpinWheel() { drawWheel(); }
 
         function drawWheel() {
             const canvas = document.getElementById('spinCanvas');
             if (!canvas) return;
             const ctx = canvas.getContext('2d');
-            const numSlices = wheelSlices.length;
+            const slices = dynamicSpinSettings.slices || [];
+            if (slices.length === 0) return;
+
+            const numSlices = slices.length;
             const arcSize = (2 * Math.PI) / numSlices;
             const radius = canvas.width / 2;
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            wheelSlices.forEach((slice, i) => {
+            slices.forEach((slice, i) => {
                 const angle = i * arcSize;
                 ctx.beginPath();
-                ctx.fillStyle = slice.color;
+                ctx.fillStyle = slice.color || '#4f46e5';
                 ctx.moveTo(radius, radius);
                 ctx.arc(radius, radius, radius - 8, angle, angle + arcSize);
                 ctx.lineTo(radius, radius);
@@ -1953,67 +2012,103 @@
             ctx.fillText('SPIN', radius, radius + 4);
         }
 
+        function getWeightedRandomSliceIndex(slices) {
+            let totalWeight = slices.reduce((acc, s) => acc + (parseFloat(s.chance) || 0), 0);
+            if (totalWeight <= 0) totalWeight = slices.length;
+
+            let randomVal = Math.random() * totalWeight;
+            for (let i = 0; i < slices.length; i++) {
+                const chance = parseFloat(slices[i].chance) || 0;
+                if (randomVal <= chance) {
+                    return i;
+                }
+                randomVal -= chance;
+            }
+            return 0;
+        }
+
         function spinWheel() {
             if (isSpinning) return;
             if (!currentUserProfile) return;
 
+            const minRequired = dynamicSpinSettings.minInvestToUnlock || 500;
             const invested = currentUserProfile.totalInvested || 0;
-            if (invested < 500) {
-                showNotification("Lucky Spin is locked! Minimum Rs. 500 investment in work packages required.", "danger");
+            if (invested < minRequired) {
+                showNotification(`Lucky Spin is locked! Minimum Rs. ${minRequired} investment required.`, "danger");
                 return;
             }
 
-            const spins = currentUserProfile.spinsAvailable || 0;
-            if (spins <= 0) {
-                showNotification("No spins available! Invite active members to earn more spins.", "danger");
+            const todayStr = getTodayDateString();
+            const hasDailyFree = currentUserProfile.lastDailyFreeSpinDate !== todayStr;
+            const cost = dynamicSpinSettings.extraSpinCost || 20;
+
+            // If not free, verify user has balance
+            if (!hasDailyFree && (currentUserProfile.balance || 0) < cost) {
+                showNotification(`Insufficient balance! Extra spin requires Rs. ${cost}. Please deposit first.`, "danger");
                 return;
             }
+
+            const slices = dynamicSpinSettings.slices || [];
+            if (slices.length === 0) {
+                showNotification("Spin prizes not configured yet.", "danger");
+                return;
+            }
+
+            const chosenIndex = getWeightedRandomSliceIndex(slices);
+            const wonItem = slices[chosenIndex];
 
             isSpinning = true;
             const spinBtn = document.getElementById('btn-spin-now');
             spinBtn.disabled = true;
+            spinBtn.innerText = "Spinning...";
 
-            const rand = Math.random();
-            let chosenIndex;
-            if (rand < 0.65) {
-                chosenIndex = Math.random() > 0.5 ? 0 : 7;
-            } else {
-                chosenIndex = 1;
-            }
-
-            const sliceAngle = 360 / wheelSlices.length;
-            const targetSliceCenter = (chosenIndex * sliceAngle) + (sliceAngle / 2);
-            const stopAngle = (360 - targetSliceCenter + 270) % 360;
-            const extraRounds = 360 * 5;
-            currentRotationAngle += extraRounds + stopAngle - (currentRotationAngle % 360);
-
-            const canvas = document.getElementById('spinCanvas');
-            canvas.style.transform = `rotate(${currentRotationAngle}deg)`;
-
-            setTimeout(() => {
-                isSpinning = false;
-                const wonItem = wheelSlices[chosenIndex];
-
-                db.ref('users/' + currentUser.uid).transaction(user => {
-                    if (user) {
-                        user.spinsAvailable = Math.max(0, (user.spinsAvailable || 0) - 1);
-                        if (wonItem.value > 0) {
-                            user.balance = (user.balance || 0) + wonItem.value;
-                        }
+            // Deduct cost upfront in transaction before animation
+            db.ref('users/' + currentUser.uid).transaction(user => {
+                if (!user) return user;
+                if (hasDailyFree) {
+                    user.lastDailyFreeSpinDate = todayStr;
+                } else {
+                    if ((user.balance || 0) < cost) {
+                        return; // abort
                     }
-                    return user;
-                }).then(() => {
+                    user.balance = (user.balance || 0) - cost;
+                }
+                return user;
+            }, (error, committed) => {
+                if (error || !committed) {
+                    isSpinning = false;
+                    updateSpinLockUI(currentUserProfile);
+                    showNotification(`Insufficient balance for extra spin (Requires Rs. ${cost}).`, "danger");
+                    return;
+                }
+
+                // Execute smooth wheel animation
+                const sliceAngle = 360 / slices.length;
+                const targetSliceCenter = (chosenIndex * sliceAngle) + (sliceAngle / 2);
+                const stopAngle = (360 - targetSliceCenter + 270) % 360;
+                const extraRounds = 360 * 5;
+                currentRotationAngle += extraRounds + stopAngle - (currentRotationAngle % 360);
+
+                const canvas = document.getElementById('spinCanvas');
+                canvas.style.transform = `rotate(${currentRotationAngle}deg)`;
+
+                setTimeout(() => {
+                    isSpinning = false;
+                    
                     if (wonItem.value > 0) {
-                        showNotification(`🎉 Congratulations! You won Rs. ${wonItem.value}!`, 'success');
+                        db.ref('users/' + currentUser.uid + '/balance').transaction(b => (b || 0) + wonItem.value).then(() => {
+                            showNotification(`🎉 Congratulations! You won Rs. ${wonItem.value}!`, 'success');
+                            updateSpinLockUI(currentUserProfile || {});
+                        });
                     } else {
-                        showNotification("Better luck next time! Try again with your next spin.", 'danger');
+                        showNotification("Better luck next time! Keep spinning to win.", 'danger');
+                        updateSpinLockUI(currentUserProfile || {});
                     }
-                    updateSpinLockUI(currentUserProfile || {});
-                });
-            }, 4600);
+                }, 4600);
+            });
         }
 
-        // --- Multi-Tier Referral Sign Up ---
+        // --- Multi-Tier Referral Sign Up with Device Anti-Fraud Protection ---
         function signupUser() {
             const btn = document.getElementById('btn-signup-submit');
             const email = document.getElementById('signup-email').value.trim();
@@ -2046,6 +2141,7 @@
                 let newUserData = { 
                     email: email, 
                     number: number, 
+                    deviceId: currentDeviceFingerprint, // Saved to prevent same-device referral abuse
                     signupDate: new Date().toISOString(), 
                     balance: 0, 
                     totalInvested: 0,
@@ -2055,8 +2151,8 @@
                     referrerL2: 'none',
                     referrerL3: 'none',
                     activeReferralsCount: 0,
-                    spinsAvailable: 0,
                     spinUnlocked: false,
+                    lastDailyFreeSpinDate: '',
                     welcomeBonusClaimed: false,
                     milestonesClaimed: {}
                 };
@@ -2129,43 +2225,79 @@
             });
         }
 
-        // --- Multi-Tier Commission ---
+        // --- Multi-Tier Commission with Device-Level Anti-Self Referral & Custom Rates ---
         function handleMultiTierCommission(investmentAmount) {
             const userRef = db.ref('users/' + currentUser.uid);
             userRef.once('value', userSnap => {
                 const userData = userSnap.val();
                 if (!userData) return;
 
+                const buyerDeviceId = userData.deviceId || currentDeviceFingerprint;
+
+                // Level 1 Commission
                 if (userData.referredBy && userData.referredBy !== 'none') {
-                    const commL1 = investmentAmount * 0.08;
-                    db.ref('users/' + userData.referredBy).transaction(curr => {
-                        if (curr) {
-                            curr.balance = (curr.balance || 0) + commL1;
-                            curr.referralEarnings = (curr.referralEarnings || 0) + commL1;
+                    db.ref('users/' + userData.referredBy).once('value', l1Snap => {
+                        const l1User = l1Snap.val();
+                        if (l1User) {
+                            // Check device anti-fraud
+                            if (l1User.deviceId && l1User.deviceId === buyerDeviceId) {
+                                console.warn("Self-referral from same device blocked for commission.");
+                            } else {
+                                const rate = (l1User.customCommissionL1 !== undefined ? parseFloat(l1User.customCommissionL1) : 8) / 100;
+                                const commL1 = investmentAmount * rate;
+                                db.ref('users/' + userData.referredBy).transaction(curr => {
+                                    if (curr) {
+                                        curr.balance = (curr.balance || 0) + commL1;
+                                        curr.referralEarnings = (curr.referralEarnings || 0) + commL1;
+                                    }
+                                    return curr;
+                                });
+                            }
                         }
-                        return curr;
                     });
                 }
 
+                // Level 2 Commission
                 if (userData.referrerL2 && userData.referrerL2 !== 'none') {
-                    const commL2 = investmentAmount * 0.03;
-                    db.ref('users/' + userData.referrerL2).transaction(curr => {
-                        if (curr) {
-                            curr.balance = (curr.balance || 0) + commL2;
-                            curr.referralEarnings = (curr.referralEarnings || 0) + commL2;
+                    db.ref('users/' + userData.referrerL2).once('value', l2Snap => {
+                        const l2User = l2Snap.val();
+                        if (l2User) {
+                            if (l2User.deviceId && l2User.deviceId === buyerDeviceId) {
+                                console.warn("Self-referral from same device blocked for commission L2.");
+                            } else {
+                                const rate = (l2User.customCommissionL2 !== undefined ? parseFloat(l2User.customCommissionL2) : 3) / 100;
+                                const commL2 = investmentAmount * rate;
+                                db.ref('users/' + userData.referrerL2).transaction(curr => {
+                                    if (curr) {
+                                        curr.balance = (curr.balance || 0) + commL2;
+                                        curr.referralEarnings = (curr.referralEarnings || 0) + commL2;
+                                    }
+                                    return curr;
+                                });
+                            }
                         }
-                        return curr;
                     });
                 }
 
+                // Level 3 Commission
                 if (userData.referrerL3 && userData.referrerL3 !== 'none') {
-                    const commL3 = investmentAmount * 0.01;
-                    db.ref('users/' + userData.referrerL3).transaction(curr => {
-                        if (curr) {
-                            curr.balance = (curr.balance || 0) + commL3;
-                            curr.referralEarnings = (curr.referralEarnings || 0) + commL3;
+                    db.ref('users/' + userData.referrerL3).once('value', l3Snap => {
+                        const l3User = l3Snap.val();
+                        if (l3User) {
+                            if (l3User.deviceId && l3User.deviceId === buyerDeviceId) {
+                                console.warn("Self-referral from same device blocked for commission L3.");
+                            } else {
+                                const rate = (l3User.customCommissionL3 !== undefined ? parseFloat(l3User.customCommissionL3) : 1) / 100;
+                                const commL3 = investmentAmount * rate;
+                                db.ref('users/' + userData.referrerL3).transaction(curr => {
+                                    if (curr) {
+                                        curr.balance = (curr.balance || 0) + commL3;
+                                        curr.referralEarnings = (curr.referralEarnings || 0) + commL3;
+                                    }
+                                    return curr;
+                                });
+                            }
                         }
-                        return curr;
                     });
                 }
             });
@@ -2272,7 +2404,7 @@
 
         function logoutUser() { auth.signOut(); }
 
-        // --- Work Packages (Render Dynamic Packages with Discounts) ---
+        // --- Work Packages ---
         function loadInvestmentPlans() {
             const container = document.getElementById('investment-plans-container');
             if (!container) return;
@@ -2880,6 +3012,7 @@
                 renderTeamLevelCards('team-tab-pane-l3', l3Data, 'Level 3');
 
                 updateMilestonesUI(userData);
+                updateUserCustomCommissionUI(userData);
             });
         }
 
