@@ -1300,25 +1300,16 @@
             ]
         };
 
-        // --- Persistent Device Fingerprint (Self-Referral Anti-Fraud) ---
-        function getDeviceFingerprint() {
-            let dId = localStorage.getItem('bv_device_fingerprint');
-            if (!dId) {
-                const nav = window.navigator;
-                const scr = window.screen;
-                const raw = (nav.userAgent || '') + (scr.colorDepth || '') + (scr.width || '') + (scr.height || '') + Math.random().toString(36);
-                let hash = 0;
-                for (let i = 0; i < raw.length; i++) {
-                    hash = ((hash << 5) - hash) + raw.charCodeAt(i);
-                    hash |= 0;
-                }
-                dId = 'DEV_' + Math.abs(hash) + '_' + Math.random().toString(36).substring(2, 9);
-                localStorage.setItem('bv_device_fingerprint', dId);
+        // --- Fast & Accurate Public IP Fetcher for IP Lock System ---
+        async function fetchUserIP() {
+            try {
+                const res = await fetch('https://api.ipify.org?format=json');
+                const data = await res.json();
+                return data.ip || '0.0.0.0';
+            } catch(e) {
+                return '0.0.0.0';
             }
-            return dId;
         }
-
-        const currentDeviceFingerprint = getDeviceFingerprint();
 
         // Server Time sync
         db.ref(".info/serverTimeOffset").on("value", function(snap) {
@@ -1339,7 +1330,6 @@
             // Packages sync
             db.ref('packages').on('value', snapshot => {
                 if (!snapshot.exists()) {
-                    // Seed initial default packages
                     const default32Plans = [
                         { id: "tier_1", name: "Tier 1 Task Pack", invest: 20, daily: 2.1, validity: 60, discountPercent: 0, order: 1 },
                         { id: "tier_2", name: "Tier 2 Task Pack", invest: 50, daily: 4.1, validity: 60, discountPercent: 0, order: 2 },
@@ -1406,7 +1396,7 @@
                 }
             });
 
-            // Milestones Sync (Can be Added, Edited, Deleted from Firebase)
+            // Milestones Sync
             db.ref('milestones').on('value', snapshot => {
                 if (!snapshot.exists()) {
                     const defaultMilestones = {
@@ -1433,7 +1423,7 @@
                 }
             });
 
-            // Spin Settings Sync (Cost, Prizes, Chances % from Firebase)
+            // Spin Settings Sync
             db.ref('spinSettings').on('value', snapshot => {
                 if (!snapshot.exists()) {
                     db.ref('spinSettings').set(dynamicSpinSettings);
@@ -1717,7 +1707,6 @@
             loadActivePackagesCount();
         }
 
-        // --- User Specific Commission Display UI ---
         function updateUserCustomCommissionUI(userData) {
             const l1 = userData.customCommissionL1 !== undefined ? parseFloat(userData.customCommissionL1) : 8;
             const l2 = userData.customCommissionL2 !== undefined ? parseFloat(userData.customCommissionL2) : 3;
@@ -1737,7 +1726,7 @@
             if (btn3) btn3.innerText = `Level 3 (${l3}%)`;
         }
 
-        // --- Locked Welcome Bonus (Rs. 5,000 Bonus / Rs. 15,000 Investment) ---
+        // --- Locked Welcome Bonus ---
         function updateWelcomeBonusUI(data) {
             const box = document.getElementById('welcome-bonus-box');
             if (data.welcomeBonusClaimed) {
@@ -1813,7 +1802,7 @@
             });
         }
 
-        // --- Lucky Spin: Clean UI when Unlocked & Daily Free/Paid Management ---
+        // --- Lucky Spin UI ---
         function updateSpinLockUI(data) {
             const invested = data.totalInvested || 0;
             const minRequired = dynamicSpinSettings.minInvestToUnlock || 500;
@@ -1826,7 +1815,6 @@
             const dailyStatusEl = document.getElementById('user-daily-spin-status');
 
             if (isUnlocked) {
-                // HIDE the entire lock box completely so page is 100% clean
                 if (card) card.style.display = 'none';
 
                 if (hasDailyFree) {
@@ -1852,7 +1840,6 @@
                     }
                 }
             } else {
-                // Show locked card and progress if not unlocked
                 if (card) {
                     card.style.display = 'flex';
                     card.className = 'spin-status-box locked';
@@ -1883,7 +1870,7 @@
             }
         }
 
-        // --- Dynamic Team Milestone Rewards Render & Claim ---
+        // --- Team Milestones ---
         function updateMilestonesUI(data) {
             const container = document.getElementById('dynamic-milestones-list');
             if (!container) return;
@@ -1959,7 +1946,7 @@
             });
         }
 
-        // --- Lucky Spin Wheel Dynamic Rendering & Percentage Selection ---
+        // --- Lucky Spin Wheel Dynamic Rendering ---
         let currentRotationAngle = 0;
         let isSpinning = false;
 
@@ -2042,7 +2029,6 @@
             const hasDailyFree = currentUserProfile.lastDailyFreeSpinDate !== todayStr;
             const cost = dynamicSpinSettings.extraSpinCost || 20;
 
-            // If not free, verify user has balance
             if (!hasDailyFree && (currentUserProfile.balance || 0) < cost) {
                 showNotification(`Insufficient balance! Extra spin requires Rs. ${cost}. Please deposit first.`, "danger");
                 return;
@@ -2062,14 +2048,13 @@
             spinBtn.disabled = true;
             spinBtn.innerText = "Spinning...";
 
-            // Deduct cost upfront in transaction before animation
             db.ref('users/' + currentUser.uid).transaction(user => {
                 if (!user) return user;
                 if (hasDailyFree) {
                     user.lastDailyFreeSpinDate = todayStr;
                 } else {
                     if ((user.balance || 0) < cost) {
-                        return; // abort
+                        return;
                     }
                     user.balance = (user.balance || 0) - cost;
                 }
@@ -2082,7 +2067,6 @@
                     return;
                 }
 
-                // Execute smooth wheel animation
                 const sliceAngle = 360 / slices.length;
                 const targetSliceCenter = (chosenIndex * sliceAngle) + (sliceAngle / 2);
                 const stopAngle = (360 - targetSliceCenter + 270) % 360;
@@ -2108,8 +2092,8 @@
             });
         }
 
-        // --- Multi-Tier Referral Sign Up with Device Anti-Fraud Protection ---
-        function signupUser() {
+        // --- Signup with IP Address Capture ---
+        async function signupUser() {
             const btn = document.getElementById('btn-signup-submit');
             const email = document.getElementById('signup-email').value.trim();
             const rawNumber = document.getElementById('signup-number').value.trim();
@@ -2134,6 +2118,8 @@
             btn.disabled = true;
             btn.innerText = "Creating Account...";
 
+            // Fetch public IP address
+            const currentIP = await fetchUserIP();
             const newReferralCode = Math.random().toString(36).substring(2, 8).toUpperCase();
             
             auth.createUserWithEmailAndPassword(`${number}@benvixa.vercel.app`, password).then(cred => {
@@ -2141,7 +2127,7 @@
                 let newUserData = { 
                     email: email, 
                     number: number, 
-                    deviceId: currentDeviceFingerprint, // Saved to prevent same-device referral abuse
+                    userIP: currentIP, // Saved for IP lock verification
                     signupDate: new Date().toISOString(), 
                     balance: 0, 
                     totalInvested: 0,
@@ -2225,23 +2211,24 @@
             });
         }
 
-        // --- Multi-Tier Commission with Device-Level Anti-Self Referral & Custom Rates ---
-        function handleMultiTierCommission(investmentAmount) {
+        // --- Multi-Tier Commission with IP Address Lock Protection ---
+        async function handleMultiTierCommission(investmentAmount) {
             const userRef = db.ref('users/' + currentUser.uid);
-            userRef.once('value', userSnap => {
+            userRef.once('value', async userSnap => {
                 const userData = userSnap.val();
                 if (!userData) return;
 
-                const buyerDeviceId = userData.deviceId || currentDeviceFingerprint;
+                // Current purchaser's IP
+                const currentPurchaserIP = userData.userIP || (await fetchUserIP());
 
                 // Level 1 Commission
                 if (userData.referredBy && userData.referredBy !== 'none') {
                     db.ref('users/' + userData.referredBy).once('value', l1Snap => {
                         const l1User = l1Snap.val();
                         if (l1User) {
-                            // Check device anti-fraud
-                            if (l1User.deviceId && l1User.deviceId === buyerDeviceId) {
-                                console.warn("Self-referral from same device blocked for commission.");
+                            // IP LOCK: Agar dono ka IP match ho jaye (same device/hotspot), commission block ho jayegi
+                            if (l1User.userIP && currentPurchaserIP && l1User.userIP !== '0.0.0.0' && l1User.userIP === currentPurchaserIP) {
+                                console.warn("Self-referral from same IP address blocked for Level 1 commission.");
                             } else {
                                 const rate = (l1User.customCommissionL1 !== undefined ? parseFloat(l1User.customCommissionL1) : 8) / 100;
                                 const commL1 = investmentAmount * rate;
@@ -2262,8 +2249,8 @@
                     db.ref('users/' + userData.referrerL2).once('value', l2Snap => {
                         const l2User = l2Snap.val();
                         if (l2User) {
-                            if (l2User.deviceId && l2User.deviceId === buyerDeviceId) {
-                                console.warn("Self-referral from same device blocked for commission L2.");
+                            if (l2User.userIP && currentPurchaserIP && l2User.userIP !== '0.0.0.0' && l2User.userIP === currentPurchaserIP) {
+                                console.warn("Self-referral from same IP blocked for Level 2 commission.");
                             } else {
                                 const rate = (l2User.customCommissionL2 !== undefined ? parseFloat(l2User.customCommissionL2) : 3) / 100;
                                 const commL2 = investmentAmount * rate;
@@ -2284,8 +2271,8 @@
                     db.ref('users/' + userData.referrerL3).once('value', l3Snap => {
                         const l3User = l3Snap.val();
                         if (l3User) {
-                            if (l3User.deviceId && l3User.deviceId === buyerDeviceId) {
-                                console.warn("Self-referral from same device blocked for commission L3.");
+                            if (l3User.userIP && currentPurchaserIP && l3User.userIP !== '0.0.0.0' && l3User.userIP === currentPurchaserIP) {
+                                console.warn("Self-referral from same IP blocked for Level 3 commission.");
                             } else {
                                 const rate = (l3User.customCommissionL3 !== undefined ? parseFloat(l3User.customCommissionL3) : 1) / 100;
                                 const commL3 = investmentAmount * rate;
@@ -2312,7 +2299,7 @@
             document.getElementById('community-modal').classList.add('hidden');
         }
 
-        // --- Multi-Identifier Robust Login ---
+        // --- Login ---
         async function loginUser() {
             const btn = document.getElementById('btn-login-submit');
             const rawInput = document.getElementById('login-number').value.trim();
@@ -3068,7 +3055,7 @@
             window.open(waUrl, '_blank');
         }
 
-        // --- English WhatsApp Status Poster Generator ---
+        // --- Poster Generator ---
         function openPosterModal() {
             if (!currentUserProfile) return;
             const canvas = document.getElementById('posterCanvas');
