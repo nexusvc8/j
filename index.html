@@ -71,28 +71,35 @@
         .mono { font-family: 'JetBrains Mono', monospace; }
         .hidden { display: none !important; }
 
-        /* Notification Toast */
+        /* Modern Responsive Card Toast */
         #notification-box {
             position: fixed;
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            padding: 12px 24px;
-            border-radius: 50px;
+            width: 90%;
+            max-width: 420px;
+            padding: 14px 16px;
+            border-radius: var(--radius-md);
             color: #fff;
-            font-size: 13.5px;
-            font-weight: 700;
+            font-size: 13px;
+            font-weight: 600;
+            line-height: 1.4;
             z-index: 99999;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.18);
-            transition: var(--transition);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.22);
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
             display: flex;
-            align-items: center;
-            gap: 8px;
-            pointer-events: none;
+            align-items: flex-start;
+            gap: 10px;
+            pointer-events: auto;
+            word-break: break-word;
         }
-        #notification-box.success { background: linear-gradient(135deg, #059669, #047857); border: 1px solid #34d399; }
-        #notification-box.danger { background: linear-gradient(135deg, #ef4444, #dc2626); border: 1px solid #f87171; }
-        #notification-box.hidden { top: -80px; opacity: 0; }
+        #notification-box.success { background: #064e3b; border-left: 5px solid #10b981; }
+        #notification-box.danger { background: #7f1d1d; border-left: 5px solid #ef4444; }
+        #notification-box.hidden { top: -120px; opacity: 0; pointer-events: none; }
+        .toast-content { flex: 1; }
+        .toast-close-btn { cursor: pointer; font-size: 18px; opacity: 0.8; margin-left: auto; flex-shrink: 0; }
+        .toast-close-btn:hover { opacity: 1; }
 
         /* Live Payout Toast */
         #live-payout-ticker {
@@ -393,19 +400,7 @@
         .locked-bonus-progress-wrap { background: #e2e8f0; border-radius: 50px; height: 9px; overflow: hidden; width: 100%; }
         .locked-bonus-progress-bar { background: linear-gradient(90deg, #f59e0b, #10b981); height: 100%; width: 0%; transition: width 0.4s ease; }
 
-        /* Spin Status Card */
-        .spin-status-box {
-            background: #f8fafc;
-            border: 1.5px dashed #cbd5e1;
-            border-radius: var(--radius-lg);
-            padding: 16px 20px;
-            margin-bottom: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            text-align: left;
-        }
-        .spin-status-box.locked { background: #fff1f2; border-color: #fda4af; }
+        
 
         /* Bank Card Deposit Design */
         .bank-card-container {
@@ -518,18 +513,61 @@
             background: var(--surface-card);
             border: 1px solid var(--border);
             border-radius: var(--radius-md);
-            padding: 12px 16px;
+            padding: 12px 14px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 10px;
             margin-bottom: 8px;
             transition: var(--transition);
+            min-width: 0;
+            overflow: hidden;
         }
         .member-card:hover { border-color: var(--primary); background: #ffffff; }
-        .member-info { display: flex; flex-direction: column; gap: 3px; }
-        .member-email { font-size: 13.5px; font-weight: 700; color: var(--text-main); }
+        .member-info { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 4px; 
+            min-width: 0; 
+            flex: 1; 
+            overflow: hidden; 
+        }
+        .member-header-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-width: 0;
+            overflow: hidden;
+        }
+        .member-email { 
+            font-size: 13px; 
+            font-weight: 700; 
+            color: var(--text-main);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            min-width: 0;
+            flex-shrink: 1;
+        }
+        .member-badge-tag {
+            flex-shrink: 0;
+            font-size: 10.5px;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 20px;
+            white-space: nowrap;
+        }
+        .member-badge-tag.active { background: #dcfce7; color: #047857; }
+        .member-badge-tag.free { background: #f1f5f9; color: #64748b; }
         .member-contact { font-size: 11.5px; color: var(--text-muted); }
-        .member-date { font-size: 11px; font-weight: 600; color: var(--text-dim); }
+        .member-date { 
+            font-size: 11px; 
+            font-weight: 600; 
+            color: var(--text-dim); 
+            flex-shrink: 0; 
+            white-space: nowrap; 
+            text-align: right;
+        }
 
         /* Clean Minimal History Cards */
         .history-cards-container {
@@ -618,23 +656,7 @@
         .receipt-label { color: var(--text-muted); font-weight: 600; }
         .receipt-val { font-weight: 700; color: var(--text-main); }
 
-        /* Spin Wheel Widget */
-        .spin-wheel-container { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px 0; }
-        .wheel-wrapper { position: relative; width: 300px; height: 300px; margin: 20px auto; }
-        #spinCanvas { border-radius: 50%; box-shadow: 0 8px 24px rgba(0,0,0,0.15); transition: transform 4.5s cubic-bezier(0.17, 0.67, 0.12, 0.99); }
-        .wheel-pointer {
-            position: absolute;
-            top: -12px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 14px solid transparent;
-            border-right: 14px solid transparent;
-            border-top: 26px solid #ef4444;
-            z-index: 10;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
-        }
+        
 
         /* Packages & Task Cards */
         .investment-plans, .task-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px; }
@@ -799,16 +821,15 @@
         <nav class="sidebar hidden" id="main-sidebar">
             <div class="menu-bar">
                 <ul class="menu-links">
-                    <li><a href="#" class="active" onclick="showSection('home', this)"><i class='bx bx-grid-alt icon'></i><span>Dashboard</span></a></li>
-                    <li><a href="#" onclick="showSection('deposit', this)"><i class='bx bx-wallet icon'></i><span>Deposit</span></a></li>
-                    <li><a href="#" onclick="showSection('invest', this)"><i class='bx bx-layer icon'></i><span>Packages</span></a></li>
-                    <li><a href="#" onclick="showSection('task', this)"><i class='bx bx-check-shield icon'></i><span>Daily Tasks</span></a></li>
-                    <li><a href="#" onclick="showSection('spin', this)"><i class='bx bx-gift icon'></i><span>Lucky Spin</span></a></li>
-                    <li><a href="#" onclick="showSection('send', this)"><i class='bx bx-money-withdraw icon'></i><span>Withdraw</span></a></li>
-                    <li><a href="#" onclick="showSection('history', this)"><i class='bx bx-receipt icon'></i><span>History</span></a></li>
-                    <li><a href="#" onclick="showSection('team', this)"><i class='bx bx-user-plus icon'></i><span>Invite</span></a></li>
-                    <li><a href="#" onclick="showSection('profile', this)"><i class='bx bx-user icon'></i><span>Profile</span></a></li>
-                    <li><a href="#" onclick="logoutUser()"><i class='bx bx-log-out icon'></i><span>Sign Out</span></a></li>
+                    <li><a href="javascript:void(0)" class="active" onclick="showSection('home', this)"><i class='bx bx-grid-alt icon'></i><span>Dashboard</span></a></li>
+                    <li><a href="javascript:void(0)" onclick="showSection('deposit', this)"><i class='bx bx-wallet icon'></i><span>Deposit</span></a></li>
+                    <li><a href="javascript:void(0)" onclick="showSection('invest', this)"><i class='bx bx-layer icon'></i><span>Packages</span></a></li>
+                    <li><a href="javascript:void(0)" onclick="showSection('task', this)"><i class='bx bx-check-shield icon'></i><span>Daily Tasks</span></a></li>
+                    <li><a href="javascript:void(0)" onclick="showSection('send', this)"><i class='bx bx-money-withdraw icon'></i><span>Withdraw</span></a></li>
+                    <li><a href="javascript:void(0)" onclick="showSection('history', this)"><i class='bx bx-receipt icon'></i><span>History</span></a></li>
+                    <li><a href="javascript:void(0)" onclick="showSection('team', this)"><i class='bx bx-user-plus icon'></i><span>Invite</span></a></li>
+                    <li><a href="javascript:void(0)" onclick="showSection('profile', this)"><i class='bx bx-user icon'></i><span>Profile</span></a></li>
+                    <li><a href="javascript:void(0)" onclick="logoutUser()"><i class='bx bx-log-out icon'></i><span>Sign Out</span></a></li>
                 </ul>
             </div>
         </nav>
@@ -914,51 +935,7 @@
                     </div>
                 </div>
 
-                <!-- Lucky Spin Wheel Section -->
-                <div id="spin-content" class="content-section hidden">
-                    <div class="section-header" style="text-align: center;">
-                        <h2>🎡 Lucky Spin & Win</h2>
-                        <p>Unlock access by investing min Rs. 500. Get 1 Daily Free Spin (resets every 24h) or spin for <span id="spin-cost-label">Rs. 20</span>!</p>
-                    </div>
-
-                    <!-- Lock Box (Only shows when < Rs. 500 invested) -->
-                    <div id="spin-lock-status-card" class="spin-status-box locked">
-                        <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <span id="spin-badge-label" style="font-size:12px; font-weight:800; text-transform:uppercase; color:#b91c1c;">
-                                <i class='bx bx-lock-alt'></i> Spin Status: Locked
-                            </span>
-                            <span id="spin-lock-badge" style="font-size:11.5px; background:#fee2e2; color:#b91c1c; padding:3px 10px; border-radius:20px; font-weight:800;">
-                                Requires Rs. 500
-                            </span>
-                        </div>
-                        <p id="spin-lock-desc" style="font-size:13px; color:#475569; margin: 2px 0;">
-                            Lucky Spin is currently locked. You need to invest at least <strong>Rs. 500</strong> in work packages to unlock the Lucky Wheel.
-                        </p>
-                        <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:700; color:#334155;">
-                            <span>Investment Progress</span>
-                            <span id="spin-invest-progress-txt" class="mono">Rs. 0 / Rs. 500</span>
-                        </div>
-                        <div class="locked-bonus-progress-wrap">
-                            <div class="locked-bonus-progress-bar" id="spin-invest-progress-fill"></div>
-                        </div>
-                    </div>
-
-                    <!-- Clean Wheel Container -->
-                    <div class="spin-wheel-container">
-                        <div style="font-size: 14px; font-weight: 800; margin-bottom: 6px; color: var(--text-main);">
-                            Daily Free Spin: <span id="user-daily-spin-status" class="mono" style="color: var(--accent); font-weight: 800;">1 Available</span>
-                        </div>
-
-                        <div class="wheel-wrapper">
-                            <div class="wheel-pointer"></div>
-                            <canvas id="spinCanvas" width="300" height="300"></canvas>
-                        </div>
-
-                        <button class="btn-primary" id="btn-spin-now" onclick="spinWheel()" style="max-width: 280px; font-size: 15px; padding: 13px; margin-top: 10px;">
-                            SPIN NOW
-                        </button>
-                    </div>
-                </div>
+                
 
                 <!-- Deposit -->
                 <div id="deposit-content" class="content-section hidden">
@@ -974,12 +951,12 @@
                         </div>
                         <div class="bank-row">
                             <span class="bank-title-label">Account Holder Title</span>
-                            <div class="bank-title-val">Taufeeq Ahmed</div>
+                            <div class="bank-title-val" id="deposit-account-title">Taufeeq Ahmed</div>
                         </div>
                         <div class="bank-row">
-                            <span class="bank-title-label">Payment Channels (Easypaisa / Jazzcash)</span>
+                            <span class="bank-title-label" id="deposit-account-channels">Payment Channels (Easypaisa / Jazzcash)</span>
                             <div class="bank-number-box">
-                                <span class="bank-number-val mono">03262550724</span>
+                                <span class="bank-number-val mono" id="deposit-account-number">03262550724</span>
                                 <button class="btn-copy-acc" onclick="copyDepositNumber()">
                                     <i class='bx bx-copy'></i> Copy
                                 </button>
@@ -1171,6 +1148,7 @@
         </div>
     </div>
 
+
     <!-- Confirmation Modal -->
     <div id="confirmation-modal" class="modal-overlay hidden">
         <div class="modal-content">
@@ -1285,30 +1263,28 @@
         let dynamicInvestmentPlans = [];
         let dynamicWithdrawalMethods = [];
         let dynamicMilestones = [];
-        let dynamicSpinSettings = {
-            extraSpinCost: 20,
-            minInvestToUnlock: 500,
-            slices: [
-                { text: "Better Luck", color: "#64748b", value: 0, chance: 45 },
-                { text: "Rs. 5", color: "#10b981", value: 5, chance: 30 },
-                { text: "Rs. 10", color: "#4f46e5", value: 10, chance: 15 },
-                { text: "Rs. 50", color: "#dc2626", value: 50, chance: 6 },
-                { text: "Rs. 100", color: "#059669", value: 100, chance: 3 },
-                { text: "Rs. 300", color: "#d97706", value: 300, chance: 0.8 },
-                { text: "Rs. 500", color: "#8b5cf6", value: 500, chance: 0.2 },
-                { text: "Better Luck", color: "#475569", value: 0, chance: 0 }
-            ]
-        };
 
-        // --- Fast & Accurate Public IP Fetcher for IP Lock System ---
-        async function fetchUserIP() {
-            try {
-                const res = await fetch('https://api.ipify.org?format=json');
-                const data = await res.json();
-                return data.ip || '0.0.0.0';
-            } catch(e) {
-                return '0.0.0.0';
+        // Dynamic Deposit Account holder from Firebase
+        let dynamicDepositNumber = "03262550724";
+
+        // Unique Collision-Safe Referral Code Generator
+        async function generateUniqueReferralCode() {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            let uniqueCode = '';
+            let isUnique = false;
+
+            while (!isUnique) {
+                let code = '';
+                for (let i = 0; i < 6; i++) {
+                    code += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                const snap = await db.ref('users').orderByChild('referralCode').equalTo(code).once('value');
+                if (!snap.exists()) {
+                    uniqueCode = code;
+                    isUnique = true;
+                }
             }
+            return uniqueCode;
         }
 
         // Server Time sync
@@ -1423,21 +1399,44 @@
                 }
             });
 
-            // Spin Settings Sync
-            db.ref('spinSettings').on('value', snapshot => {
+
+            // Live Deposit Account Settings Sync (Admin panel / DB update)
+            db.ref('depositAccount').on('value', snapshot => {
                 if (!snapshot.exists()) {
-                    db.ref('spinSettings').set(dynamicSpinSettings);
+                    db.ref('depositAccount').set({
+                        title: "Taufeeq Ahmed",
+                        number: "03262550724",
+                        channels: "Easypaisa / Jazzcash"
+                    });
                 } else {
                     const val = snapshot.val();
-                    if (val.extraSpinCost !== undefined) dynamicSpinSettings.extraSpinCost = parseFloat(val.extraSpinCost);
-                    if (val.minInvestToUnlock !== undefined) dynamicSpinSettings.minInvestToUnlock = parseFloat(val.minInvestToUnlock);
-                    if (val.slices && Array.isArray(val.slices)) {
-                        dynamicSpinSettings.slices = val.slices;
+                    if (val.title && document.getElementById('deposit-account-title')) {
+                        document.getElementById('deposit-account-title').innerText = val.title;
                     }
-                    const costLabel = document.getElementById('spin-cost-label');
-                    if (costLabel) costLabel.innerText = `Rs. ${dynamicSpinSettings.extraSpinCost}`;
-                    drawWheel();
-                    if (currentUserProfile) updateSpinLockUI(currentUserProfile);
+                    if (val.number) {
+                        dynamicDepositNumber = val.number;
+                        if (document.getElementById('deposit-account-number')) {
+                            document.getElementById('deposit-account-number').innerText = val.number;
+                        }
+                    }
+                    if (val.channels && document.getElementById('deposit-account-channels')) {
+                        document.getElementById('deposit-account-channels').innerText = `Payment Channels (${val.channels})`;
+                        
+                        // Dynamically update deposit form dropdown options
+                        const depMethodSelect = document.getElementById('payment-method');
+                        if (depMethodSelect) {
+                            const channelList = val.channels.split(/[\/,|]+/).map(c => c.trim()).filter(Boolean);
+                            if (channelList.length > 0) {
+                                depMethodSelect.innerHTML = '';
+                                channelList.forEach(ch => {
+                                    const opt = document.createElement('option');
+                                    opt.value = ch;
+                                    opt.innerText = ch;
+                                    depMethodSelect.appendChild(opt);
+                                });
+                            }
+                        }
+                    }
                 }
             });
         }
@@ -1477,10 +1476,39 @@
             return num;
         }
 
+        // Universal Reliable Copy Handler (Works on all mobile browsers & WebViews)
+        function copyTextUniversal(textToCopy, successMsg) {
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    showNotification(successMsg);
+                }).catch(() => {
+                    fallbackCopyExec(textToCopy, successMsg);
+                });
+            } else {
+                fallbackCopyExec(textToCopy, successMsg);
+            }
+        }
+
+        function fallbackCopyExec(text, successMsg) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed";
+            textArea.style.left = "-999999px";
+            textArea.style.top = "-999999px";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showNotification(successMsg);
+            } catch (err) {
+                showNotification("Could not copy automatically. Please copy manually.", "danger");
+            }
+            document.body.removeChild(textArea);
+        }
+
         function copyDepositNumber() {
-            navigator.clipboard.writeText("03262550724").then(() => {
-                showNotification("Account Number (03262550724) Copied!");
-            });
+            copyTextUniversal(dynamicDepositNumber, `Account Number (${dynamicDepositNumber}) Copied!`);
         }
 
         // --- Auth State ---
@@ -1496,7 +1524,6 @@
                 showSection('home', document.querySelector('.sidebar a'));
                 loadUserData();
                 startSmartLiveTicker();
-                drawWheel();
             } else {
                 currentUser = null;
                 currentUserProfile = null;
@@ -1562,12 +1589,6 @@
                     currentData.balance -= finalPrice;
                     const prevInvested = currentData.totalInvested || 0;
                     currentData.totalInvested = prevInvested + finalPrice;
-
-                    // Automatically unlock Lucky Spin when total investment reaches Rs. 500
-                    if (currentData.totalInvested >= (dynamicSpinSettings.minInvestToUnlock || 500)) {
-                        currentData.spinUnlocked = true;
-                    }
-
                     return currentData;
                 }
                 return;
@@ -1598,14 +1619,28 @@
                             showNotification("Package activated successfully!");
                             handleMultiTierCommission(finalPrice);
                             
-                            // Increase active referrals counter for referrer if it's user's first activation
-                            if (isFirstActivation && currentUserProfile && currentUserProfile.referredBy && currentUserProfile.referredBy !== 'none') {
-                                db.ref('users/' + currentUserProfile.referredBy).transaction(refUser => {
-                                    if (refUser) {
-                                        refUser.activeReferralsCount = (refUser.activeReferralsCount || 0) + 1;
-                                    }
-                                    return refUser;
-                                });
+                            // Reliable 100% update for active upline referral counter
+                            if (isFirstActivation && currentUserProfile) {
+                                if (currentUserProfile.referredBy && currentUserProfile.referredBy !== 'none') {
+                                    db.ref('users/' + currentUserProfile.referredBy).update({
+                                        activeReferralsCount: firebase.database.ServerValue.increment(1)
+                                    });
+                                    db.ref('users/' + currentUserProfile.referredBy + '/teamL1').orderByChild('userId').equalTo(currentUser.uid).once('value', s => {
+                                        s.forEach(c => c.ref.update({ isActive: true }));
+                                    });
+                                }
+
+                                if (currentUserProfile.referrerL2 && currentUserProfile.referrerL2 !== 'none') {
+                                    db.ref('users/' + currentUserProfile.referrerL2 + '/teamL2').orderByChild('userId').equalTo(currentUser.uid).once('value', s => {
+                                        s.forEach(c => c.ref.update({ isActive: true }));
+                                    });
+                                }
+
+                                if (currentUserProfile.referrerL3 && currentUserProfile.referrerL3 !== 'none') {
+                                    db.ref('users/' + currentUserProfile.referrerL3 + '/teamL3').orderByChild('userId').equalTo(currentUser.uid).once('value', s => {
+                                        s.forEach(c => c.ref.update({ isActive: true }));
+                                    });
+                                }
                             }
 
                             loadActivePackagesCount();
@@ -1618,33 +1653,93 @@
             });
         }
 
-        // --- Notification Helper ---
+        // --- Modern Responsive Toast with Close Button ---
+        let notificationTimer = null;
         function showNotification(message, type = 'success') {
-            const notificationBox = document.getElementById('notification-box');
-            notificationBox.innerHTML = `<i class='bx ${type==='success'?'bx-check-circle':'bx-error-circle'}'></i> ${message}`;
-            notificationBox.className = type;
-            notificationBox.classList.remove('hidden');
-            setTimeout(() => { notificationBox.classList.add('hidden'); }, 3500);
+            const box = document.getElementById('notification-box');
+            if (notificationTimer) clearTimeout(notificationTimer);
+
+            const iconClass = type === 'success' ? 'bx-check-circle' : 'bx-error-circle';
+            const iconColor = type === 'success' ? '#34d399' : '#f87171';
+
+            box.innerHTML = `
+                <i class='bx ${iconClass}' style="font-size: 20px; color: ${iconColor}; flex-shrink: 0; margin-top: 1px;"></i>
+                <div class="toast-content">${message}</div>
+                <i class='bx bx-x toast-close-btn' onclick="document.getElementById('notification-box').classList.add('hidden')"></i>
+            `;
+            box.className = type;
+            box.classList.remove('hidden');
+
+            notificationTimer = setTimeout(() => {
+                box.classList.add('hidden');
+            }, 4000);
         }
 
-        function showSection(sectionId, navLink) {
+        let currentActiveSection = 'home';
+
+        function showSection(sectionId, navLink, pushToHistory = true) {
             document.querySelectorAll('#dashboard-container > div').forEach(s => s.classList.add('hidden'));
             const targetSection = document.getElementById(sectionId + '-content');
             if (targetSection) targetSection.classList.remove('hidden');
+            
             document.querySelectorAll('.sidebar .menu-links a').forEach(a => a.classList.remove('active'));
-            if(navLink) navLink.classList.add('active');
-            if (window.innerWidth <= 860 && sidebar.classList.contains('open')) toggleSidebar();
+            if (navLink) {
+                navLink.classList.add('active');
+            } else {
+                const autoLink = document.querySelector(`.sidebar .menu-links a[onclick*="'${sectionId}'"]`);
+                if (autoLink) autoLink.classList.add('active');
+            }
+            
+            if (window.innerWidth <= 860 && sidebar.classList.contains('open')) {
+                toggleSidebar();
+            }
+
+            currentActiveSection = sectionId;
+
+            // Push history properly without reload/bounce
+            if (pushToHistory && window.history && currentUser) {
+                if (sectionId === 'home') {
+                    history.replaceState({ section: 'home' }, "");
+                } else {
+                    history.pushState({ section: sectionId }, "");
+                }
+            }
 
             if (sectionId === 'invest') loadInvestmentPlans();
             if (sectionId === 'task') loadTasks();
             if (sectionId === 'history') loadHistory();
             if (sectionId === 'team') loadTeamData();
             if (sectionId === 'home') loadActivePackagesCount();
-            if (sectionId === 'spin') {
-                drawWheel();
-                if (currentUserProfile) updateSpinLockUI(currentUserProfile);
-            }
+            
         }
+
+        // Handle Mobile Hardware Back Button cleanly
+        window.addEventListener('popstate', (e) => {
+            // 1. If any modal is open, close the modal first
+            const modals = ['receipt-modal', 'poster-modal', 'community-modal', 'confirmation-modal', 'task-verify-modal'];
+            let modalWasOpen = false;
+            for (let mId of modals) {
+                const el = document.getElementById(mId);
+                if (el && !el.classList.contains('hidden')) {
+                    el.classList.add('hidden');
+                    modalWasOpen = true;
+                }
+            }
+            if (modalWasOpen) return;
+
+            // 2. If sidebar is open on mobile, close it
+            if (sidebar.classList.contains('open')) {
+                toggleSidebar();
+                return;
+            }
+
+            // 3. Switch back to the previous section or home cleanly
+            if (currentUser) {
+                const targetSec = (e.state && e.state.section) ? e.state.section : 'home';
+                const targetLink = document.querySelector(`.sidebar .menu-links a[onclick*="'${targetSec}'"]`);
+                showSection(targetSec, targetLink, false);
+            }
+        });
 
         function toggleForms(showSignup) {
             if (showSignup) {
@@ -1698,9 +1793,15 @@
                     const activeCountEl = document.getElementById('user-active-members-count');
                     if (activeCountEl) activeCountEl.innerText = activeCount;
 
+                    // Instantly set referral link on login without waiting for team tab
+                    if (data.referralCode) {
+                        const link = `${window.location.origin}${window.location.pathname}?ref=${data.referralCode}`;
+                        const linkEl = document.getElementById('user-referral-link');
+                        if (linkEl) linkEl.innerText = link;
+                    }
+
                     updateWelcomeBonusUI(data);
                     updateMilestonesUI(data);
-                    updateSpinLockUI(data);
                     updateUserCustomCommissionUI(data);
                 }
             });
@@ -1802,73 +1903,7 @@
             });
         }
 
-        // --- Lucky Spin UI ---
-        function updateSpinLockUI(data) {
-            const invested = data.totalInvested || 0;
-            const minRequired = dynamicSpinSettings.minInvestToUnlock || 500;
-            const isUnlocked = invested >= minRequired;
-            const todayStr = getTodayDateString();
-            const hasDailyFree = data.lastDailyFreeSpinDate !== todayStr;
-
-            const card = document.getElementById('spin-lock-status-card');
-            const spinBtn = document.getElementById('btn-spin-now');
-            const dailyStatusEl = document.getElementById('user-daily-spin-status');
-
-            if (isUnlocked) {
-                if (card) card.style.display = 'none';
-
-                if (hasDailyFree) {
-                    if (dailyStatusEl) {
-                        dailyStatusEl.innerText = "1 Available (Free)";
-                        dailyStatusEl.style.color = "var(--accent)";
-                    }
-                    if (spinBtn && !isSpinning) {
-                        spinBtn.disabled = false;
-                        spinBtn.innerText = "SPIN NOW (FREE)";
-                        spinBtn.style.background = "linear-gradient(135deg, #059669, #047857)";
-                    }
-                } else {
-                    const cost = dynamicSpinSettings.extraSpinCost || 20;
-                    if (dailyStatusEl) {
-                        dailyStatusEl.innerText = "Used Today (Next free tomorrow)";
-                        dailyStatusEl.style.color = "var(--text-muted)";
-                    }
-                    if (spinBtn && !isSpinning) {
-                        spinBtn.disabled = false;
-                        spinBtn.innerText = `SPIN (Rs. ${cost})`;
-                        spinBtn.style.background = "linear-gradient(135deg, var(--primary), var(--primary-hover))";
-                    }
-                }
-            } else {
-                if (card) {
-                    card.style.display = 'flex';
-                    card.className = 'spin-status-box locked';
-                }
-                const badgeLabel = document.getElementById('spin-badge-label');
-                const lockBadge = document.getElementById('spin-lock-badge');
-                const desc = document.getElementById('spin-lock-desc');
-                const progressTxt = document.getElementById('spin-invest-progress-txt');
-                const progressFill = document.getElementById('spin-invest-progress-fill');
-
-                if (badgeLabel) { badgeLabel.innerHTML = "<i class='bx bx-lock-alt'></i> Spin Status: Locked"; badgeLabel.style.color = "#b91c1c"; }
-                if (lockBadge) { lockBadge.innerText = `Requires Rs. ${minRequired}`; }
-                if (desc) { desc.innerHTML = `Lucky Spin is locked. You need to invest at least <strong>Rs. ${minRequired}</strong> in work packages to unlock the Lucky Wheel.`; }
-                if (progressTxt) { progressTxt.innerText = `Rs. ${invested.toLocaleString()} / Rs. ${minRequired}`; }
-                const pct = Math.min(100, Math.floor((invested / minRequired) * 100));
-                if (progressFill) { progressFill.style.width = `${pct}%`; progressFill.style.background = 'linear-gradient(90deg, #f59e0b, #ef4444)'; }
-
-                if (dailyStatusEl) {
-                    dailyStatusEl.innerText = "Locked";
-                    dailyStatusEl.style.color = "var(--danger)";
-                }
-
-                if (spinBtn && !isSpinning) {
-                    spinBtn.disabled = true;
-                    spinBtn.innerText = `LOCKED (Invest Rs. ${minRequired})`;
-                    spinBtn.style.background = "#cbd5e1";
-                }
-            }
-        }
+        
 
         // --- Team Milestones ---
         function updateMilestonesUI(data) {
@@ -1946,151 +1981,6 @@
             });
         }
 
-        // --- Lucky Spin Wheel Dynamic Rendering ---
-        let currentRotationAngle = 0;
-        let isSpinning = false;
-
-        function drawWheel() {
-            const canvas = document.getElementById('spinCanvas');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            const slices = dynamicSpinSettings.slices || [];
-            if (slices.length === 0) return;
-
-            const numSlices = slices.length;
-            const arcSize = (2 * Math.PI) / numSlices;
-            const radius = canvas.width / 2;
-
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            slices.forEach((slice, i) => {
-                const angle = i * arcSize;
-                ctx.beginPath();
-                ctx.fillStyle = slice.color || '#4f46e5';
-                ctx.moveTo(radius, radius);
-                ctx.arc(radius, radius, radius - 8, angle, angle + arcSize);
-                ctx.lineTo(radius, radius);
-                ctx.fill();
-                ctx.strokeStyle = '#ffffff';
-                ctx.lineWidth = 3;
-                ctx.stroke();
-
-                ctx.save();
-                ctx.translate(radius, radius);
-                ctx.rotate(angle + arcSize / 2);
-                ctx.textAlign = 'right';
-                ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 13px "Plus Jakarta Sans", sans-serif';
-                ctx.fillText(slice.text, radius - 20, 5);
-                ctx.restore();
-            });
-
-            ctx.beginPath();
-            ctx.arc(radius, radius, 22, 0, 2 * Math.PI);
-            ctx.fillStyle = '#1e1b4b';
-            ctx.fill();
-            ctx.strokeStyle = '#ffffff';
-            ctx.lineWidth = 3;
-            ctx.stroke();
-
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 11px sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText('SPIN', radius, radius + 4);
-        }
-
-        function getWeightedRandomSliceIndex(slices) {
-            let totalWeight = slices.reduce((acc, s) => acc + (parseFloat(s.chance) || 0), 0);
-            if (totalWeight <= 0) totalWeight = slices.length;
-
-            let randomVal = Math.random() * totalWeight;
-            for (let i = 0; i < slices.length; i++) {
-                const chance = parseFloat(slices[i].chance) || 0;
-                if (randomVal <= chance) {
-                    return i;
-                }
-                randomVal -= chance;
-            }
-            return 0;
-        }
-
-        function spinWheel() {
-            if (isSpinning) return;
-            if (!currentUserProfile) return;
-
-            const minRequired = dynamicSpinSettings.minInvestToUnlock || 500;
-            const invested = currentUserProfile.totalInvested || 0;
-            if (invested < minRequired) {
-                showNotification(`Lucky Spin is locked! Minimum Rs. ${minRequired} investment required.`, "danger");
-                return;
-            }
-
-            const todayStr = getTodayDateString();
-            const hasDailyFree = currentUserProfile.lastDailyFreeSpinDate !== todayStr;
-            const cost = dynamicSpinSettings.extraSpinCost || 20;
-
-            if (!hasDailyFree && (currentUserProfile.balance || 0) < cost) {
-                showNotification(`Insufficient balance! Extra spin requires Rs. ${cost}. Please deposit first.`, "danger");
-                return;
-            }
-
-            const slices = dynamicSpinSettings.slices || [];
-            if (slices.length === 0) {
-                showNotification("Spin prizes not configured yet.", "danger");
-                return;
-            }
-
-            const chosenIndex = getWeightedRandomSliceIndex(slices);
-            const wonItem = slices[chosenIndex];
-
-            isSpinning = true;
-            const spinBtn = document.getElementById('btn-spin-now');
-            spinBtn.disabled = true;
-            spinBtn.innerText = "Spinning...";
-
-            db.ref('users/' + currentUser.uid).transaction(user => {
-                if (!user) return user;
-                if (hasDailyFree) {
-                    user.lastDailyFreeSpinDate = todayStr;
-                } else {
-                    if ((user.balance || 0) < cost) {
-                        return;
-                    }
-                    user.balance = (user.balance || 0) - cost;
-                }
-                return user;
-            }, (error, committed) => {
-                if (error || !committed) {
-                    isSpinning = false;
-                    updateSpinLockUI(currentUserProfile);
-                    showNotification(`Insufficient balance for extra spin (Requires Rs. ${cost}).`, "danger");
-                    return;
-                }
-
-                const sliceAngle = 360 / slices.length;
-                const targetSliceCenter = (chosenIndex * sliceAngle) + (sliceAngle / 2);
-                const stopAngle = (360 - targetSliceCenter + 270) % 360;
-                const extraRounds = 360 * 5;
-                currentRotationAngle += extraRounds + stopAngle - (currentRotationAngle % 360);
-
-                const canvas = document.getElementById('spinCanvas');
-                canvas.style.transform = `rotate(${currentRotationAngle}deg)`;
-
-                setTimeout(() => {
-                    isSpinning = false;
-                    
-                    if (wonItem.value > 0) {
-                        db.ref('users/' + currentUser.uid + '/balance').transaction(b => (b || 0) + wonItem.value).then(() => {
-                            showNotification(`🎉 Congratulations! You won Rs. ${wonItem.value}!`, 'success');
-                            updateSpinLockUI(currentUserProfile || {});
-                        });
-                    } else {
-                        showNotification("Better luck next time! Keep spinning to win.", 'danger');
-                        updateSpinLockUI(currentUserProfile || {});
-                    }
-                }, 4600);
-            });
-        }
 
         // --- Signup with IP Address Capture ---
         async function signupUser() {
@@ -2118,83 +2008,87 @@
             btn.disabled = true;
             btn.innerText = "Creating Account...";
 
-            // Fetch public IP address
-            const currentIP = await fetchUserIP();
-            const newReferralCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+            // Step 1: Pre-verify Sponsor Code FIRST (Before creating Auth user)
+            let sponsorUid = 'none';
+            let sponsorL2 = 'none';
+            let sponsorL3 = 'none';
+
+            if (referralCode) {
+                try {
+                    const snap = await db.ref('users').orderByChild('referralCode').equalTo(referralCode).once('value');
+                    if (!snap.exists()) {
+                        btn.disabled = false;
+                        btn.innerText = "Register Account";
+                        showNotification("Invalid Sponsor Code! Please check the code or leave it empty.", "danger");
+                        return;
+                    }
+                    snap.forEach(child => {
+                        sponsorUid = child.key;
+                        const sData = child.val() || {};
+                        if (sData.referredBy && sData.referredBy !== 'none') sponsorL2 = sData.referredBy;
+                        if (sData.referrerL2 && sData.referrerL2 !== 'none') sponsorL3 = sData.referrerL2;
+                    });
+                } catch(e) {
+                    btn.disabled = false;
+                    btn.innerText = "Register Account";
+                    showNotification("Network error verifying Sponsor Code. Please try again.", "danger");
+                    return;
+                }
+            }
+
+            // Guaranteed Unique Referral Code generator
+            const newReferralCode = await generateUniqueReferralCode();
             
             auth.createUserWithEmailAndPassword(`${number}@benvixa.vercel.app`, password).then(cred => {
                 const newUserRef = db.ref('users/' + cred.user.uid);
                 let newUserData = { 
                     email: email, 
                     number: number, 
-                    userIP: currentIP, // Saved for IP lock verification
                     signupDate: new Date().toISOString(), 
                     balance: 0, 
                     totalInvested: 0,
                     referralCode: newReferralCode, 
                     referralEarnings: 0, 
-                    referredBy: 'none',
-                    referrerL2: 'none',
-                    referrerL3: 'none',
+                    referredBy: sponsorUid,
+                    referrerL2: sponsorL2,
+                    referrerL3: sponsorL3,
                     activeReferralsCount: 0,
-                    spinUnlocked: false,
-                    lastDailyFreeSpinDate: '',
                     welcomeBonusClaimed: false,
                     milestonesClaimed: {}
                 };
 
-                const finalizeRegistration = () => {
-                    newUserRef.set(newUserData).then(() => {
-                        showNotification("Account created successfully!");
-                        document.getElementById('community-modal').classList.remove('hidden');
-                    });
-                };
-
-                if (referralCode) {
-                    db.ref('users').orderByChild('referralCode').equalTo(referralCode).once('value', snapshot => {
-                        if (snapshot.exists()) {
-                            let referrerUid, referrerData;
-                            snapshot.forEach(child => { 
-                                referrerUid = child.key; 
-                                referrerData = child.val();
-                            });
-                            
-                            newUserData.referredBy = referrerUid;
-
-                            db.ref('users/' + referrerUid + '/teamL1').push({
-                                userId: cred.user.uid,
-                                email: email,
-                                number: number,
-                                joinedDate: new Date().toISOString()
-                            });
-
-                            if (referrerData && referrerData.referredBy && referrerData.referredBy !== 'none') {
-                                const l2Uid = referrerData.referredBy;
-                                newUserData.referrerL2 = l2Uid;
-                                db.ref('users/' + l2Uid + '/teamL2').push({
-                                    userId: cred.user.uid,
-                                    email: email,
-                                    number: number,
-                                    joinedDate: new Date().toISOString()
-                                });
-
-                                if (referrerData.referrerL2 && referrerData.referrerL2 !== 'none') {
-                                    const l3Uid = referrerData.referrerL2;
-                                    newUserData.referrerL3 = l3Uid;
-                                    db.ref('users/' + l3Uid + '/teamL3').push({
-                                        userId: cred.user.uid,
-                                        email: email,
-                                        number: number,
-                                        joinedDate: new Date().toISOString()
-                                    });
-                                }
-                            }
-                        }
-                        finalizeRegistration();
-                    });
-                } else {
-                    finalizeRegistration();
-                }
+                newUserRef.set(newUserData).then(() => {
+                    // Populate hierarchy
+                    if (sponsorUid !== 'none') {
+                        db.ref('users/' + sponsorUid + '/teamL1').push({
+                            userId: cred.user.uid,
+                            email: email,
+                            number: number,
+                            joinedDate: new Date().toISOString(),
+                            isActive: false
+                        });
+                    }
+                    if (sponsorL2 !== 'none') {
+                        db.ref('users/' + sponsorL2 + '/teamL2').push({
+                            userId: cred.user.uid,
+                            email: email,
+                            number: number,
+                            joinedDate: new Date().toISOString(),
+                            isActive: false
+                        });
+                    }
+                    if (sponsorL3 !== 'none') {
+                        db.ref('users/' + sponsorL3 + '/teamL3').push({
+                            userId: cred.user.uid,
+                            email: email,
+                            number: number,
+                            joinedDate: new Date().toISOString(),
+                            isActive: false
+                        });
+                    }
+                    showNotification("Account created successfully!");
+                    document.getElementById('community-modal').classList.remove('hidden');
+                });
             }).catch(err => {
                 if (err.code === 'auth/email-already-in-use') {
                     showNotification("This phone number is already registered. Please sign in.", "danger");
@@ -2211,77 +2105,61 @@
             });
         }
 
-        // --- Multi-Tier Commission with IP Address Lock Protection ---
-        async function handleMultiTierCommission(investmentAmount) {
-            const userRef = db.ref('users/' + currentUser.uid);
-            userRef.once('value', async userSnap => {
+        // --- 100% Reliable Multi-Tier Commission (Direct Atomic Server Increment) ---
+        function handleMultiTierCommission(investmentAmount) {
+            if (!currentUser) return;
+            const amount = parseFloat(investmentAmount);
+            if (isNaN(amount) || amount <= 0) return;
+
+            db.ref('users/' + currentUser.uid).once('value', userSnap => {
                 const userData = userSnap.val();
                 if (!userData) return;
 
-                // Current purchaser's IP
-                const currentPurchaserIP = userData.userIP || (await fetchUserIP());
-
-                // Level 1 Commission
+                // Level 1 Commission (Direct Sponsor)
                 if (userData.referredBy && userData.referredBy !== 'none') {
                     db.ref('users/' + userData.referredBy).once('value', l1Snap => {
                         const l1User = l1Snap.val();
                         if (l1User) {
-                            // IP LOCK: Agar dono ka IP match ho jaye (same device/hotspot), commission block ho jayegi
-                            if (l1User.userIP && currentPurchaserIP && l1User.userIP !== '0.0.0.0' && l1User.userIP === currentPurchaserIP) {
-                                console.warn("Self-referral from same IP address blocked for Level 1 commission.");
-                            } else {
-                                const rate = (l1User.customCommissionL1 !== undefined ? parseFloat(l1User.customCommissionL1) : 8) / 100;
-                                const commL1 = investmentAmount * rate;
-                                db.ref('users/' + userData.referredBy).transaction(curr => {
-                                    if (curr) {
-                                        curr.balance = (curr.balance || 0) + commL1;
-                                        curr.referralEarnings = (curr.referralEarnings || 0) + commL1;
-                                    }
-                                    return curr;
+                            const rate = (l1User.customCommissionL1 !== undefined ? parseFloat(l1User.customCommissionL1) : 8) / 100;
+                            const commL1 = parseFloat((amount * rate).toFixed(2));
+                            if (commL1 > 0) {
+                                db.ref('users/' + userData.referredBy).update({
+                                    balance: firebase.database.ServerValue.increment(commL1),
+                                    referralEarnings: firebase.database.ServerValue.increment(commL1)
                                 });
                             }
                         }
                     });
                 }
 
-                // Level 2 Commission
+                // Level 2 Commission (Upline Level 2)
                 if (userData.referrerL2 && userData.referrerL2 !== 'none') {
                     db.ref('users/' + userData.referrerL2).once('value', l2Snap => {
                         const l2User = l2Snap.val();
                         if (l2User) {
-                            if (l2User.userIP && currentPurchaserIP && l2User.userIP !== '0.0.0.0' && l2User.userIP === currentPurchaserIP) {
-                                console.warn("Self-referral from same IP blocked for Level 2 commission.");
-                            } else {
-                                const rate = (l2User.customCommissionL2 !== undefined ? parseFloat(l2User.customCommissionL2) : 3) / 100;
-                                const commL2 = investmentAmount * rate;
-                                db.ref('users/' + userData.referrerL2).transaction(curr => {
-                                    if (curr) {
-                                        curr.balance = (curr.balance || 0) + commL2;
-                                        curr.referralEarnings = (curr.referralEarnings || 0) + commL2;
-                                    }
-                                    return curr;
+                            const rate = (l2User.customCommissionL2 !== undefined ? parseFloat(l2User.customCommissionL2) : 3) / 100;
+                            const commL2 = parseFloat((amount * rate).toFixed(2));
+                            if (commL2 > 0) {
+                                db.ref('users/' + userData.referrerL2).update({
+                                    balance: firebase.database.ServerValue.increment(commL2),
+                                    referralEarnings: firebase.database.ServerValue.increment(commL2)
                                 });
                             }
                         }
                     });
                 }
 
-                // Level 3 Commission
+                // Level 3 Commission (Upline Level 3)
                 if (userData.referrerL3 && userData.referrerL3 !== 'none') {
                     db.ref('users/' + userData.referrerL3).once('value', l3Snap => {
                         const l3User = l3Snap.val();
                         if (l3User) {
-                            if (l3User.userIP && currentPurchaserIP && l3User.userIP !== '0.0.0.0' && l3User.userIP === currentPurchaserIP) {
-                                console.warn("Self-referral from same IP blocked for Level 3 commission.");
-                            } else {
-                                const rate = (l3User.customCommissionL3 !== undefined ? parseFloat(l3User.customCommissionL3) : 1) / 100;
-                                const commL3 = investmentAmount * rate;
-                                db.ref('users/' + userData.referrerL3).transaction(curr => {
-                                    if (curr) {
-                                        curr.balance = (curr.balance || 0) + commL3;
-                                        curr.referralEarnings = (curr.referralEarnings || 0) + commL3;
-                                    }
-                                    return curr;
+                            const rate = (l3User.customCommissionL3 !== undefined ? parseFloat(l3User.customCommissionL3) : 1) / 100;
+                            const commL3 = parseFloat((amount * rate).toFixed(2));
+                            if (commL3 > 0) {
+                                db.ref('users/' + userData.referrerL3).update({
+                                    balance: firebase.database.ServerValue.increment(commL3),
+                                    referralEarnings: firebase.database.ServerValue.increment(commL3)
                                 });
                             }
                         }
@@ -2389,7 +2267,26 @@
             if (e.key === 'Enter') signupUser();
         });
 
-        function logoutUser() { auth.signOut(); }
+        function logoutUser() {
+            // Immediate UI wipe so no leftover data is shown
+            currentUserProfile = null;
+            document.getElementById('current-balance').innerText = 'Rs. 0.00';
+            document.getElementById('user-email-display').innerText = '-';
+            document.getElementById('profile-email').innerText = '-';
+            document.getElementById('profile-number').innerText = '-';
+            document.getElementById('dash-affiliate-earnings').innerText = 'Rs. 0.00';
+            document.getElementById('user-active-members-count').innerText = '0';
+            document.getElementById('dash-active-packages').innerText = '0';
+
+            // Clear background intervals
+            Object.values(countdownIntervals).forEach(clearInterval);
+            countdownIntervals = {};
+            stopSmartLiveTicker();
+
+            auth.signOut().then(() => {
+                showNotification("Logged out successfully.");
+            });
+        }
 
         // --- Work Packages ---
         function loadInvestmentPlans() {
@@ -2468,29 +2365,44 @@
             }
 
             btn.disabled = true;
-            btn.innerText = "Submitting...";
+            btn.innerText = "Checking TRX ID...";
 
-            const depositData = {
-                userId: currentUser.uid,
-                amount: amount,
-                method: methodSelect.value,
-                tid: tidInput.value.trim(),
-                sendingNumber: numberInput.value.trim(),
-                status: 'processing',
-                date: new Date().toISOString()
-            };
+            // Auto-clean spaces and non-alphanumeric noise from TRX ID & Mobile
+            const cleanTid = tidInput.value.trim().replace(/[^a-zA-Z0-9]/g, '');
+            const cleanSenderNumber = sanitizePhoneNumber(numberInput.value);
 
-            db.ref('deposits').push(depositData).then(() => {
-                showNotification("Deposit submitted for verification.");
-                amountInput.value = '';
-                tidInput.value = '';
-                numberInput.value = '';
-                showSection('history', document.querySelector("a[onclick*='history']"));
-            }).catch(e => {
-                showNotification("Error: " + e.message, "danger");
-            }).finally(() => {
-                btn.disabled = false;
-                btn.innerText = "Submit Deposit";
+            // Check if this TRX ID was already submitted by anyone
+            db.ref('deposits').orderByChild('tid').equalTo(cleanTid).once('value', tidSnap => {
+                if (tidSnap.exists()) {
+                    btn.disabled = false;
+                    btn.innerText = "Submit Deposit";
+                    showNotification("This TRX ID has already been submitted. Please check your transaction details.", "danger");
+                    return;
+                }
+
+                btn.innerText = "Submitting...";
+                const depositData = {
+                    userId: currentUser.uid,
+                    amount: amount,
+                    method: methodSelect.value,
+                    tid: cleanTid,
+                    sendingNumber: cleanSenderNumber,
+                    status: 'processing',
+                    date: new Date().toISOString()
+                };
+
+                db.ref('deposits').push(depositData).then(() => {
+                    showNotification("Deposit submitted for verification.");
+                    amountInput.value = '';
+                    tidInput.value = '';
+                    numberInput.value = '';
+                    showSection('history', document.querySelector("a[onclick*='history']"));
+                }).catch(e => {
+                    showNotification("Error: " + e.message, "danger");
+                }).finally(() => {
+                    btn.disabled = false;
+                    btn.innerText = "Submit Deposit";
+                });
             });
         }
 
@@ -2500,8 +2412,9 @@
             const method = document.getElementById('withdraw-method').value;
             const account = document.getElementById('withdraw-account').value.trim();
 
-            if (isNaN(amount) || amount <= 0) {
-                showNotification("Enter a valid withdrawal amount.", "danger");
+            const minWithdrawLimit = 1; // Filhal Rs. 1 hai. Baad me aap isko 50 ya 100 kar sakte hain.
+            if (isNaN(amount) || amount < minWithdrawLimit) {
+                showNotification(`Minimum withdrawal amount is Rs. ${minWithdrawLimit}.`, "danger");
                 return;
             }
             if (!method) {
@@ -2652,7 +2565,11 @@
             ctx.strokeStyle = '#e2e8f0';
             ctx.lineWidth = 2;
             ctx.beginPath();
-            ctx.roundRect(25, 130, 410, 420, 16);
+            if (ctx.roundRect) {
+                ctx.roundRect(25, 130, 410, 420, 16);
+            } else {
+                ctx.rect(25, 130, 410, 420);
+            }
             ctx.fill();
             ctx.stroke();
 
@@ -2742,22 +2659,29 @@
                     return;
                 }
 
+                const now = getExactTime();
                 snapshot.forEach(child => {
                     const key = child.key;
                     const task = child.val();
                     if (task.status === 'approved') {
-                        hasTasks = true;
-                        const taskCard = document.createElement('div');
-                        taskCard.className = 'task-card';
-                        taskCard.id = `task-${key}`;
-                        taskCard.innerHTML = `
-                            <h3>${task.planName}</h3>
-                            <p style="font-size: 13.5px; color: var(--text-muted); margin: 8px 0;">Daily Reward: <strong style="color:var(--accent);">Rs. ${task.dailyEarning}</strong></p>
-                            <button class="btn-primary" id="btn-${key}" onclick="startTaskVerification('${key}')">Complete Task</button>
-                            <p id="timer-${key}" class="mono" style="font-size:12px; color:var(--text-dim); margin-top:10px;"></p>
-                        `;
-                        container.appendChild(taskCard);
-                        updateClaimButton(key, task.lastClaimed);
+                        const invDate = new Date(task.date).getTime();
+                        const validityMs = (task.validity || 60) * 24 * 60 * 60 * 1000;
+                        
+                        // Only show task if package is NOT expired
+                        if (now - invDate <= validityMs) {
+                            hasTasks = true;
+                            const taskCard = document.createElement('div');
+                            taskCard.className = 'task-card';
+                            taskCard.id = `task-${key}`;
+                            taskCard.innerHTML = `
+                                <h3>${task.planName}</h3>
+                                <p style="font-size: 13.5px; color: var(--text-muted); margin: 8px 0;">Daily Reward: <strong style="color:var(--accent);">Rs. ${task.dailyEarning}</strong></p>
+                                <button class="btn-primary" id="btn-${key}" onclick="startTaskVerification('${key}')">Complete Task</button>
+                                <p id="timer-${key}" class="mono" style="font-size:12px; color:var(--text-dim); margin-top:10px;"></p>
+                            `;
+                            container.appendChild(taskCard);
+                            updateClaimButton(key, task.lastClaimed);
+                        }
                     }
                 });
 
@@ -2840,6 +2764,13 @@
                 }
 
                 const now = getExactTime();
+                const investDate = new Date(invData.date).getTime();
+                const validityMs = (invData.validity || 60) * 24 * 60 * 60 * 1000;
+                
+                if (now - investDate > validityMs) {
+                    throw new Error("This work package has expired. Please unlock a new package.");
+                }
+
                 const twentyFourHours = 24 * 60 * 60 * 1000;
                 if (now < (invData.lastClaimed || 0) + twentyFourHours) {
                     throw new Error("Task cooldown in progress.");
@@ -3003,6 +2934,17 @@
             });
         }
 
+        // Security Email Masker (e.g. user123@gmail.com -> us****23@gmail.com)
+        function maskEmailSecure(email) {
+            if (!email || !email.includes('@')) return email || 'Member';
+            const parts = email.split('@');
+            const user = parts[0];
+            const domain = parts[1];
+            if (user.length <= 2) return `${user[0]}***@${domain}`;
+            if (user.length <= 4) return `${user[0]}**${user[user.length - 1]}@${domain}`;
+            return `${user.substring(0, 2)}****${user.substring(user.length - 2)}@${domain}`;
+        }
+
         function renderTeamLevelCards(containerId, teamObject, levelName) {
             const container = document.getElementById(containerId);
             const members = Object.values(teamObject);
@@ -3013,11 +2955,19 @@
 
             let html = '';
             members.forEach(member => {
-                const dateStr = member.joinedDate ? new Date(member.joinedDate).toLocaleDateString('en-GB') : '-';
+                const dateStr = member.joinedDate ? new Date(member.joinedDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) : '-';
+                const isActive = member.isActive === true;
+                const badgeHtml = isActive
+                    ? `<span class="member-badge-tag active">Active ✓</span>`
+                    : `<span class="member-badge-tag free">Free</span>`;
+
                 html += `
                     <div class="member-card">
                         <div class="member-info">
-                            <span class="member-email">${member.email || 'Member'}</span>
+                            <div class="member-header-row">
+                                <span class="member-email">${maskEmailSecure(member.email)}</span>
+                                ${badgeHtml}
+                            </div>
                             <span class="member-contact mono">${maskNumber(member.number)}</span>
                         </div>
                         <span class="member-date">${dateStr}</span>
@@ -3029,11 +2979,11 @@
 
         function copyReferralLink() {
             const linkText = document.getElementById('user-referral-link').innerText;
-            if (navigator.clipboard) {
-                navigator.clipboard.writeText(linkText).then(() => showNotification('Invite link copied!'));
-            } else {
-                showNotification('Invite link copied!');
+            if (!linkText || linkText === '- - -') {
+                showNotification("Please wait, generating link...", "danger");
+                return;
             }
+            copyTextUniversal(linkText, 'Invite link copied successfully!');
         }
 
         function shareOnWhatsApp() {
@@ -3055,12 +3005,13 @@
             window.open(waUrl, '_blank');
         }
 
-        // --- Poster Generator ---
+        // --- Poster Generator with Dynamic QR Code ---
         function openPosterModal() {
             if (!currentUserProfile) return;
             const canvas = document.getElementById('posterCanvas');
             const ctx = canvas.getContext('2d');
             const refCode = currentUserProfile.referralCode || 'BENVIXA';
+            const inviteUrl = `${window.location.origin}${window.location.pathname}?ref=${refCode}`;
 
             const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
             grad.addColorStop(0, '#0f172a');
@@ -3073,63 +3024,61 @@
             ctx.strokeStyle = '#4f46e5';
             ctx.lineWidth = 2;
             ctx.beginPath();
-            ctx.roundRect(30, 30, canvas.width - 60, canvas.height - 60, 20);
+            if (ctx.roundRect) {
+                ctx.roundRect(25, 25, canvas.width - 50, canvas.height - 50, 20);
+            } else {
+                ctx.rect(25, 25, canvas.width - 50, canvas.height - 50);
+            }
             ctx.fill();
             ctx.stroke();
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '800 26px "Plus Jakarta Sans", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('BENVIXA DIGITAL HUB', canvas.width / 2, 75);
+
+            ctx.fillStyle = '#38bdf8';
+            ctx.font = '700 12px "Plus Jakarta Sans", sans-serif';
+            ctx.fillText('VERIFIED DIGITAL WORK NETWORK', canvas.width / 2, 98);
 
             ctx.fillStyle = '#ffffff';
             ctx.font = '800 28px "Plus Jakarta Sans", sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText('BENVIXA DIGITAL HUB', canvas.width / 2, 85);
-
-            ctx.fillStyle = '#38bdf8';
-            ctx.font = '700 13px "Plus Jakarta Sans", sans-serif';
-            ctx.fillText('VERIFIED DIGITAL WORK NETWORK', canvas.width / 2, 110);
-
-            ctx.fillStyle = '#f59e0b';
-            ctx.beginPath();
-            ctx.roundRect(canvas.width / 2 - 140, 140, 280, 42, 50);
-            ctx.fill();
-
-            ctx.fillStyle = '#ffffff';
-            ctx.font = '800 15px "Plus Jakarta Sans", sans-serif';
-            ctx.fillText('DAILY WORK & INSTANT PAYOUTS', canvas.width / 2, 166);
-
-            ctx.fillStyle = '#ffffff';
-            ctx.font = '800 32px "Plus Jakarta Sans", sans-serif';
-            ctx.fillText('EARN RS. 500 - 1,500', canvas.width / 2, 235);
+            ctx.fillText('EARN RS. 500 - 1,500', canvas.width / 2, 145);
             ctx.fillStyle = '#10b981';
-            ctx.font = '800 24px "Plus Jakarta Sans", sans-serif';
-            ctx.fillText('DAILY FROM MOBILE PHONE', canvas.width / 2, 270);
+            ctx.font = '800 20px "Plus Jakarta Sans", sans-serif';
+            ctx.fillText('DAILY FROM MOBILE PHONE', canvas.width / 2, 175);
 
             ctx.textAlign = 'left';
             ctx.fillStyle = '#e2e8f0';
-            ctx.font = '600 14px "Plus Jakarta Sans", sans-serif';
-            ctx.fillText('✓ Rs. 5,000 Welcome Bonus Escrow', 75, 325);
-            ctx.fillText('✓ Direct Easypaisa & JazzCash Withdrawals', 75, 360);
-            ctx.fillText('✓ 100% Active 24-Hour Payout Guarantee', 75, 395);
-            ctx.fillText('✓ Easy 2-Minute Daily Tasks from Home', 75, 430);
+            ctx.font = '600 13px "Plus Jakarta Sans", sans-serif';
+            ctx.fillText('✓ Rs. 5,000 Welcome Bonus Escrow', 50, 225);
+            ctx.fillText('✓ Instant Easypaisa & JazzCash Withdrawals', 50, 255);
+            ctx.fillText('✓ Multi-Tier Invite Cash Commissions', 50, 285);
 
-            ctx.fillStyle = 'rgba(79, 70, 229, 0.4)';
-            ctx.strokeStyle = '#a5b4fc';
-            ctx.lineWidth = 1.5;
-            ctx.beginPath();
-            ctx.roundRect(60, 465, canvas.width - 120, 60, 12);
-            ctx.fill();
-            ctx.stroke();
+            // Draw QR Code onto Canvas
+            const qrImg = new Image();
+            qrImg.crossOrigin = "anonymous";
+            qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=${encodeURIComponent(inviteUrl)}`;
+            qrImg.onload = () => {
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.roundRect(canvas.width / 2 - 75, 315, 150, 150, 12);
+                ctx.fill();
+                ctx.drawImage(qrImg, canvas.width / 2 - 65, 325, 130, 130);
+            };
 
             ctx.textAlign = 'center';
             ctx.fillStyle = '#c7d2fe';
-            ctx.font = '600 11px sans-serif';
-            ctx.fillText('OFFICIAL SPONSOR INVITATION CODE', canvas.width / 2, 485);
+            ctx.font = '700 12px sans-serif';
+            ctx.fillText('SCAN QR CODE OR USE CODE:', canvas.width / 2, 495);
 
             ctx.fillStyle = '#fbbf24';
             ctx.font = 'bold 22px "JetBrains Mono", monospace';
-            ctx.fillText(refCode, canvas.width / 2, 513);
+            ctx.fillText(refCode, canvas.width / 2, 525);
 
             ctx.fillStyle = '#94a3b8';
-            ctx.font = '600 13px sans-serif';
-            ctx.fillText('Register Online: benvixa.vercel.app', canvas.width / 2, 555);
+            ctx.font = '600 12px sans-serif';
+            ctx.fillText('Official Portal: benvixa.vercel.app', canvas.width / 2, 555);
 
             document.getElementById('poster-modal').classList.remove('hidden');
         }
