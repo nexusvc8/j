@@ -2191,34 +2191,67 @@
             btn.innerText = "Signing In...";
 
             let candidates = [];
+            const isEmail = rawInput.includes('@');
+            const cleanNumber = sanitizePhoneNumber(rawInput);
 
-            if (rawInput.includes('@')) {
-                // Agar user ne direct email likhi hai
-                candidates.push(rawInput);
-                try {
-                    const snap = await db.ref('users').orderByChild('email').equalTo(rawInput).once('value');
-                    if (snap.exists()) {
-                        snap.forEach(child => {
-                            const u = child.val();
-                            if (u && u.number) {
-                                candidates.push(`${u.number}@benvixa.vercel.app`);
-                            }
-                        });
-                    }
-                } catch (e) {}
+            // 1. Direct inputs
+            if (isEmail) {
+                candidates.push(rawInput.trim().toLowerCase());
+                candidates.push(rawInput.trim());
             } else {
-                // Agar user ne phone number likha hai
-                const number = sanitizePhoneNumber(rawInput);
-                if (number.length !== 11) {
-                    btn.disabled = false;
-                    btn.innerText = "Sign In";
-                    showNotification("Please enter a valid 11-digit phone number (e.g. 03XXXXXXXXX).", "danger");
-                    return;
+                if (cleanNumber.length === 11) {
+                    candidates.push(`${cleanNumber}@benvixa.vercel.app`);
+                    candidates.push(`${cleanNumber}@benvixahub.com`);
+                    candidates.push(`${cleanNumber}@benvixa.com`);
                 }
-                candidates.push(`${number}@benvixa.vercel.app`);
             }
 
-            candidates = [...new Set(candidates)];
+            // 2. Database Smart Lookup (Case-insensitive check for Email or Phone)
+            try {
+                const usersSnap = await db.ref('users').once('value');
+                if (usersSnap.exists()) {
+                    usersSnap.forEach(child => {
+                        const u = child.val();
+                        if (!u) return;
+
+                        const dbEmail = (u.email || '').trim().toLowerCase();
+                        const dbNumber = sanitizePhoneNumber(u.number || '');
+
+                        const matchEmail = isEmail && dbEmail === rawInput.trim().toLowerCase();
+                        const matchNumber = !isEmail && dbNumber === cleanNumber;
+
+                        if (matchEmail || matchNumber) {
+                            if (dbNumber && dbNumber.length === 11) {
+                                candidates.push(`${dbNumber}@benvixa.vercel.app`);
+                                candidates.push(`${dbNumber}@benvixahub.com`);
+                                candidates.push(`${dbNumber}@benvixa.com`);
+                            }
+                            if (u.email) {
+                                candidates.push(u.email.trim());
+                                candidates.push(u.email.trim().toLowerCase());
+                            }
+                        }
+                    });
+                }
+            } catch (dbErr) {
+                console.warn("DB lookup notice:", dbErr);
+            }
+
+            // Fallback for phone
+            if (!isEmail && cleanNumber.length === 11) {
+                candidates.push(`${cleanNumber}@benvixa.vercel.app`);
+            }
+
+            // Unique clean candidates
+            candidates = [...new Set(candidates.filter(Boolean))];
+
+            if (candidates.length === 0) {
+                btn.disabled = false;
+                btn.innerText = "Sign In";
+                showNotification("Please enter a valid 11-digit phone number (e.g. 03XXXXXXXXX) or registered email.", "danger");
+                return;
+            }
+
             let loggedIn = false;
             let lastError = null;
 
@@ -2229,6 +2262,10 @@
                     break;
                 } catch (err) {
                     lastError = err;
+                    // Agar password ghalat hai ya IP block hai to mazeed attempts zaya na karein
+                    if (err.code === 'auth/wrong-password' || err.code === 'auth/too-many-requests') {
+                        break;
+                    }
                 }
             }
 
@@ -2236,10 +2273,21 @@
             btn.innerText = "Sign In";
 
             if (!loggedIn) {
-                if (lastError && lastError.code === 'auth/too-many-requests') {
-                    showNotification("Too many failed attempts. Please wait a moment before trying again.", "danger");
+                console.error("Login Error Details:", lastError);
+                if (lastError) {
+                    if (lastError.code === 'auth/wrong-password' || lastError.code === 'auth/invalid-credential') {
+                        showNotification("Incorrect password! Please check your password and try again.", "danger");
+                    } else if (lastError.code === 'auth/too-many-requests') {
+                        showNotification("Access temporarily blocked due to multiple failed attempts. Please wait 10-15 minutes.", "danger");
+                    } else if (lastError.code === 'auth/user-not-found') {
+                        showNotification("Account not found with this number/email. Please register first.", "danger");
+                    } else if (lastError.code === 'auth/network-request-failed') {
+                        showNotification("Network connection error. Please check your internet connection.", "danger");
+                    } else {
+                        showNotification(lastError.message || "Sign in failed. Please verify credentials.", "danger");
+                    }
                 } else {
-                    showNotification("Incorrect phone number/email or password. Please try again.", "danger");
+                    showNotification("Account verification failed. Please check your login details.", "danger");
                 }
             }
         }
