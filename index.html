@@ -1006,7 +1006,8 @@
                     <input type="number" id="withdraw-amount" inputmode="decimal" placeholder="Amount">
                     <label>Withdraw Method</label>
                     <select id="withdraw-method">
-                        <option value="">Loading methods...</option>
+                        <option value="Easypaisa">Easypaisa</option>
+                        <option value="Jazzcash">Jazzcash</option>
                     </select>
                     <label>Account / Mobile Number</label>
                     <input type="tel" id="withdraw-account" inputmode="numeric" placeholder="Account Number">
@@ -1267,24 +1268,16 @@
         // Dynamic Deposit Account holder from Firebase
         let dynamicDepositNumber = "03262550724";
 
-        // Unique Collision-Safe Referral Code Generator
-        async function generateUniqueReferralCode() {
+        // Instant Collision-Proof Referral Code Generator
+        function generateUniqueReferralCode() {
             const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-            let uniqueCode = '';
-            let isUnique = false;
-
-            while (!isUnique) {
-                let code = '';
-                for (let i = 0; i < 6; i++) {
-                    code += chars.charAt(Math.floor(Math.random() * chars.length));
-                }
-                const snap = await db.ref('users').orderByChild('referralCode').equalTo(code).once('value');
-                if (!snap.exists()) {
-                    uniqueCode = code;
-                    isUnique = true;
-                }
+            let randomPart = '';
+            for (let i = 0; i < 4; i++) {
+                randomPart += chars.charAt(Math.floor(Math.random() * chars.length));
             }
-            return uniqueCode;
+            // Timestamp ka aakhri hissa + random chars milakar hamesha unique banta hai
+            const timePart = Date.now().toString(36).slice(-2).toUpperCase();
+            return (randomPart + timePart);
         }
 
         // Server Time sync
@@ -1521,6 +1514,9 @@
                 appHeader.classList.remove('hidden');
                 sidebar.classList.remove('hidden');
 
+                // Re-sync dynamic configs after successful authentication
+                initFirebaseDynamicConfigs();
+
                 showSection('home', document.querySelector('.sidebar a'));
                 loadUserData();
                 startSmartLiveTicker();
@@ -1585,10 +1581,11 @@
             const userRef = db.ref('users/' + currentUser.uid);
             userRef.transaction(currentData => {
                 if (currentData === null) return currentData;
-                if (currentData.balance >= finalPrice) {
-                    currentData.balance -= finalPrice;
-                    const prevInvested = currentData.totalInvested || 0;
-                    currentData.totalInvested = prevInvested + finalPrice;
+                const currentBal = parseFloat(currentData.balance || 0);
+                if (currentBal >= finalPrice) {
+                    currentData.balance = parseFloat((currentBal - finalPrice).toFixed(2));
+                    const prevInvested = parseFloat(currentData.totalInvested || 0);
+                    currentData.totalInvested = parseFloat((prevInvested + finalPrice).toFixed(2));
                     return currentData;
                 }
                 return;
@@ -1887,8 +1884,9 @@
             btn.innerText = "Transferring...";
 
             db.ref('users/' + currentUser.uid).transaction(curr => {
-                if (curr && !curr.welcomeBonusClaimed && (curr.totalInvested || 0) >= 15000) {
-                    curr.balance = (curr.balance || 0) + 5000;
+                if (curr && !curr.welcomeBonusClaimed && (parseFloat(curr.totalInvested || 0)) >= 15000) {
+                    const curBal = parseFloat(curr.balance || 0);
+                    curr.balance = parseFloat((curBal + 5000).toFixed(2));
                     curr.welcomeBonusClaimed = true;
                 }
                 return curr;
@@ -1968,7 +1966,8 @@
                     curr.milestonesClaimed = curr.milestonesClaimed || {};
                     if (!curr.milestonesClaimed[ms.id]) {
                         curr.milestonesClaimed[ms.id] = true;
-                        curr.balance = (curr.balance || 0) + ms.reward;
+                        const curBal = parseFloat(curr.balance || 0);
+                        curr.balance = parseFloat((curBal + parseFloat(ms.reward || 0)).toFixed(2));
                     }
                 }
                 return curr;
@@ -2194,6 +2193,7 @@
             let candidates = [];
 
             if (rawInput.includes('@')) {
+                // Agar user ne direct email likhi hai
                 candidates.push(rawInput);
                 try {
                     const snap = await db.ref('users').orderByChild('email').equalTo(rawInput).once('value');
@@ -2202,13 +2202,12 @@
                             const u = child.val();
                             if (u && u.number) {
                                 candidates.push(`${u.number}@benvixa.vercel.app`);
-                                candidates.push(`${u.number}@benvixahub.com`);
-                                candidates.push(`${u.number}@benvixa.com`);
                             }
                         });
                     }
                 } catch (e) {}
             } else {
+                // Agar user ne phone number likha hai
                 const number = sanitizePhoneNumber(rawInput);
                 if (number.length !== 11) {
                     btn.disabled = false;
@@ -2216,22 +2215,7 @@
                     showNotification("Please enter a valid 11-digit phone number (e.g. 03XXXXXXXXX).", "danger");
                     return;
                 }
-
                 candidates.push(`${number}@benvixa.vercel.app`);
-                candidates.push(`${number}@benvixahub.com`);
-                candidates.push(`${number}@benvixa.com`);
-
-                try {
-                    const snap = await db.ref('users').orderByChild('number').equalTo(number).once('value');
-                    if (snap.exists()) {
-                        snap.forEach(child => {
-                            const u = child.val();
-                            if (u && u.email && u.email.includes('@')) {
-                                candidates.push(u.email);
-                            }
-                        });
-                    }
-                } catch (e) {}
             }
 
             candidates = [...new Set(candidates)];
@@ -2368,7 +2352,7 @@
             btn.innerText = "Checking TRX ID...";
 
             // Auto-clean spaces and non-alphanumeric noise from TRX ID & Mobile
-            const cleanTid = tidInput.value.trim().replace(/[^a-zA-Z0-9]/g, '');
+            const cleanTid = tidInput.value.trim().replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
             const cleanSenderNumber = sanitizePhoneNumber(numberInput.value);
 
             // Check if this TRX ID was already submitted by anyone
@@ -2408,16 +2392,21 @@
 
         function submitWithdrawal() {
             const btn = document.getElementById('btn-withdraw-submit');
-            const amount = parseFloat(document.getElementById('withdraw-amount').value);
-            const method = document.getElementById('withdraw-method').value;
-            const account = document.getElementById('withdraw-account').value.trim();
+            const amountInput = document.getElementById('withdraw-amount');
+            const methodSelect = document.getElementById('withdraw-method');
+            const accountInput = document.getElementById('withdraw-account');
 
-            const minWithdrawLimit = 1; // Filhal Rs. 1 hai. Baad me aap isko 50 ya 100 kar sakte hain.
+            const amount = parseFloat(amountInput.value);
+            const method = methodSelect ? methodSelect.value : '';
+            const account = accountInput.value.trim();
+
+            const minWithdrawLimit = 1;
+
             if (isNaN(amount) || amount < minWithdrawLimit) {
                 showNotification(`Minimum withdrawal amount is Rs. ${minWithdrawLimit}.`, "danger");
                 return;
             }
-            if (!method) {
+            if (!method || method === "Loading methods...") {
                 showNotification("Please select a withdrawal method.", "danger");
                 return;
             }
@@ -2426,20 +2415,33 @@
                 return;
             }
 
+            const clientBal = currentUserProfile ? parseFloat(currentUserProfile.balance || 0) : 0;
+            if (clientBal < amount) {
+                showNotification(`Insufficient wallet balance. Available: Rs. ${clientBal.toFixed(2)}`, "danger");
+                return;
+            }
+
             btn.disabled = true;
             btn.innerText = "Processing...";
 
-            const userBalRef = db.ref('users/' + currentUser.uid + '/balance');
-            userBalRef.transaction(currentBal => {
-                if (currentBal === null) return currentBal;
-                if ((currentBal || 0) >= amount) {
-                    return currentBal - amount;
+            const userRef = db.ref('users/' + currentUser.uid);
+            let failDueToBalance = false;
+
+            userRef.transaction(userData => {
+                if (!userData) return userData;
+                const actualBal = parseFloat(userData.balance || 0);
+                if (actualBal >= amount) {
+                    userData.balance = Math.max(0, parseFloat((actualBal - amount).toFixed(2)));
+                    return userData;
+                } else {
+                    failDueToBalance = true;
+                    return;
                 }
-                return;
             }, (error, committed) => {
+                btn.disabled = false;
+                btn.innerText = "Submit Withdraw Request";
+
                 if (error) {
-                    btn.disabled = false;
-                    btn.innerText = "Submit Withdraw Request";
                     showNotification("Transaction error: " + error.message, "danger");
                 } else if (committed) {
                     const withdrawalData = {
@@ -2450,10 +2452,11 @@
                         status: 'processing',
                         date: new Date().toISOString()
                     };
+
                     db.ref('withdrawals').push(withdrawalData).then(() => {
-                        showNotification("Withdrawal request queued.");
-                        document.getElementById('withdraw-amount').value = '';
-                        document.getElementById('withdraw-account').value = '';
+                        showNotification("Withdrawal request queued successfully!");
+                        amountInput.value = '';
+                        accountInput.value = '';
 
                         displayReceiptModal({
                             type: 'Withdrawal',
@@ -2464,15 +2467,15 @@
                             date: new Date().toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' }),
                             refCode: currentUserProfile ? currentUserProfile.referralCode : 'BENVIXA'
                         });
-
-                    }).finally(() => {
-                        btn.disabled = false;
-                        btn.innerText = "Submit Withdraw Request";
+                    }).catch(err => {
+                        showNotification("Saved with notice: " + err.message, "danger");
                     });
                 } else {
-                    btn.disabled = false;
-                    btn.innerText = "Submit Withdraw Request";
-                    showNotification("Insufficient wallet balance.", "danger");
+                    if (failDueToBalance) {
+                        showNotification("Insufficient wallet balance on server.", "danger");
+                    } else {
+                        showNotification("Network sync delay. Please click submit again.", "danger");
+                    }
                 }
             });
         }
@@ -2776,10 +2779,18 @@
                     throw new Error("Task cooldown in progress.");
                 }
 
+                const rewardVal = parseFloat(invData.dailyEarning || 0);
+
                 return invRef.update({ lastClaimed: now }).then(() => {
-                    return db.ref('users/' + currentUser.uid + '/balance').transaction(curr => (curr || 0) + invData.dailyEarning);
+                    return db.ref('users/' + currentUser.uid).transaction(currUser => {
+                        if (currUser) {
+                            const curBal = parseFloat(currUser.balance || 0);
+                            currUser.balance = parseFloat((curBal + rewardVal).toFixed(2));
+                        }
+                        return currUser;
+                    });
                 }).then(() => {
-                    showNotification(`Reward credited: Rs. ${invData.dailyEarning}`);
+                    showNotification(`Reward credited: Rs. ${rewardVal}`);
                     updateClaimButton(key, now);
                 });
             }).catch(e => {
@@ -3062,7 +3073,11 @@
             qrImg.onload = () => {
                 ctx.fillStyle = '#ffffff';
                 ctx.beginPath();
-                ctx.roundRect(canvas.width / 2 - 75, 315, 150, 150, 12);
+                if (ctx.roundRect) {
+                    ctx.roundRect(canvas.width / 2 - 75, 315, 150, 150, 12);
+                } else {
+                    ctx.rect(canvas.width / 2 - 75, 315, 150, 150);
+                }
                 ctx.fill();
                 ctx.drawImage(qrImg, canvas.width / 2 - 65, 325, 130, 130);
             };
@@ -3088,12 +3103,16 @@
         }
 
         function downloadPoster() {
-            const canvas = document.getElementById('posterCanvas');
-            const link = document.createElement('a');
-            link.download = `Benvixa_Promo_Poster_${Date.now()}.png`;
-            link.href = canvas.toDataURL('image/png');
-            link.click();
-            showNotification('Status Poster Downloaded! Post it to WhatsApp.');
+            try {
+                const canvas = document.getElementById('posterCanvas');
+                const link = document.createElement('a');
+                link.download = `Benvixa_Promo_Poster_${Date.now()}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                showNotification('Status Poster Downloaded! Post it to WhatsApp.');
+            } catch(e) {
+                showNotification("Please take a screenshot of the poster to share.", "danger");
+            }
         }
 
         function checkForReferralCodeInURL() {
