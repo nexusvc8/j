@@ -1289,6 +1289,22 @@
             return Date.now() + serverTimeOffset;
         }
 
+        // Real Internet Server Time (Device Clock fraud rokne ke liye)
+        async function getTrustedServerTime() {
+            try {
+                const res = await fetch('https://worldtimeapi.org/api/timezone/Etc/UTC', { cache: 'no-store' });
+                const data = await res.json();
+                return new Date(data.utc_datetime).getTime();
+            } catch (e) {
+                try {
+                    const res = await fetch(window.location.href, { method: 'HEAD', cache: 'no-store' });
+                    const sDate = res.headers.get('date');
+                    if (sDate) return new Date(sDate).getTime();
+                } catch (err) {}
+                return Date.now() + serverTimeOffset;
+            }
+        }
+
         function getTodayDateString() {
             const d = new Date(getExactTime());
             return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -2806,46 +2822,68 @@
             }, 5200);
         }
 
-        function claimEarning(key) {
-            const invRef = db.ref('investments/' + key);
-            invRef.once('value').then(invSnap => {
+        async function claimEarning(key) {
+            const btn = document.getElementById(`btn-${key}`);
+            if (btn) {
+                btn.disabled = true;
+                btn.innerText = "Verifying...";
+            }
+
+            try {
+                // 1. Asli internet time fetch hoga (Phone date/time se bypass nahi hoga)
+                const realNow = await getTrustedServerTime();
+
+                const invRef = db.ref('investments/' + key);
+                const invSnap = await invRef.once('value');
                 const invData = invSnap.val();
+
                 if (!invData || invData.userId !== currentUser.uid) {
                     throw new Error("Task record not found.");
                 }
 
-                const now = getExactTime();
                 const investDate = new Date(invData.date).getTime();
                 const validityMs = (invData.validity || 60) * 24 * 60 * 60 * 1000;
                 
-                if (now - investDate > validityMs) {
+                if (realNow - investDate > validityMs) {
                     throw new Error("This work package has expired. Please unlock a new package.");
                 }
 
                 const twentyFourHours = 24 * 60 * 60 * 1000;
-                if (now < (invData.lastClaimed || 0) + twentyFourHours) {
-                    throw new Error("Task cooldown in progress.");
+                const lastClaimTime = invData.lastClaimed || 0;
+
+                // 24 ghante ka strict check
+                if (realNow < lastClaimTime + twentyFourHours) {
+                    const remainingMs = (lastClaimTime + twentyFourHours) - realNow;
+                    const remHours = Math.ceil(remainingMs / (1000 * 60 * 60));
+                    throw new Error(`24 ghante se pehle dobara claim nahi ho sakta! Baqi waqt: ${remHours} ghante.`);
                 }
 
                 const rewardVal = parseFloat(invData.dailyEarning || 0);
 
-                return invRef.update({ lastClaimed: now }).then(() => {
-                    return db.ref('users/' + currentUser.uid).transaction(currUser => {
-                        if (currUser) {
-                            const curBal = parseFloat(currUser.balance || 0);
-                            currUser.balance = parseFloat((curBal + rewardVal).toFixed(2));
-                        }
-                        return currUser;
-                    });
-                }).then(() => {
-                    showNotification(`Reward credited: Rs. ${rewardVal}`);
-                    updateClaimButton(key, now);
+                // 2. Database mein Google Firebase ka apna asli Server Timestamp save karein
+                await invRef.update({ 
+                    lastClaimed: firebase.database.ServerValue.TIMESTAMP 
                 });
-            }).catch(e => {
+
+                // 3. Balance add karein
+                await db.ref('users/' + currentUser.uid).transaction(currUser => {
+                    if (currUser) {
+                        const curBal = parseFloat(currUser.balance || 0);
+                        currUser.balance = parseFloat((curBal + rewardVal).toFixed(2));
+                    }
+                    return currUser;
+                });
+
+                showNotification(`Reward credited: Rs. ${rewardVal}`);
+                updateClaimButton(key, realNow);
+
+            } catch (e) {
                 showNotification(e.message, "danger");
-                const btn = document.getElementById(`btn-${key}`);
-                if (btn) btn.disabled = false;
-            });
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerText = "Complete Task";
+                }
+            }
         }
 
         // --- History ---
