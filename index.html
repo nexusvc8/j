@@ -1003,7 +1003,7 @@
                         <p>Transfer accumulated task earnings directly to your mobile wallet.</p>
                     </div>
                     <label>Withdraw Amount (PKR)</label>
-                    <input type="number" id="withdraw-amount" inputmode="decimal" placeholder="Amount">
+                    <input type="number" id="withdraw-amount" inputmode="decimal" placeholder="Minimum Rs. 5">
                     <label>Withdraw Method</label>
                     <select id="withdraw-method">
                         <option value="Easypaisa">Easypaisa</option>
@@ -2464,7 +2464,7 @@
             const method = methodSelect ? methodSelect.value : '';
             const account = accountInput.value.trim();
 
-            const minWithdrawLimit = 1;
+            const minWithdrawLimit = 5;
 
             if (isNaN(amount) || amount < minWithdrawLimit) {
                 showNotification(`Minimum withdrawal amount is Rs. ${minWithdrawLimit}.`, "danger");
