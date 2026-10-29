@@ -101,42 +101,120 @@
         .toast-close-btn { cursor: pointer; font-size: 18px; opacity: 0.8; margin-left: auto; flex-shrink: 0; }
         .toast-close-btn:hover { opacity: 1; }
 
-        /* Live Payout Toast */
-        #live-payout-ticker {
-            position: fixed;
-            bottom: 24px;
-            left: 24px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 50px;
-            padding: 8px 16px 8px 10px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            box-shadow: var(--shadow-lg);
-            z-index: 9999;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            transform: translateY(60px);
-            opacity: 0;
-            pointer-events: none;
-            max-width: 330px;
+        /* Fast Slide In Right Animation for Withdraw Success */
+        @keyframes slideInFromRight {
+            0% { transform: translateX(100%); opacity: 0; }
+            100% { transform: translateX(0); opacity: 1; }
         }
-        #live-payout-ticker.show { transform: translateY(0); opacity: 1; }
-        .ticker-badge {
-            width: 36px;
-            height: 36px;
+        .slide-in-right {
+            animation: slideInFromRight 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* Exact Screenshot Mint Green Receipt Screen */
+        .ep-success-screen {
+            background: linear-gradient(180deg, #d3f6e4 0%, #e4faee 60%, #eefbf4 100%) !important;
+            min-height: 560px;
+            border-radius: 26px;
+            padding: 35px 20px 25px 20px !important;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 12px 35px rgba(0, 195, 101, 0.12);
+        }
+        .ep-success-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        .ep-badge-wrap {
+            margin-bottom: 24px;
+        }
+        .ep-amount {
+            font-size: 34px;
+            font-weight: 900;
+            color: #1e293b;
+            line-height: 1.2;
+            margin-bottom: 6px;
+        }
+        .ep-subtitle {
+            font-size: 14.5px;
+            color: #475569;
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+        .ep-receiver-avatar {
+            width: 62px;
+            height: 62px;
             border-radius: 50%;
+            background: #ffffff;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.06);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
-            flex-shrink: 0;
+            overflow: hidden;
+            margin-bottom: 12px;
         }
-        .ticker-badge.wth { background: #dcfce7; color: #059669; }
-        .ticker-badge.act { background: #e0e7ff; color: #4338ca; }
-        .ticker-details { display: flex; flex-direction: column; overflow: hidden; }
-        .ticker-title { font-size: 12.5px; font-weight: 700; color: var(--text-main); white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
-        .ticker-sub { font-size: 11px; color: var(--text-muted); margin-top: 1px; display: flex; align-items: center; gap: 4px; }
+        .ep-receiver-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .ep-receiver-name {
+            font-size: 20px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 4px;
+        }
+        .ep-receiver-acc {
+            font-size: 16px;
+            font-weight: 600;
+            color: #334155;
+            letter-spacing: 0.5px;
+        }
+        .ep-bottom-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 40px;
+        }
+        .ep-btn-home {
+            flex: 1;
+            padding: 14px 20px;
+            background: #ffffff;
+            border: 1.8px solid #00c365;
+            border-radius: 50px;
+            color: #0f172a;
+            font-size: 14.5px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+        }
+        .ep-btn-home:hover {
+            background: #00c365;
+            color: #ffffff;
+        }
+        .ep-btn-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 1.8px solid #00c365;
+            color: #0f172a;
+            font-size: 22px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+        }
+        .ep-btn-icon:hover {
+            background: #00c365;
+            color: #ffffff;
+        }
 
         /* App Header */
         .app-header {
@@ -225,14 +303,16 @@
         /* Main Content Container */
         .main-content {
             flex-grow: 1;
-            padding: 24px;
-            padding-bottom: 70px;
+            padding: 18px 16px;
+            padding-bottom: 85px;
             background: var(--bg-body);
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
         }
+
+        /* Default Auth Card */
         .content-section {
-            max-width: 960px;
+            max-width: 420px;
             margin: 0 auto;
             background: var(--surface);
             padding: 24px;
@@ -240,9 +320,42 @@
             border: 1px solid var(--border);
             box-shadow: var(--shadow-md);
         }
-        .section-header { margin-bottom: 22px; }
-        .section-header h2 { font-size: 20px; font-weight: 800; color: var(--text-main); letter-spacing: -0.3px; }
-        .section-header p { color: var(--text-muted); font-size: 13.5px; margin-top: 4px; }
+
+        /* Fullscreen Native App Layout for ALL Dashboard Pages */
+        #dashboard-container .content-section {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .section-header { 
+            margin-bottom: 16px; 
+            padding: 0 4px;
+        }
+        .section-header h2 { 
+            font-size: 20px; 
+            font-weight: 800; 
+            color: var(--text-main); 
+            letter-spacing: -0.3px; 
+        }
+        .section-header p { 
+            color: var(--text-muted); 
+            font-size: 13px; 
+            margin-top: 3px; 
+        }
+
+        /* Clean White Card for Forms (Deposit, Profile, etc.) */
+        .app-form-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: 22px 20px;
+            box-shadow: var(--shadow-sm);
+            margin-top: 14px;
+        }
 
         /* Form Controls */
         label { font-size: 12.5px; font-weight: 700; color: #475569; margin-bottom: 6px; display: block; }
@@ -300,23 +413,6 @@
         }
         button.btn-whatsapp-share:hover { filter: brightness(1.08); transform: translateY(-1px); }
 
-        button.btn-poster {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-            color: #ffffff;
-            border: none;
-            border-radius: var(--radius-md);
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 10px;
-            box-shadow: 0 4px 14px rgba(59, 130, 246, 0.3);
-        }
 
         /* Dashboard Overview Hero */
         .dash-hero-card {
@@ -455,30 +551,6 @@
             gap: 4px;
         }
 
-        /* Milestones List Card */
-        .milestone-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 16px;
-            background: var(--surface-card);
-            border-radius: var(--radius-md);
-            border: 1px solid var(--border);
-            margin-bottom: 10px;
-            transition: var(--transition);
-        }
-        .milestone-item:hover { border-color: var(--primary); }
-        .milestone-badge {
-            font-size: 11px;
-            font-weight: 700;
-            padding: 6px 14px;
-            border-radius: 20px;
-            border: none;
-            cursor: pointer;
-        }
-        .milestone-badge.claimable { background: #059669; color: #fff; }
-        .milestone-badge.locked { background: #e2e8f0; color: #64748b; cursor: not-allowed; }
-        .milestone-badge.claimed { background: #dcfce7; color: #047857; cursor: default; }
 
         /* Team Tabs & Cards */
         .team-tab-nav {
@@ -487,15 +559,17 @@
             margin: 18px 0 14px 0;
             border-bottom: 1px solid var(--border);
             padding-bottom: 10px;
-            overflow-x: auto;
+            width: 100%;
         }
         .team-tab-btn {
-            padding: 8px 16px;
+            flex: 1;
+            text-align: center;
+            padding: 10px 8px;
             border: 1px solid var(--border);
             background: var(--surface-card);
             color: var(--text-muted);
             border-radius: var(--radius-sm);
-            font-size: 13px;
+            font-size: 13.5px;
             font-weight: 700;
             cursor: pointer;
             transition: var(--transition);
@@ -610,89 +684,214 @@
         .history-status-badge.approved, .history-status-badge.completed { background: #dcfce7; color: #059669; }
         .history-status-badge.rejected { background: #fee2e2; color: #dc2626; }
 
-        /* Slip / Receipt Modal */
-        #receipt-modal.modal-overlay {
-            background: rgba(15, 23, 42, 0.75);
-            backdrop-filter: blur(6px);
-            align-items: flex-end;
-        }
-        @media (min-width: 600px) {
-            #receipt-modal.modal-overlay { align-items: center; }
-        }
-        .receipt-modal-content {
-            background: #ffffff;
-            border: 1px solid var(--border);
-            padding: 24px 20px;
-            border-radius: 24px 24px 0 0;
-            width: 100%;
-            max-width: 440px;
-            text-align: center;
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.25);
-            max-height: 92vh;
-            overflow-y: auto;
-            position: relative;
-        }
-        @media (min-width: 600px) {
-            .receipt-modal-content { border-radius: var(--radius-xl); padding: 28px 24px; }
-        }
-
-        .receipt-card {
-            background: #f8fafc;
-            border: 1.5px dashed #cbd5e1;
-            border-radius: var(--radius-md);
-            padding: 16px 14px;
-            margin: 16px 0;
-            text-align: left;
-        }
-        .receipt-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 13px;
-            padding: 7px 0;
-            border-bottom: 1px solid #e2e8f0;
-        }
-        .receipt-row:last-child { border-bottom: none; }
-        .receipt-label { color: var(--text-muted); font-weight: 600; }
-        .receipt-val { font-weight: 700; color: var(--text-main); }
 
         
 
-        /* Packages & Task Cards */
-        .investment-plans, .task-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px; }
-        .plan-card, .task-card {
+        /* Clean Light Responsive Package Cards */
+        .investment-plans {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+        .task-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 14px;
+        }
+        .task-card {
             background: var(--surface);
             border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: 20px;
+            border-radius: var(--radius-md);
+            padding: 18px;
             text-align: center;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            transition: var(--transition);
             box-shadow: var(--shadow-sm);
+        }
+
+        /* Modern Crisp Light Package Card */
+        .pkg-pro-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            padding: 18px 18px;
+            box-shadow: 0 3px 12px rgba(15, 23, 42, 0.04);
             position: relative;
-            overflow: hidden;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            color: var(--text-main);
         }
-        .plan-card:hover, .task-card:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: var(--shadow-md); }
-        .plan-card h3, .task-card h3 { font-size: 16px; font-weight: 700; color: var(--text-main); margin-bottom: 6px; }
-        .plan-price-wrap { margin: 8px 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .plan-price { font-size: 26px; font-weight: 900; color: var(--primary); }
-        .plan-original-price { font-size: 14px; text-decoration: line-through; color: var(--text-dim); margin-bottom: 2px; }
-        .discount-badge-card {
-            position: absolute;
-            top: 12px;
-            right: -28px;
-            background: #ef4444;
-            color: #fff;
-            font-size: 10px;
+        .pkg-pro-card:hover {
+            transform: translateY(-2px);
+            border-color: #cbd5e1;
+            box-shadow: 0 8px 22px rgba(79, 70, 229, 0.08);
+        }
+
+        .pkg-card-top-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        /* Light Primary Tier Badge */
+        .pkg-tier-pill {
+            background: rgba(79, 70, 229, 0.08);
+            border: 1px solid rgba(79, 70, 229, 0.18);
+            color: var(--primary);
+            font-size: 11.5px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            letter-spacing: 0.2px;
+        }
+        .pkg-tier-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--primary);
+        }
+
+        /* Emerald Active Return Badge */
+        .pkg-active-pill {
+            background: #dcfce7;
+            border: 1px solid #bbf7d0;
+            color: #059669;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin-left: auto;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .pkg-pack-sub {
+            font-size: 13.5px;
+            font-weight: 600;
+            color: #64748b;
+            display: block;
+            margin-bottom: 2px;
+        }
+        .pkg-price-row {
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+            margin-bottom: 14px;
+        }
+        .pkg-rs-prefix {
+            font-size: 16px;
             font-weight: 800;
-            padding: 4px 30px;
-            transform: rotate(45deg);
-            box-shadow: 0 2px 6px rgba(239, 68, 68, 0.4);
-            letter-spacing: 0.5px;
+            color: var(--text-main);
         }
-        .plan-meta { font-size: 12.5px; color: var(--text-muted); margin-bottom: 16px; line-height: 1.6; }
+        .pkg-main-price {
+            font-size: 28px;
+            font-weight: 900;
+            color: #0f172a;
+            line-height: 1;
+            letter-spacing: -0.5px;
+        }
+        .pkg-old-price {
+            font-size: 13px;
+            text-decoration: line-through;
+            color: #94a3b8;
+            margin-left: 6px;
+            font-weight: 600;
+        }
+
+        /* Light 2-Column Metrics Box */
+        .pkg-metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .pkg-metric-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 10px 12px;
+            text-align: left;
+        }
+        .pkg-metric-head {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11.5px;
+            font-weight: 600;
+            color: #64748b;
+            margin-bottom: 3px;
+        }
+        .pkg-metric-val {
+            font-size: 15.5px;
+            font-weight: 800;
+        }
+        .pkg-metric-val.green {
+            color: #059669;
+        }
+        .pkg-metric-val.dark {
+            color: #1e293b;
+        }
+
+        /* Light Total Return Strip */
+        .pkg-total-return-box {
+            background: #f1f5f9;
+            border: 1px dashed #cbd5e1;
+            border-radius: 10px;
+            padding: 9px 13px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+        .pkg-return-label {
+            font-size: 12.5px;
+            font-weight: 600;
+            color: #475569;
+        }
+        .pkg-return-val {
+            font-size: 14.5px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        /* Compact Primary Unlock Button */
+        .pkg-unlock-btn {
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+            transition: all 0.2s;
+        }
+        .pkg-unlock-btn:hover {
+            filter: brightness(1.06);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(79, 70, 229, 0.32);
+        }
+        .pkg-unlock-btn:disabled, .pkg-unlock-btn.active {
+            background: #dcfce7 !important;
+            color: #047857 !important;
+            border: 1px solid #bbf7d0 !important;
+            box-shadow: none !important;
+            cursor: default;
+        }
 
         /* Referral Box */
         .referral-box {
@@ -769,6 +968,402 @@
         }
         @keyframes spinAnim { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
+        /* Screenshot-Style Multi-Step Native Withdraw Design (Borderless Full Screen) */
+        #send-content {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+            max-width: 520px;
+            margin: 0 auto;
+        }
+
+        /* Borderless Native Screen (No double card, clean floating look) */
+        .native-app-screen {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            padding: 4px 2px 20px 2px !important;
+            position: relative;
+        }
+
+        .native-top-nav {
+            margin-bottom: 16px;
+        }
+        .btn-screen-back {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            border: 1.5px solid #e2e8f0;
+            background: #ffffff;
+            color: #1e293b;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .btn-screen-back:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+
+        .native-header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 14px;
+            border-bottom: 1px solid #f1f5f9;
+            margin-bottom: 20px;
+        }
+        .native-header-titles h2 {
+            font-size: 24px;
+            font-weight: 800;
+            color: #0f172a;
+            line-height: 1.2;
+            letter-spacing: -0.3px;
+        }
+        .native-header-titles p {
+            font-size: 13.5px;
+            color: #64748b;
+            margin-top: 4px;
+        }
+        .native-header-logo {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 1.5px solid #e2e8f0;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            flex-shrink: 0;
+        }
+        .native-header-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Toggle Tab Pills (Account No / IBAN) */
+        .toggle-tab-container {
+            display: flex;
+            background: #ffffff;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 22px;
+            gap: 6px;
+        }
+        .toggle-tab-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 11px 14px;
+            border-radius: 9px;
+            font-size: 13.5px;
+            font-weight: 700;
+            border: none;
+            background: transparent;
+            color: #475569;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .toggle-tab-btn.active {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        /* App Form Fields */
+        .native-input-group {
+            margin-bottom: 18px;
+        }
+        .native-input-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 8px;
+            display: block;
+        }
+        .native-field-input {
+            width: 100%;
+            padding: 14px 16px !important;
+            border: 1.5px solid #cbd5e1 !important;
+            border-radius: 12px !important;
+            font-size: 15px !important;
+            background: #ffffff !important;
+            color: #0f172a !important;
+            margin-bottom: 0 !important;
+            outline: none;
+            transition: var(--transition);
+        }
+        .native-field-input:focus {
+            border-color: #00c365 !important;
+            box-shadow: 0 0 0 3px rgba(0, 195, 101, 0.15) !important;
+        }
+
+        /* Native Action Buttons (Gray when invalid, Green when valid) */
+        .btn-native-action {
+            width: 100%;
+            padding: 15px;
+            border-radius: 50px;
+            font-size: 15px;
+            font-weight: 800;
+            border: none;
+            cursor: not-allowed;
+            background: #94a3b8;
+            color: #ffffff;
+            transition: all 0.25s ease;
+            margin-top: 24px;
+        }
+        .btn-native-action.ready {
+            background: #00c365 !important;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(0, 195, 101, 0.35);
+        }
+        .btn-native-action.ready:active {
+            transform: scale(0.98);
+        }
+
+        /* Step 3: Enter Amount Center Area */
+        .amount-display-stage {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 35px 10px 25px 10px;
+        }
+        .amount-row-wrapper {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 6px;
+        }
+        .amount-currency-label {
+            font-size: 24px;
+            font-weight: 800;
+            color: #1e293b;
+        }
+        .amount-numeric-input {
+            width: 220px;
+            border: none !important;
+            background: transparent !important;
+            font-size: 58px !important;
+            font-weight: 900 !important;
+            color: #0f172a !important;
+            text-align: left !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            outline: none !important;
+            box-shadow: none !important;
+            caret-color: #00c365;
+        }
+        .my-balance-indicator {
+            font-size: 13.5px;
+            color: #475569;
+            font-weight: 600;
+            margin-top: 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Step 4: Confirm Transaction Cards */
+        .confirm-section-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: #1e293b;
+            margin: 18px 0 8px 0;
+            display: block;
+        }
+        .confirm-info-card {
+            background: #ffffff;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 6px;
+        }
+        .confirm-info-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+        }
+        .confirm-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+            background: #f8fafc;
+        }
+        .confirm-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .confirm-text-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            overflow: hidden;
+        }
+        .confirm-title {
+            font-size: 14.5px;
+            font-weight: 800;
+            color: #0f172a;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .confirm-sub {
+            font-size: 12px;
+            color: #64748b;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .summary-card-box {
+            background: #ffffff;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 18px 16px;
+            margin-bottom: 16px;
+        }
+        .summary-item-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13.5px;
+            color: #475569;
+            margin-bottom: 12px;
+        }
+        .summary-divider {
+            border-top: 1px solid #e2e8f0;
+            margin: 12px 0;
+        }
+        .summary-total-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 16px;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        /* Wallets List Elements */
+        .wallet-search-box {
+            position: relative;
+            margin-bottom: 16px;
+        }
+        .wallet-search-box i {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 21px;
+            color: #94a3b8;
+        }
+        .wallet-search-input {
+            width: 100%;
+            padding: 14px 18px 14px 50px !important;
+            border-radius: 50px !important;
+            border: 1.5px solid #e2e8f0 !important;
+            background: #ffffff !important;
+            font-size: 14.5px !important;
+            margin-bottom: 0 !important;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            transition: var(--transition);
+        }
+        .wallet-search-input:focus {
+            border-color: #00c365 !important;
+            box-shadow: 0 0 0 3px rgba(0, 195, 101, 0.12) !important;
+            background: #ffffff !important;
+        }
+        .wallets-list-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            overflow: visible !important;
+        }
+        .wallet-item-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 18px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            user-select: none;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+        }
+        .wallet-item-row:hover, .wallet-item-row:active {
+            background-color: #ffffff;
+            border-color: #00c365;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(0, 195, 101, 0.12);
+        }
+        .wallet-item-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .wallet-circle-logo {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13.5px;
+            font-weight: 800;
+            color: #ffffff;
+            background: #4f46e5;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border: 1px solid rgba(0,0,0,0.05);
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+        .wallet-circle-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .wallet-item-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: #0f172a;
+            letter-spacing: -0.2px;
+        }
+        .wallet-chevron-icon {
+            font-size: 22px;
+            color: #94a3b8;
+            transition: transform 0.2s;
+        }
+        .wallet-item-row:hover .wallet-chevron-icon {
+            color: #00c365;
+            transform: translateX(3px);
+        }
+
         @media (max-width: 860px) {
             .sidebar {
                 position: fixed;
@@ -792,14 +1387,6 @@
 
     <div id="notification-box" class="hidden"></div>
 
-    <!-- Live Anti-detection Ticker -->
-    <div id="live-payout-ticker">
-        <div class="ticker-badge wth" id="ticker-icon"><i class='bx bx-check-circle'></i></div>
-        <div class="ticker-details">
-            <span class="ticker-title mono" id="ticker-title">0301****489 withdrew Rs. 850</span>
-            <span class="ticker-sub" id="ticker-sub"><i class='bx bx-time-five'></i> <span id="ticker-time">Just now</span></span>
-        </div>
-    </div>
 
     <!-- Header -->
     <header class="app-header hidden" id="app-header">
@@ -866,8 +1453,8 @@
                     <input type="tel" id="signup-number" inputmode="numeric" placeholder="03XXXXXXXXX">
                     <label>Password</label>
                     <input type="password" id="signup-password" placeholder="Create strong password (min 6 chars)">
-                    <label>Referral Sponsor ID (Optional)</label>
-                    <input type="text" id="signup-referral" placeholder="Sponsor Code">
+                    <label>Referral Code (Optional)</label>
+                    <input type="text" id="signup-referral" placeholder="Referral Code">
                     <button class="btn-primary" id="btn-signup-submit" onclick="signupUser()">Register Account</button>
                     <p style="text-align:center; margin-top:18px; font-size:13.5px; color:var(--text-muted);">
                         Already registered? <a href="#" onclick="toggleForms(false)" style="color:var(--primary); font-weight:700; text-decoration:none;">Sign In</a>
@@ -877,7 +1464,7 @@
 
             <!-- Dashboard Container -->
             <div id="dashboard-container" class="hidden">
-                <!-- Dashboard Section -->
+                <!-- Dashboard Section (Header shows ONLY here) -->
                 <div id="home-content" class="content-section">
                     <div id="system-notice" class="notice-banner">
                         <div style="display:flex; align-items:center; gap:8px;">
@@ -923,8 +1510,8 @@
                             <span id="bonus-status-badge" style="font-size:11px; background:#fef3c7; color:#b45309; padding:4px 10px; border-radius:20px; font-weight:700;">Locked</span>
                         </div>
                         <div style="font-size:12.5px; color:#78350f; display:flex; justify-content:space-between;">
-                            <span>Requirement: <strong>Rs. 15,000 Investment</strong></span>
-                            <span id="bonus-progress-count" class="mono" style="font-weight:700;">Rs. 0 / Rs. 15,000</span>
+                            <span>Requirement: <strong>Rs. 30,000 Investment</strong></span>
+                            <span id="bonus-progress-count" class="mono" style="font-weight:700;">Rs. 0 / Rs. 30,000</span>
                         </div>
                         <div class="locked-bonus-progress-wrap">
                             <div class="locked-bonus-progress-bar" id="bonus-progress-fill"></div>
@@ -935,10 +1522,9 @@
                     </div>
                 </div>
 
-                
-
-                <!-- Deposit -->
+                <!-- Deposit Page -->
                 <div id="deposit-content" class="content-section hidden">
+
                     <div class="section-header">
                         <h2>Deposit Funds</h2>
                         <p>Transfer exact amount to the official account card below and submit your TRX ID.</p>
@@ -964,18 +1550,21 @@
                         </div>
                     </div>
 
-                    <label>Amount (PKR)</label>
-                    <input type="number" id="deposit-amount" inputmode="decimal" placeholder="Minimum Rs. 20">
-                    <label>Payment Channel</label>
-                    <select id="payment-method">
-                        <option>Easypaisa</option>
-                        <option>Jazzcash</option>
-                    </select>
-                    <label>Transaction ID (TRX ID)</label>
-                    <input type="text" id="transaction-id" placeholder="e.g. 8472910382">
-                    <label>Sender Mobile Number</label>
-                    <input type="tel" id="sending-number" inputmode="numeric" placeholder="e.g. 03001234567">
-                    <button class="btn-primary" id="btn-deposit-submit" onclick="submitDeposit()">Submit Deposit</button>
+                    <!-- Clean Single Form Card -->
+                    <div class="app-form-card">
+                        <label>Amount (PKR)</label>
+                        <input type="number" id="deposit-amount" inputmode="decimal" placeholder="Minimum Rs. 20">
+                        <label>Payment Channel</label>
+                        <select id="payment-method">
+                            <option>Easypaisa</option>
+                            <option>Jazzcash</option>
+                        </select>
+                        <label>Transaction ID (TRX ID)</label>
+                        <input type="text" id="transaction-id" placeholder="e.g. 8472910382">
+                        <label>Sender Mobile Number</label>
+                        <input type="tel" id="sending-number" inputmode="numeric" placeholder="e.g. 03001234567">
+                        <button class="btn-primary" id="btn-deposit-submit" onclick="submitDeposit()">Submit Deposit</button>
+                    </div>
                 </div>
 
                 <!-- Packages Dynamic -->
@@ -996,35 +1585,243 @@
                     <div id="task-list-container" class="task-list"></div>
                 </div>
 
-                <!-- Withdraw -->
+                <!-- Withdraw with Back Button in Step 1 -->
                 <div id="send-content" class="content-section hidden">
-                    <div class="section-header">
-                        <h2>Withdraw Funds</h2>
-                        <p>Transfer accumulated task earnings directly to your mobile wallet.</p>
-                    </div>
-                    <label>Withdraw Amount (PKR)</label>
-                    <input type="number" id="withdraw-amount" inputmode="decimal" placeholder="Minimum Rs. 5">
-                    <label>Withdraw Method</label>
-                    <select id="withdraw-method">
-                        <option value="Easypaisa">Easypaisa</option>
-                        <option value="Jazzcash">Jazzcash</option>
-                    </select>
-                    <label>Account / Mobile Number</label>
-                    <input type="tel" id="withdraw-account" inputmode="numeric" placeholder="Account Number">
-                    <button class="btn-primary" id="btn-withdraw-submit" onclick="submitWithdrawal()">Submit Withdraw Request</button>
+                    
+                    <!-- STEP 1: WALLET LIST SCREEN -->
+                    <div id="withdraw-step-wallets">
+                        <div class="native-top-nav">
+                            <button class="btn-screen-back" onclick="showSection('home')">
+                                <i class='bx bx-chevron-left'></i>
+                            </button>
+                        </div>
+                        <div class="section-header">
+                            <h2>Select Payment Wallet</h2>
+                            <p>Choose your wallet or digital bank for instant transfer.</p>
+                        </div>
 
-                    <div style="margin-top: 20px; padding: 16px; border: 1px solid var(--border); border-radius: var(--radius-md); background-color: var(--surface-card);">
-                        <h4 style="margin-bottom: 6px; font-size:13.5px; font-weight:700; color: var(--text-main);">Withdrawal Guidelines</h4>
-                        <p style="font-size: 12.5px; color: var(--text-muted);">• Operating hours: 9:00 AM – 11:00 PM daily.</p>
-                        <p style="font-size: 12.5px; color: var(--danger); margin-top: 4px;">• Ensure payment details are accurate before submitting.</p>
+                        <!-- Search Bar -->
+                        <div class="wallet-search-box">
+                            <i class='bx bx-search'></i>
+                            <input type="text" id="wallet-search-input" class="wallet-search-input" placeholder="Search Wallet by Name" oninput="filterWalletsList()">
+                        </div>
+
+                        <!-- Wallets List -->
+                        <div id="wallets-list-wrapper" class="wallets-list-container">
+                            <!-- Dynamic Wallets will render here -->
+                        </div>
                     </div>
+
+                    <!-- STEP 2: ACCOUNT DETAILS SCREEN (Screenshots 1 & 2) -->
+                    <div id="withdraw-step-details" class="native-app-screen hidden">
+                        <div class="native-top-nav">
+                            <button class="btn-screen-back" onclick="goToStep(1)">
+                                <i class='bx bx-chevron-left'></i>
+                            </button>
+                        </div>
+
+                        <div class="native-header-row">
+                            <div class="native-header-titles">
+                                <h2>Account Details</h2>
+                                <p>Wallet selected: <strong id="step2-wallet-name" style="color:#0f172a;">JazzCash</strong></p>
+                            </div>
+                            <div class="native-header-logo" id="step2-wallet-logo">
+                                <img src="" alt="Wallet">
+                            </div>
+                        </div>
+
+                        <!-- Toggle Tabs (Account No / IBAN) -->
+                        <div class="toggle-tab-container">
+                            <button class="toggle-tab-btn active" id="tab-btn-accno" onclick="setAccountMode('account')">
+                                <i class='bx bx-user'></i> Account No.
+                            </button>
+                            <button class="toggle-tab-btn" id="tab-btn-iban" onclick="setAccountMode('iban')">
+                                <i class='bx bx-credit-card'></i> IBAN
+                            </button>
+                        </div>
+
+                        <!-- Receiver Account Input -->
+                        <div class="native-input-group">
+                            <label id="step2-account-label">Enter Receiver's Account Number</label>
+                            <input type="tel" id="step2-account-input" class="native-field-input" inputmode="numeric" placeholder="Enter Here" oninput="handleAccountInput(this)">
+                        </div>
+
+                        <!-- Receiver Name Input (Only Letters, no @, &, _, numbers) -->
+                        <div class="native-input-group">
+                            <label>Enter Receiver's Name</label>
+                            <input type="text" id="step2-name-input" class="native-field-input" placeholder="Enter Receiver's Full Name" oninput="handleNameInput(this)">
+                        </div>
+
+                        <!-- Next Button -->
+                        <button class="btn-native-action" id="step2-next-btn" onclick="goToStep(3)" disabled>Next</button>
+                    </div>
+
+                    <!-- STEP 3: ENTER AMOUNT SCREEN (Screenshot 3) -->
+                    <div id="withdraw-step-amount" class="native-app-screen hidden">
+                        <div class="native-top-nav">
+                            <button class="btn-screen-back" onclick="goToStep(2)">
+                                <i class='bx bx-chevron-left'></i>
+                            </button>
+                        </div>
+
+                        <div class="native-header-row">
+                            <div class="native-header-titles">
+                                <h2>Enter Amount</h2>
+                                <p><span id="step3-method-title">Jazz Cash</span>: <strong id="step3-account-display" style="color:#0f172a;">-</strong></p>
+                            </div>
+                            <div class="native-header-logo" id="step3-wallet-logo">
+                                <img src="" alt="Wallet">
+                            </div>
+                        </div>
+
+                        <!-- Amount Center Display Stage -->
+                        <div class="amount-display-stage">
+                            <div class="amount-row-wrapper">
+                                <span class="amount-currency-label">Rs.</span>
+                                <input type="tel" id="step3-amount-input" class="amount-numeric-input mono" inputmode="numeric" placeholder="0" oninput="handleAmountInput(this)">
+                            </div>
+                            <div class="my-balance-indicator">
+                                My Balance: <strong id="step3-balance-display" style="color:#00c365;">Rs. 0.00</strong>
+                                <i class='bx bx-refresh' style="font-size:16px; cursor:pointer;" onclick="refreshAmountScreenBalance()"></i>
+                            </div>
+                        </div>
+
+                        <!-- Next Button -->
+                        <button class="btn-native-action" id="step3-next-btn" onclick="goToStep(4)" disabled>Next</button>
+                    </div>
+
+                    <!-- STEP 4: CONFIRM TRANSACTION SCREEN (Screenshot 4) -->
+                    <div id="withdraw-step-confirm" class="native-app-screen hidden">
+                        <div class="native-top-nav">
+                            <button class="btn-screen-back" onclick="goToStep(3)">
+                                <i class='bx bx-chevron-left'></i>
+                            </button>
+                        </div>
+
+                        <div class="native-header-titles" style="margin-bottom: 20px;">
+                            <h2>Confirm Transaction</h2>
+                        </div>
+
+                        <!-- Pay From Card -->
+                        <span class="confirm-section-label">Pay From</span>
+                        <div class="confirm-info-card">
+                            <div class="confirm-info-left">
+                                <div class="confirm-avatar">
+                                    <img src="https://i.ibb.co/YB5jfT2h/file-0000000088a8820bbb937594adec6c09.png" alt="App Logo">
+                                </div>
+                                <div class="confirm-text-wrap">
+                                    <span class="confirm-title">Benvixa Wallet</span>
+                                    <span class="confirm-sub" id="confirm-user-balance">Balance: Rs. 0.00</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pay To Card -->
+                        <span class="confirm-section-label">Pay To</span>
+                        <div class="confirm-info-card">
+                            <div class="confirm-info-left">
+                                <div class="confirm-avatar" id="confirm-receiver-logo">
+                                    <img src="" alt="Method">
+                                </div>
+                                <div class="confirm-text-wrap">
+                                    <span class="confirm-title" id="confirm-receiver-name">-</span>
+                                    <span class="confirm-sub" id="confirm-receiver-account">-</span>
+                                </div>
+                            </div>
+                            <i class='bx bx-check-circle' style="font-size:24px; color:#00c365;"></i>
+                        </div>
+
+                        <!-- Payment Summary -->
+                        <span class="confirm-section-label">Payment Summary</span>
+                        <div class="summary-card-box">
+                            <div class="summary-item-row">
+                                <span>Transfer Amount</span>
+                                <strong id="summary-transfer-amount" class="mono" style="color:#0f172a;">Rs. 0.00</strong>
+                            </div>
+                            <div class="summary-item-row">
+                                <span>Fee (including tax)</span>
+                                <strong style="color:#00c365;">Free</strong>
+                            </div>
+                            <div class="summary-divider"></div>
+                            <div class="summary-total-row">
+                                <span>Total Amount</span>
+                                <strong id="summary-total-amount" class="mono" style="color:#0f172a;">Rs. 0.00</strong>
+                            </div>
+                        </div>
+
+                        <!-- Send Now Action Button -->
+                        <button class="btn-native-action ready" id="btn-final-send-now" onclick="executeFinalWithdrawal()" style="background:#00c365 !important;">
+                            Send Now
+                        </button>
+                    </div>
+
+                    <!-- STEP 5: EXACT SCREENSHOT SUCCESS VIEW -->
+                    <div id="withdraw-step-success" class="native-app-screen hidden ep-success-screen">
+                        <div class="ep-success-content">
+                            <!-- 3D Gold Sun Badge with Radiant Rays -->
+                            <div class="ep-badge-wrap">
+                                <svg width="150" height="150" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <!-- 8 Radiant Green Rays -->
+                                    <line x1="80" y1="12" x2="80" y2="24" stroke="#00c365" stroke-width="4.5" stroke-linecap="round"/>
+                                    <line x1="80" y1="136" x2="80" y2="148" stroke="#00c365" stroke-width="4.5" stroke-linecap="round"/>
+                                    <line x1="12" y1="80" x2="24" y2="80" stroke="#00c365" stroke-width="4.5" stroke-linecap="round"/>
+                                    <line x1="136" y1="80" x2="148" y2="80" stroke="#00c365" stroke-width="4.5" stroke-linecap="round"/>
+                                    <line x1="32" y1="32" x2="41" y2="41" stroke="#00c365" stroke-width="4.5" stroke-linecap="round"/>
+                                    <line x1="119" y1="119" x2="128" y2="128" stroke="#00c365" stroke-width="4.5" stroke-linecap="round"/>
+                                    <line x1="32" y1="128" x2="41" y2="119" stroke="#00c365" stroke-width="4.5" stroke-linecap="round"/>
+                                    <line x1="119" y1="41" x2="128" y2="32" stroke="#00c365" stroke-width="4.5" stroke-linecap="round"/>
+
+                                    <!-- 3D Metallic Gold Disc -->
+                                    <defs>
+                                        <radialGradient id="goldGrad" cx="38%" cy="32%" r="70%">
+                                            <stop offset="0%" stop-color="#fff1a8"/>
+                                            <stop offset="35%" stop-color="#f6c75b"/>
+                                            <stop offset="75%" stop-color="#df9a26"/>
+                                            <stop offset="100%" stop-color="#b8720e"/>
+                                        </radialGradient>
+                                        <filter id="goldDrop" x="-20%" y="-20%" width="140%" height="140%">
+                                            <feDropShadow dx="0" dy="7" stdDeviation="5" flood-color="#df9a26" flood-opacity="0.32"/>
+                                        </filter>
+                                    </defs>
+                                    <circle cx="80" cy="80" r="42" fill="url(#goldGrad)" filter="url(#goldDrop)"/>
+
+                                    <!-- Green Checkmark inside Gold Disc -->
+                                    <path d="M64 80L74 90L96 66" stroke="#009647" stroke-width="8.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M64 80L74 90L96 66" stroke="#00c365" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+
+                            <!-- Big Amount Display -->
+                            <div class="ep-amount mono" id="success-screen-amount">Rs. 0.00</div>
+                            <div class="ep-subtitle">Successfully Sent to</div>
+
+                            <!-- Receiver Wallet Logo Avatar -->
+                            <div class="ep-receiver-avatar" id="success-receiver-avatar">
+                                <img src="" alt="Wallet" id="success-receiver-img">
+                            </div>
+
+                            <!-- Receiver Name -->
+                            <div class="ep-receiver-name" id="success-screen-name">-</div>
+
+                            <!-- Receiver Account / Phone Number -->
+                            <div class="ep-receiver-acc mono" id="success-screen-acc">-</div>
+                        </div>
+
+                        <!-- Bottom Buttons Row -->
+                        <div class="ep-bottom-bar">
+                            <button class="ep-btn-home" onclick="finishWithdrawalToHome()">Back to home</button>
+                            <button class="ep-btn-icon" onclick="shareWithdrawalProof()" title="Share"><i class='bx bx-share-alt'></i></button>
+                            <button class="ep-btn-icon" onclick="showSection('history')" title="History"><i class='bx bx-file-blank'></i></button>
+                        </div>
+                    </div>
+
                 </div>
 
                 <!-- History -->
                 <div id="history-content" class="content-section hidden">
                     <div class="section-header">
                         <h2>Transaction History</h2>
-                        <p>Tap any transaction card below to view and download its official receipt slip.</p>
+                        <p>Your recent deposits and withdrawals records.</p>
                     </div>
 
                     <h3 style="font-size: 15px; margin: 18px 0 10px 0; color:var(--text-main);">Deposits</h3>
@@ -1038,13 +1835,22 @@
                     </div>
                 </div>
 
-                <!-- Invite (Affiliate & Milestones Dynamic) -->
+                <!-- Invite (Affiliate Hierarchy) -->
                 <div id="team-content" class="content-section hidden">
-                    <div class="section-header">
-                        <h2>Invite & Multi-Tier Affiliate</h2>
-                        <p id="affiliate-commission-desc">Receive <strong>Level 1: 8%</strong>, <strong>Level 2: 3%</strong>, and <strong>Level 3: 1%</strong> lifetime commissions!</p>
+                    <!-- Invite Promo Banner -->
+                    <div style="margin-bottom: 14px;">
+                        <img src="https://i.postimg.cc/L4fHmtBd/file-00000000f914821196bde803a6266465.png" alt="Invite Banner" style="width: 100%; height: auto; border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); display: block;">
                     </div>
 
+                    <!-- Personal Invite Link (Cards ke opar) -->
+                    <div style="margin-bottom: 18px;">
+                        <div class="referral-box" style="margin-top: 0;">
+                            <span id="user-referral-link" class="mono" style="font-size:12.5px; color:var(--text-main);">- - -</span>
+                            <button class="btn-primary" onclick="copyReferralLink()">Copy Link</button>
+                        </div>
+                    </div>
+
+                    <!-- Commission Stats Cards -->
                     <div class="stats-grid">
                         <div class="stat-card">
                             <span class="stat-label">Total Commission</span>
@@ -1056,43 +1862,12 @@
                         </div>
                     </div>
 
-                    <div style="margin-top: 10px;">
-                        <label>Your Personal Invite Link</label>
-                        <div class="referral-box">
-                            <span id="user-referral-link" class="mono" style="font-size:12.5px; color:var(--text-main);">- - -</span>
-                            <button class="btn-primary" onclick="copyReferralLink()">Copy Link</button>
-                        </div>
-                        
-                        <button class="btn-whatsapp-share" onclick="shareOnWhatsApp()">
-                            <i class='bx bxl-whatsapp' style="font-size: 20px;"></i>
-                            Share on WhatsApp (1-Click)
-                        </button>
-
-                        <button class="btn-poster" onclick="openPosterModal()">
-                            <i class='bx bx-image' style="font-size: 20px;"></i>
-                            Generate HD Status Poster (English)
-                        </button>
-                    </div>
-
-                    <!-- Dynamic Milestone Rewards Container -->
-                    <div style="margin: 22px 0 16px 0; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px; background: #fff;">
-                        <h3 style="font-size: 15.5px; font-weight: 800; color: var(--text-main); margin-bottom: 4px;">
-                            🎯 Team Milestone Rewards
-                        </h3>
-                        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;">
-                            Achieve active member targets to claim instant cash prizes directly into your wallet.
-                        </p>
-                        <div id="dynamic-milestones-list">
-                            <p style="color:var(--text-muted); font-size:13px;">Loading rewards...</p>
-                        </div>
-                    </div>
-
                     <!-- 3-Level Team Tabs -->
                     <h3 style="font-size: 15px; margin: 24px 0 6px 0; color:var(--text-main);">Team Members Hierarchy</h3>
                     <div class="team-tab-nav">
-                        <button class="team-tab-btn active" id="tab-btn-l1" onclick="switchTeamTab('l1')">Level 1 (8%)</button>
-                        <button class="team-tab-btn" id="tab-btn-l2" onclick="switchTeamTab('l2')">Level 2 (3%)</button>
-                        <button class="team-tab-btn" id="tab-btn-l3" onclick="switchTeamTab('l3')">Level 3 (1%)</button>
+                        <button class="team-tab-btn active" id="tab-btn-l1" onclick="switchTeamTab('l1')">Level 1</button>
+                        <button class="team-tab-btn" id="tab-btn-l2" onclick="switchTeamTab('l2')">Level 2</button>
+                        <button class="team-tab-btn" id="tab-btn-l3" onclick="switchTeamTab('l3')">Level 3</button>
                     </div>
 
                     <div id="team-tab-pane-l1" class="history-cards-container">
@@ -1108,14 +1883,16 @@
 
                 <!-- Profile -->
                 <div id="profile-content" class="content-section hidden">
-                    <div class="section-header">
-                        <h2>User Profile</h2>
-                        <p>Personal credentials and registration overview.</p>
-                    </div>
-                    <div style="display:flex; flex-direction:column; gap:14px; font-size:13.5px;">
-                        <div><strong style="color:var(--text-muted); display:inline-block; width:130px;">Email:</strong> <span id="profile-email">-</span></div>
-                        <div><strong style="color:var(--text-muted); display:inline-block; width:130px;">Phone:</strong> <span id="profile-number">-</span></div>
-                        <div><strong style="color:var(--text-muted); display:inline-block; width:130px;">Member Since:</strong> <span id="profile-signup-date">-</span></div>
+                    <div class="app-form-card" style="margin-top: 0;">
+                        <div class="section-header" style="margin-bottom:16px;">
+                            <h2>User Profile</h2>
+                            <p>Personal credentials and registration overview.</p>
+                        </div>
+                        <div style="display:flex; flex-direction:column; gap:14px; font-size:13.5px;">
+                            <div><strong style="color:var(--text-muted); display:inline-block; width:130px;">Email:</strong> <span id="profile-email">-</span></div>
+                            <div><strong style="color:var(--text-muted); display:inline-block; width:130px;">Phone:</strong> <span id="profile-number">-</span></div>
+                            <div><strong style="color:var(--text-muted); display:inline-block; width:130px;">Member Since:</strong> <span id="profile-signup-date">-</span></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1136,18 +1913,6 @@
         </div>
     </div>
 
-    <!-- HD WhatsApp Poster Modal -->
-    <div id="poster-modal" class="modal-overlay hidden">
-        <div class="modal-content" style="max-width: 420px; padding: 18px;">
-            <h3 style="font-size: 18px; font-weight: 800;">Your Promo Status Poster</h3>
-            <p style="font-size: 12.5px; color: var(--text-muted); margin: 4px 0 14px 0;">Post this on your WhatsApp Status to invite new friends!</p>
-            <canvas id="posterCanvas" width="450" height="600" style="width: 100%; height: auto; border-radius: 12px; box-shadow: 0 4px 14px rgba(0,0,0,0.15);"></canvas>
-            <button class="btn-primary" onclick="downloadPoster()" style="margin-top: 14px;">
-                <i class='bx bx-download'></i> Download Poster Image
-            </button>
-            <button class="modal-btn cancel btn-primary" onclick="closePosterModal()" style="margin-top: 8px;">Close</button>
-        </div>
-    </div>
 
 
     <!-- Confirmation Modal -->
@@ -1162,57 +1927,6 @@
         </div>
     </div>
 
-    <!-- Receipt Modal -->
-    <div id="receipt-modal" class="modal-overlay hidden">
-        <div class="receipt-modal-content">
-            <div id="rcpt-status-icon" style="display:inline-flex; align-items:center; justify-content:center; width:52px; height:52px; background:#dcfce7; color:#059669; border-radius:50%; margin-bottom:8px;">
-                <i class='bx bx-check-double' style="font-size: 32px;"></i>
-            </div>
-            
-            <h3 id="rcpt-header-type" style="font-size: 20px; font-weight: 800; color:var(--text-main);">Transaction Slip</h3>
-            <div id="rcpt-amount" class="mono" style="font-size: 28px; font-weight: 900; color: var(--text-main); margin: 6px 0 2px 0;">Rs. 0.00</div>
-            <span id="rcpt-status-tag" class="history-status-badge" style="font-size:12px; padding:4px 14px;">Processing</span>
-            
-            <div class="receipt-card">
-                <div class="receipt-row">
-                    <span class="receipt-label">Transaction Type:</span>
-                    <span class="receipt-val" id="rcpt-type-title">Withdrawal</span>
-                </div>
-                <div class="receipt-row">
-                    <span class="receipt-label">Payment Channel:</span>
-                    <span class="receipt-val" id="rcpt-method">Easypaisa</span>
-                </div>
-                <div class="receipt-row" id="rcpt-target-row">
-                    <span class="receipt-label" id="rcpt-target-label">Account Number:</span>
-                    <span class="receipt-val mono" id="rcpt-account">-</span>
-                </div>
-                <div class="receipt-row" id="rcpt-trx-row">
-                    <span class="receipt-label">TRX ID:</span>
-                    <span class="receipt-val mono" id="rcpt-trx-val" style="color:var(--primary); font-size:12px;">-</span>
-                </div>
-                <div class="receipt-row">
-                    <span class="receipt-label">Date & Time:</span>
-                    <span class="receipt-val" id="rcpt-date">-</span>
-                </div>
-                <div class="receipt-row">
-                    <span class="receipt-label">Member Sponsor ID:</span>
-                    <span class="receipt-val mono" id="rcpt-ref" style="color: var(--primary);">-</span>
-                </div>
-            </div>
-
-            <p style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 14px;">
-                Verified Certificate from Benvixa Work Network. Share on WhatsApp status to invite friends!
-            </p>
-
-            <button class="btn-primary" onclick="downloadReceiptSlip()" style="margin-bottom: 8px;">
-                <i class='bx bx-download'></i> Download Slip Image
-            </button>
-            <button class="btn-whatsapp-share" onclick="shareReceiptToWhatsApp()" style="margin-top: 0; margin-bottom: 10px;">
-                <i class='bx bxl-whatsapp'></i> Share to WhatsApp Status
-            </button>
-            <button class="modal-btn cancel btn-primary" onclick="closeReceiptModal()">Close</button>
-        </div>
-    </div>
 
     <!-- WhatsApp Channel Popup -->
     <div id="community-modal" class="modal-overlay">
@@ -1263,7 +1977,8 @@
         // Dynamic Data holders
         let dynamicInvestmentPlans = [];
         let dynamicWithdrawalMethods = [];
-        let dynamicMilestones = [];
+        let cachedUserInvestments = null;
+        let lastInvestmentsFetchTime = 0;
 
         // Dynamic Deposit Account holder from Firebase
         let dynamicDepositNumber = "03262550724";
@@ -1289,20 +2004,9 @@
             return Date.now() + serverTimeOffset;
         }
 
-        // Real Internet Server Time (Device Clock fraud rokne ke liye)
+        // Real Trusted Server Time (Console fetch error fixed)
         async function getTrustedServerTime() {
-            try {
-                const res = await fetch('https://worldtimeapi.org/api/timezone/Etc/UTC', { cache: 'no-store' });
-                const data = await res.json();
-                return new Date(data.utc_datetime).getTime();
-            } catch (e) {
-                try {
-                    const res = await fetch(window.location.href, { method: 'HEAD', cache: 'no-store' });
-                    const sDate = res.headers.get('date');
-                    if (sDate) return new Date(sDate).getTime();
-                } catch (err) {}
-                return Date.now() + serverTimeOffset;
-            }
+            return getExactTime();
         }
 
         function getTodayDateString() {
@@ -1310,10 +2014,10 @@
             return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
         }
 
-        // --- Dynamic Milestones & Spin Settings Realtime Listeners ---
+        // --- Dynamic Milestones & Settings Listeners (Optimized .once to save quota) ---
         function initFirebaseDynamicConfigs() {
-            // Packages sync
-            db.ref('packages').on('value', snapshot => {
+            // Packages sync (once fetch to save bandwidth)
+            db.ref('packages').once('value', snapshot => {
                 if (!snapshot.exists()) {
                     const default32Plans = [
                         { id: "tier_1", name: "Tier 1 Task Pack", invest: 20, daily: 2.1, validity: 60, discountPercent: 0, order: 1 },
@@ -1331,13 +2035,14 @@
                     const data = snapshot.val();
                     dynamicInvestmentPlans = Object.keys(data).map(key => {
                         const item = data[key];
+                        const rawDiscount = item.discountPercent !== undefined ? item.discountPercent : (item.discount || 0);
                         return {
                             id: key,
-                            name: item.name || "Task Package",
+                            name: (item.name || "Task Package").replace(/\s*task\s*pack(age)?/gi, '').trim(),
                             invest: parseFloat(item.invest || item.price || 0),
                             daily: parseFloat(item.daily || item.dailyReward || 0),
                             validity: parseInt(item.validity || 60),
-                            discountPercent: parseFloat(item.discountPercent || 0),
+                            discountPercent: parseFloat(rawDiscount || 0),
                             order: item.order || 999
                         };
                     }).sort((a, b) => (a.order !== b.order ? a.order - b.order : a.invest - b.invest));
@@ -1350,67 +2055,42 @@
             });
 
             // Withdrawal methods sync
-            db.ref('withdrawalMethods').on('value', snapshot => {
+            db.ref('withdrawalMethods').once('value', snapshot => {
                 if (!snapshot.exists()) {
-                    db.ref('withdrawalMethods').set({
-                        "easypaisa": { name: "Easypaisa", active: true },
-                        "jazzcash": { name: "Jazzcash", active: true }
-                    });
+                    const defaultWallets = {
+                        "easypaisa": { 
+                            name: "Easypaisa", 
+                            logo: "https://i.ibb.co/bMywLFcy/Screenshot-20261027-005853-1.jpg", 
+                            active: true 
+                        },
+                        "jazzcash": { name: "JazzCash", logo: "", active: true },
+                        "sadapay": { name: "SadaPay", logo: "", active: true },
+                        "nayapay": { name: "NayaPay", logo: "", active: true },
+                        "upaisa": { name: "Upaisa", logo: "", active: true },
+                        "hbl_konnect": { name: "HBL Konnect", logo: "", active: true },
+                        "opay": { name: "OPay", logo: "", active: true }
+                    };
+                    db.ref('withdrawalMethods').set(defaultWallets);
+                    dynamicWithdrawalMethods = Object.keys(defaultWallets).map(k => ({ key: k, ...defaultWallets[k] }));
+                    renderWalletsList(dynamicWithdrawalMethods);
                 } else {
                     const methods = snapshot.val();
-                    const select = document.getElementById('withdraw-method');
-                    if (select) {
-                        select.innerHTML = '';
-                        dynamicWithdrawalMethods = [];
-                        Object.keys(methods).forEach(key => {
-                            const m = methods[key];
-                            const name = typeof m === 'string' ? m : (m.name || key);
-                            const isActive = m.active !== false;
-                            if (isActive) {
-                                dynamicWithdrawalMethods.push(name);
-                                const opt = document.createElement('option');
-                                opt.value = name;
-                                opt.innerText = name;
-                                select.appendChild(opt);
-                            }
-                        });
-                        if (select.children.length === 0) {
-                            select.innerHTML = '<option value="Easypaisa">Easypaisa</option><option value="Jazzcash">Jazzcash</option>';
+                    dynamicWithdrawalMethods = [];
+                    Object.keys(methods).forEach(key => {
+                        const m = methods[key];
+                        const name = typeof m === 'string' ? m : (m.name || key);
+                        const logo = typeof m === 'object' ? (m.logo || m.image || m.icon || '') : '';
+                        const isActive = typeof m === 'object' ? (m.active !== false) : true;
+                        if (isActive) {
+                            dynamicWithdrawalMethods.push({ key: key, name: name, logo: logo });
                         }
-                    }
+                    });
+                    renderWalletsList(dynamicWithdrawalMethods);
                 }
             });
 
-            // Milestones Sync
-            db.ref('milestones').on('value', snapshot => {
-                if (!snapshot.exists()) {
-                    const defaultMilestones = {
-                        "ms_5": { target: 5, reward: 30, title: "5 Active Members", order: 1 },
-                        "ms_15": { target: 15, reward: 70, title: "15 Active Members", order: 2 },
-                        "ms_35": { target: 35, reward: 240, title: "35 Active Members", order: 3 },
-                        "ms_50": { target: 50, reward: 300, title: "50 Active Members", order: 4 },
-                        "ms_100": { target: 100, reward: 1000, title: "100 Active Members (VIP)", order: 5 }
-                    };
-                    db.ref('milestones').set(defaultMilestones);
-                } else {
-                    const data = snapshot.val();
-                    dynamicMilestones = Object.keys(data).map(key => ({
-                        id: key,
-                        target: parseInt(data[key].target || 0),
-                        reward: parseFloat(data[key].reward || 0),
-                        title: data[key].title || `${data[key].target} Active Members`,
-                        order: data[key].order || 999
-                    })).sort((a, b) => a.order !== b.order ? a.order - b.order : a.target - b.target);
-
-                    if (currentUserProfile) {
-                        updateMilestonesUI(currentUserProfile);
-                    }
-                }
-            });
-
-
-            // Live Deposit Account Settings Sync (Admin panel / DB update)
-            db.ref('depositAccount').on('value', snapshot => {
+            // Live Deposit Account Settings Sync
+            db.ref('depositAccount').once('value', snapshot => {
                 if (!snapshot.exists()) {
                     db.ref('depositAccount').set({
                         title: "Taufeeq Ahmed",
@@ -1431,7 +2111,6 @@
                     if (val.channels && document.getElementById('deposit-account-channels')) {
                         document.getElementById('deposit-account-channels').innerText = `Payment Channels (${val.channels})`;
                         
-                        // Dynamically update deposit form dropdown options
                         const depMethodSelect = document.getElementById('payment-method');
                         if (depMethodSelect) {
                             const channelList = val.channels.split(/[\/,|]+/).map(c => c.trim()).filter(Boolean);
@@ -1530,12 +2209,8 @@
                 appHeader.classList.remove('hidden');
                 sidebar.classList.remove('hidden');
 
-                // Re-sync dynamic configs after successful authentication
-                initFirebaseDynamicConfigs();
-
                 showSection('home', document.querySelector('.sidebar a'));
                 loadUserData();
-                startSmartLiveTicker();
             } else {
                 currentUser = null;
                 currentUserProfile = null;
@@ -1549,7 +2224,6 @@
 
                 Object.values(countdownIntervals).forEach(clearInterval);
                 countdownIntervals = {};
-                stopSmartLiveTicker();
                 checkForReferralCodeInURL();
             }
         });
@@ -1630,6 +2304,7 @@
 
                         db.ref('investments').push(invData).then(() => {
                             showNotification("Package activated successfully!");
+                            cachedUserInvestments = null; // Cache refresh taake naya task foran show ho
                             handleMultiTierCommission(finalPrice);
                             
                             // Reliable 100% update for active upline referral counter
@@ -1694,6 +2369,16 @@
             document.querySelectorAll('#dashboard-container > div').forEach(s => s.classList.add('hidden'));
             const targetSection = document.getElementById(sectionId + '-content');
             if (targetSection) targetSection.classList.remove('hidden');
+
+            // Header visibility: Sirf Withdraw ('send') page par hide ho, baki sab pages par show ho
+            const appHeader = document.getElementById('app-header');
+            if (appHeader) {
+                if (sectionId === 'send') {
+                    appHeader.classList.add('hidden');
+                } else {
+                    appHeader.classList.remove('hidden');
+                }
+            }
             
             document.querySelectorAll('.sidebar .menu-links a').forEach(a => a.classList.remove('active'));
             if (navLink) {
@@ -1723,13 +2408,14 @@
             if (sectionId === 'history') loadHistory();
             if (sectionId === 'team') loadTeamData();
             if (sectionId === 'home') loadActivePackagesCount();
-            
+            if (sectionId === 'send') backToWalletSelection();
         }
+
 
         // Handle Mobile Hardware Back Button cleanly
         window.addEventListener('popstate', (e) => {
             // 1. If any modal is open, close the modal first
-            const modals = ['receipt-modal', 'poster-modal', 'community-modal', 'confirmation-modal', 'task-verify-modal'];
+            const modals = ['community-modal', 'confirmation-modal', 'task-verify-modal'];
             let modalWasOpen = false;
             for (let mId of modals) {
                 const el = document.getElementById(mId);
@@ -1764,24 +2450,39 @@
             }
         }
 
-        function loadActivePackagesCount() {
-            if (!currentUser) return;
-            db.ref('investments').orderByChild('userId').equalTo(currentUser.uid).once('value', snap => {
-                let count = 0;
-                const now = getExactTime();
-                snap.forEach(child => {
-                    const item = child.val();
-                    if (item.status === 'approved') {
-                        const investDate = new Date(item.date).getTime();
-                        const validityMs = (item.validity || 60) * 24 * 60 * 60 * 1000;
-                        if (now - investDate <= validityMs) {
-                            count++;
-                        }
-                    }
-                });
-                const el = document.getElementById('dash-active-packages');
-                if (el) el.innerText = count;
+        // Smart Cache: 30 seconds tak dobara Firebase par call nahi jayegi
+        async function getUserInvestmentsData(forceRefresh = false) {
+            const now = Date.now();
+            if (!forceRefresh && cachedUserInvestments && (now - lastInvestmentsFetchTime < 30000)) {
+                return cachedUserInvestments;
+            }
+            if (!currentUser) return [];
+            const snap = await db.ref('investments').orderByChild('userId').equalTo(currentUser.uid).once('value');
+            const list = [];
+            snap.forEach(child => {
+                list.push({ key: child.key, ...child.val() });
             });
+            cachedUserInvestments = list;
+            lastInvestmentsFetchTime = now;
+            return list;
+        }
+
+        async function loadActivePackagesCount() {
+            if (!currentUser) return;
+            const investments = await getUserInvestmentsData();
+            let count = 0;
+            const now = getExactTime();
+            investments.forEach(item => {
+                if (item.status === 'approved') {
+                    const investDate = new Date(item.date).getTime();
+                    const validityMs = (item.validity || 60) * 24 * 60 * 60 * 1000;
+                    if (now - investDate <= validityMs) {
+                        count++;
+                    }
+                }
+            });
+            const el = document.getElementById('dash-active-packages');
+            if (el) el.innerText = count;
         }
 
         // --- Load User Data ---
@@ -1814,7 +2515,6 @@
                     }
 
                     updateWelcomeBonusUI(data);
-                    updateMilestonesUI(data);
                     updateUserCustomCommissionUI(data);
                 }
             });
@@ -1822,22 +2522,13 @@
         }
 
         function updateUserCustomCommissionUI(userData) {
-            const l1 = userData.customCommissionL1 !== undefined ? parseFloat(userData.customCommissionL1) : 8;
-            const l2 = userData.customCommissionL2 !== undefined ? parseFloat(userData.customCommissionL2) : 3;
-            const l3 = userData.customCommissionL3 !== undefined ? parseFloat(userData.customCommissionL3) : 1;
-
-            const desc = document.getElementById('affiliate-commission-desc');
-            if (desc) {
-                desc.innerHTML = `Receive <strong>Level 1: ${l1}%</strong>, <strong>Level 2: ${l2}%</strong>, and <strong>Level 3: ${l3}%</strong> lifetime commissions!`;
-            }
-
             const btn1 = document.getElementById('tab-btn-l1');
             const btn2 = document.getElementById('tab-btn-l2');
             const btn3 = document.getElementById('tab-btn-l3');
 
-            if (btn1) btn1.innerText = `Level 1 (${l1}%)`;
-            if (btn2) btn2.innerText = `Level 2 (${l2}%)`;
-            if (btn3) btn3.innerText = `Level 3 (${l3}%)`;
+            if (btn1) btn1.innerText = `Level 1`;
+            if (btn2) btn2.innerText = `Level 2`;
+            if (btn3) btn3.innerText = `Level 3`;
         }
 
         // --- Locked Welcome Bonus ---
@@ -1850,7 +2541,7 @@
             if (box) box.style.display = 'flex';
 
             const invested = data.totalInvested || 0;
-            const target = 15000;
+            const target = 30000;
             const progressCount = document.getElementById('bonus-progress-count');
             const progressFill = document.getElementById('bonus-progress-fill');
             const unlockBtn = document.getElementById('btn-unlock-bonus');
@@ -1886,8 +2577,8 @@
         }
 
         function claimLockedBonus() {
-            if (!currentUserProfile || (currentUserProfile.totalInvested || 0) < 15000) {
-                showNotification("Rs. 15,000 investment required in work packages to unlock bonus.", "danger");
+            if (!currentUserProfile || (currentUserProfile.totalInvested || 0) < 30000) {
+                showNotification("Rs. 30,000 investment required in work packages to unlock bonus.", "danger");
                 return;
             }
             if (currentUserProfile.welcomeBonusClaimed) {
@@ -1900,7 +2591,7 @@
             btn.innerText = "Transferring...";
 
             db.ref('users/' + currentUser.uid).transaction(curr => {
-                if (curr && !curr.welcomeBonusClaimed && (parseFloat(curr.totalInvested || 0)) >= 15000) {
+                if (curr && !curr.welcomeBonusClaimed && (parseFloat(curr.totalInvested || 0)) >= 30000) {
                     const curBal = parseFloat(curr.balance || 0);
                     curr.balance = parseFloat((curBal + 5000).toFixed(2));
                     curr.welcomeBonusClaimed = true;
@@ -1919,82 +2610,6 @@
 
         
 
-        // --- Team Milestones ---
-        function updateMilestonesUI(data) {
-            const container = document.getElementById('dynamic-milestones-list');
-            if (!container) return;
-
-            if (dynamicMilestones.length === 0) {
-                container.innerHTML = '<p style="color:var(--text-muted); font-size:13px;">No active milestone rewards available.</p>';
-                return;
-            }
-
-            const activeCount = data.activeReferralsCount || 0;
-            const claimed = data.milestonesClaimed || {};
-
-            let html = '';
-            dynamicMilestones.forEach(ms => {
-                const isClaimed = !!claimed[ms.id];
-                const isEligible = activeCount >= ms.target;
-                
-                let btnHtml = '';
-                if (isClaimed) {
-                    btnHtml = `<button class="milestone-badge claimed" disabled>Claimed ✓</button>`;
-                } else if (isEligible) {
-                    btnHtml = `<button class="milestone-badge claimable" onclick="claimDynamicMilestone('${ms.id}')">Claim Rs. ${ms.reward}</button>`;
-                } else {
-                    btnHtml = `<button class="milestone-badge locked" disabled>${activeCount} / ${ms.target} Active</button>`;
-                }
-
-                html += `
-                    <div class="milestone-item">
-                        <div>
-                            <strong style="font-size:13.5px; color:var(--text-main);">${ms.title}</strong>
-                            <div style="font-size:12px; color:var(--accent); font-weight:700;">Bonus: Rs. ${ms.reward.toLocaleString()}</div>
-                        </div>
-                        ${btnHtml}
-                    </div>
-                `;
-            });
-
-            container.innerHTML = html;
-        }
-
-        function claimDynamicMilestone(milestoneId) {
-            if (!currentUserProfile) return;
-            const ms = dynamicMilestones.find(m => m.id === milestoneId);
-            if (!ms) return;
-
-            const activeCount = currentUserProfile.activeReferralsCount || 0;
-            const claimed = currentUserProfile.milestonesClaimed || {};
-
-            if (activeCount < ms.target) {
-                showNotification(`Target incomplete. Needs ${ms.target} active members.`, "danger");
-                return;
-            }
-            if (claimed[ms.id]) {
-                showNotification("Reward already claimed.", "danger");
-                return;
-            }
-
-            db.ref('users/' + currentUser.uid).transaction(curr => {
-                if (curr) {
-                    curr.milestonesClaimed = curr.milestonesClaimed || {};
-                    if (!curr.milestonesClaimed[ms.id]) {
-                        curr.milestonesClaimed[ms.id] = true;
-                        const curBal = parseFloat(curr.balance || 0);
-                        curr.balance = parseFloat((curBal + parseFloat(ms.reward || 0)).toFixed(2));
-                    }
-                }
-                return curr;
-            }, (err, comm) => {
-                if (comm) {
-                    showNotification(`Milestone unlocked! Rs. ${ms.reward} credited to balance!`);
-                } else {
-                    showNotification("Failed to claim milestone.", "danger");
-                }
-            });
-        }
 
 
         // --- Signup with IP Address Capture ---
@@ -2192,7 +2807,7 @@
             document.getElementById('community-modal').classList.add('hidden');
         }
 
-        // --- Login ---
+        // --- Optimized Low-Bandwidth Login ---
         async function loginUser() {
             const btn = document.getElementById('btn-login-submit');
             const rawInput = document.getElementById('login-number').value.trim();
@@ -2210,61 +2825,34 @@
             const isEmail = rawInput.includes('@');
             const cleanNumber = sanitizePhoneNumber(rawInput);
 
-            // 1. Direct inputs
             if (isEmail) {
-                candidates.push(rawInput.trim().toLowerCase());
-                candidates.push(rawInput.trim());
+                candidates.push(rawInput.toLowerCase());
             } else {
                 if (cleanNumber.length === 11) {
                     candidates.push(`${cleanNumber}@benvixa.vercel.app`);
                     candidates.push(`${cleanNumber}@benvixahub.com`);
-                    candidates.push(`${cleanNumber}@benvixa.com`);
                 }
             }
 
-            // 2. Database Smart Lookup (Case-insensitive check for Email or Phone)
-            try {
-                const usersSnap = await db.ref('users').once('value');
-                if (usersSnap.exists()) {
-                    usersSnap.forEach(child => {
-                        const u = child.val();
-                        if (!u) return;
-
-                        const dbEmail = (u.email || '').trim().toLowerCase();
-                        const dbNumber = sanitizePhoneNumber(u.number || '');
-
-                        const matchEmail = isEmail && dbEmail === rawInput.trim().toLowerCase();
-                        const matchNumber = !isEmail && dbNumber === cleanNumber;
-
-                        if (matchEmail || matchNumber) {
-                            if (dbNumber && dbNumber.length === 11) {
-                                candidates.push(`${dbNumber}@benvixa.vercel.app`);
-                                candidates.push(`${dbNumber}@benvixahub.com`);
-                                candidates.push(`${dbNumber}@benvixa.com`);
-                            }
-                            if (u.email) {
-                                candidates.push(u.email.trim());
-                                candidates.push(u.email.trim().toLowerCase());
-                            }
-                        }
-                    });
-                }
-            } catch (dbErr) {
-                console.warn("DB lookup notice:", dbErr);
-            }
-
-            // Fallback for phone
+            // Low-bandwidth targeted lookup (Only check this single user if needed)
             if (!isEmail && cleanNumber.length === 11) {
-                candidates.push(`${cleanNumber}@benvixa.vercel.app`);
+                try {
+                    const snap = await db.ref('users').orderByChild('number').equalTo(cleanNumber).once('value');
+                    if (snap.exists()) {
+                        snap.forEach(c => {
+                            const u = c.val();
+                            if (u && u.email) candidates.push(u.email.trim().toLowerCase());
+                        });
+                    }
+                } catch(e) {}
             }
 
-            // Unique clean candidates
             candidates = [...new Set(candidates.filter(Boolean))];
 
             if (candidates.length === 0) {
                 btn.disabled = false;
                 btn.innerText = "Sign In";
-                showNotification("Please enter a valid 11-digit phone number (e.g. 03XXXXXXXXX) or registered email.", "danger");
+                showNotification("Please enter a valid 11-digit phone number (e.g. 03XXXXXXXXX).", "danger");
                 return;
             }
 
@@ -2278,7 +2866,6 @@
                     break;
                 } catch (err) {
                     lastError = err;
-                    // Agar password ghalat hai ya IP block hai to mazeed attempts zaya na karein
                     if (err.code === 'auth/wrong-password' || err.code === 'auth/too-many-requests') {
                         break;
                     }
@@ -2289,21 +2876,18 @@
             btn.innerText = "Sign In";
 
             if (!loggedIn) {
-                console.error("Login Error Details:", lastError);
                 if (lastError) {
                     if (lastError.code === 'auth/wrong-password' || lastError.code === 'auth/invalid-credential') {
-                        showNotification("Incorrect password! Please check your password and try again.", "danger");
+                        showNotification("Incorrect password! Please try again.", "danger");
                     } else if (lastError.code === 'auth/too-many-requests') {
-                        showNotification("Access temporarily blocked due to multiple failed attempts. Please wait 10-15 minutes.", "danger");
+                        showNotification("Too many failed attempts. Please wait 10-15 minutes.", "danger");
                     } else if (lastError.code === 'auth/user-not-found') {
-                        showNotification("Account not found with this number/email. Please register first.", "danger");
-                    } else if (lastError.code === 'auth/network-request-failed') {
-                        showNotification("Network connection error. Please check your internet connection.", "danger");
+                        showNotification("Account not found. Please register first.", "danger");
                     } else {
-                        showNotification(lastError.message || "Sign in failed. Please verify credentials.", "danger");
+                        showNotification(lastError.message || "Sign in failed.", "danger");
                     }
                 } else {
-                    showNotification("Account verification failed. Please check your login details.", "danger");
+                    showNotification("Invalid credentials.", "danger");
                 }
             }
         }
@@ -2316,8 +2900,15 @@
         });
 
         function logoutUser() {
-            // Immediate UI wipe so no leftover data is shown
+            // Firebase listeners ko kill karein taake background mein bandwidth na khaye
+            if (currentUser) {
+                db.ref('users/' + currentUser.uid).off();
+                db.ref('investments').orderByChild('userId').equalTo(currentUser.uid).off();
+            }
+
             currentUserProfile = null;
+            currentUser = null;
+            cachedUserInvestments = null; // Cache clear
             document.getElementById('current-balance').innerText = 'Rs. 0.00';
             document.getElementById('user-email-display').innerText = '-';
             document.getElementById('profile-email').innerText = '-';
@@ -2326,41 +2917,38 @@
             document.getElementById('user-active-members-count').innerText = '0';
             document.getElementById('dash-active-packages').innerText = '0';
 
-            // Clear background intervals
             Object.values(countdownIntervals).forEach(clearInterval);
             countdownIntervals = {};
-            stopSmartLiveTicker();
 
             auth.signOut().then(() => {
                 showNotification("Logged out successfully.");
             });
         }
 
-        // --- Work Packages ---
-        function loadInvestmentPlans() {
+        // --- Work Packages (Cached & Optimized) ---
+        async function loadInvestmentPlans() {
             const container = document.getElementById('investment-plans-container');
             if (!container) return;
-            container.innerHTML = '<p style="color:var(--text-muted);">Loading packages...</p>';
+            container.innerHTML = '<p style="color:var(--text-muted); text-align:center; padding:20px;">Loading packages...</p>';
             
             if (!currentUser) return;
 
-            db.ref('investments').orderByChild('userId').equalTo(currentUser.uid).once('value', snapshot => {
-                const activePlanNames = new Set();
-                const now = getExactTime();
+            const investments = await getUserInvestmentsData();
+            const activePlanNames = new Set();
+            const now = getExactTime();
 
-                snapshot.forEach(child => {
-                    const item = child.val();
-                    if (item.status === 'approved') {
-                        const invDate = new Date(item.date).getTime();
-                        const validityMs = (item.validity || 60) * 24 * 60 * 60 * 1000;
-                        if (now - invDate <= validityMs) {
-                            activePlanNames.add(item.planName);
-                        }
+            investments.forEach(item => {
+                if (item.status === 'approved') {
+                    const invDate = new Date(item.date).getTime();
+                    const validityMs = (item.validity || 60) * 24 * 60 * 60 * 1000;
+                    if (now - invDate <= validityMs) {
+                        activePlanNames.add(item.planName);
                     }
-                });
+                }
+            });
 
                 if (dynamicInvestmentPlans.length === 0) {
-                    container.innerHTML = '<p style="color:var(--text-muted);">No packages available right now.</p>';
+                    container.innerHTML = '<p style="color:var(--text-muted); text-align:center; padding:20px;">No packages available right now.</p>';
                     return;
                 }
 
@@ -2370,28 +2958,65 @@
                     const finalPrice = calculatePlanFinalPrice(plan);
                     const hasDiscount = plan.discountPercent > 0;
 
+                    // Auto-Calculate Total Return (Daily * Validity)
+                    const totalReturnVal = (parseFloat(plan.daily || 0) * parseInt(plan.validity || 60, 10));
+                    const totalReturnFormatted = totalReturnVal.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 1 });
+
+                    // Clean Tier Label - remove any "Task Pack" words completely
+                    let cleanTitle = (plan.name || '').replace(/\s*task\s*pack(age)?/gi, '').trim();
+                    if (!cleanTitle || cleanTitle.toLowerCase() === 'task package') {
+                        cleanTitle = plan.id ? plan.id.replace('tier_', 'Tier ') : 'VIP Package';
+                    }
+
                     html += `
-                        <div class="plan-card">
-                            ${hasDiscount ? `<div class="discount-badge-card">${plan.discountPercent}% OFF</div>` : ''}
-                            <div>
-                                <h3>${plan.name}</h3>
-                                <div class="plan-price-wrap">
-                                    ${hasDiscount ? `<div class="plan-original-price mono">Rs. ${plan.invest.toLocaleString()}</div>` : ''}
-                                    <div class="plan-price mono">Rs. ${finalPrice.toLocaleString()}</div>
-                                </div>
-                                <div class="plan-meta">
-                                    <div>Daily Reward: <strong style="color:var(--accent);">Rs. ${plan.daily}</strong></div>
-                                    <div>Duration: ${plan.validity} Days</div>
+                        <div class="pkg-pro-card">
+                            <div class="pkg-card-top-row">
+                                <span class="pkg-tier-pill">
+                                    <span class="pkg-tier-dot"></span>
+                                    ${cleanTitle}
+                                </span>
+                                <div style="display:flex; align-items:center; gap:6px; margin-left:auto;">
+                                    ${hasDiscount ? `<span style="background:#fef2f2; border:1px solid #fecaca; color:#dc2626; font-size:11px; font-weight:800; padding:3px 8px; border-radius:20px;">${plan.discountPercent}% OFF</span>` : ''}
+                                    ${isInvested ? `<span class="pkg-active-pill"><i class='bx bx-check-circle'></i> Active</span>` : ''}
                                 </div>
                             </div>
-                            <button class="btn-primary" onclick="investNow('${plan.id}')" ${isInvested ? 'disabled' : ''}>
-                                ${isInvested ? 'Active Package' : (hasDiscount ? `Unlock (${plan.discountPercent}% Off)` : 'Unlock Package')}
+
+                            <div class="pkg-price-row" style="margin-top: 6px;">
+                                <span class="pkg-rs-prefix">Rs.</span>
+                                <span class="pkg-main-price mono">${finalPrice.toLocaleString()}</span>
+                                ${hasDiscount ? `<span class="pkg-old-price mono">Rs. ${plan.invest.toLocaleString()}</span>` : ''}
+                            </div>
+
+                            <div class="pkg-metrics-grid">
+                                <div class="pkg-metric-box">
+                                    <div class="pkg-metric-head">
+                                        <i class='bx bx-trending-up' style="color:#059669; font-size:14px;"></i>
+                                        <span>Daily Earning</span>
+                                    </div>
+                                    <div class="pkg-metric-val green mono">Rs. ${plan.daily}</div>
+                                </div>
+                                <div class="pkg-metric-box">
+                                    <div class="pkg-metric-head">
+                                        <i class='bx bx-time-five' style="color:#64748b; font-size:14px;"></i>
+                                        <span>Duration</span>
+                                    </div>
+                                    <div class="pkg-metric-val dark mono">${plan.validity} Days</div>
+                                </div>
+                            </div>
+
+                            <div class="pkg-total-return-box">
+                                <span class="pkg-return-label">Total Revenue</span>
+                                <span class="pkg-return-val mono">Rs. ${totalReturnFormatted}</span>
+                            </div>
+
+                            <button class="pkg-unlock-btn ${isInvested ? 'active' : ''}" onclick="investNow('${plan.id}')" ${isInvested ? 'disabled' : ''}>
+                                <span>${isInvested ? 'Activated ✓' : 'Activate'}</span>
+                                ${!isInvested ? `<i class='bx bx-right-arrow-alt' style="font-size:18px;"></i>` : ''}
                             </button>
                         </div>
                     `;
                 });
                 container.innerHTML = html;
-            });
         }
 
         // --- Deposit & Withdrawal ---
@@ -2454,39 +3079,298 @@
             });
         }
 
-        function submitWithdrawal() {
-            const btn = document.getElementById('btn-withdraw-submit');
-            const amountInput = document.getElementById('withdraw-amount');
-            const methodSelect = document.getElementById('withdraw-method');
-            const accountInput = document.getElementById('withdraw-account');
+        // Pakistani Wallet Preset Colors & Badges
+        const WALLET_PRESETS = {
+            'easypaisa': { bg: '#00a651', text: '#fff', initial: 'EP' },
+            'jazzcash': { bg: '#e11b22', text: '#fff', initial: 'JC' },
+            'sadapay': { bg: '#00d2aa', text: '#fff', initial: 'SP' },
+            'nayapay': { bg: '#ff5c39', text: '#fff', initial: 'NP' },
+            'upaisa': { bg: '#f26522', text: '#fff', initial: 'UP' },
+            'hbl konnect': { bg: '#008542', text: '#fff', initial: 'HBL' },
+            'opay': { bg: '#00b875', text: '#fff', initial: 'OP' },
+            'firstpay': { bg: '#1c355e', text: '#fff', initial: 'FP' },
+            'paymax': { bg: '#8dc63f', text: '#fff', initial: 'PM' }
+        };
 
-            const amount = parseFloat(amountInput.value);
-            const method = methodSelect ? methodSelect.value : '';
-            const account = accountInput.value.trim();
+        function getWalletDesign(name) {
+            const key = (name || '').toLowerCase().trim();
+            for (let k in WALLET_PRESETS) {
+                if (key.includes(k)) return WALLET_PRESETS[k];
+            }
+            return { bg: '#4f46e5', text: '#ffffff', initial: (name || 'W').substring(0, 2).toUpperCase() };
+        }
 
-            const minWithdrawLimit = 5;
-
-            if (isNaN(amount) || amount < minWithdrawLimit) {
-                showNotification(`Minimum withdrawal amount is Rs. ${minWithdrawLimit}.`, "danger");
+        // Render Screenshot-Style Wallets List (With Dynamic Firebase Logo)
+        function renderWalletsList(methods) {
+            const container = document.getElementById('wallets-list-wrapper');
+            if (!container) return;
+            if (!methods || methods.length === 0) {
+                container.innerHTML = '<p style="padding:20px; text-align:center; color:#94a3b8; font-size:13.5px;">No wallets available at the moment.</p>';
                 return;
             }
-            if (!method || method === "Loading methods...") {
-                showNotification("Please select a withdrawal method.", "danger");
-                return;
+
+            let html = '';
+            methods.forEach(method => {
+                const design = getWalletDesign(method.name);
+                const hasLogo = method.logo && method.logo.trim() !== '';
+                const logoHtml = hasLogo 
+                    ? `<img src="${method.logo}" alt="${method.name}" onerror="this.parentElement.innerHTML='${design.initial}'">`
+                    : design.initial;
+
+                const bgStyle = hasLogo ? 'background:#ffffff;' : `background:${design.bg}; color:${design.text};`;
+
+                html += `
+                    <div class="wallet-item-row" onclick="selectWithdrawMethod('${encodeURIComponent(method.name)}', '${encodeURIComponent(method.logo || '')}')" data-name="${method.name.toLowerCase()}">
+                        <div class="wallet-item-left">
+                            <div class="wallet-circle-logo" style="${bgStyle}">
+                                ${logoHtml}
+                            </div>
+                            <span class="wallet-item-name">${method.name}</span>
+                        </div>
+                        <i class='bx bx-chevron-right wallet-chevron-icon'></i>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        // Search Filter
+        function filterWalletsList() {
+            const q = (document.getElementById('wallet-search-input').value || '').toLowerCase().trim();
+            const rows = document.querySelectorAll('#wallets-list-wrapper .wallet-item-row');
+            rows.forEach(row => {
+                const name = row.getAttribute('data-name') || '';
+                if (name.includes(q)) {
+                    row.style.display = 'flex';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        // --- NATIVE APP MULTI-STEP WITHDRAWAL CONTROLLER ---
+        let withdrawOrder = {
+            methodName: '',
+            methodLogo: '',
+            accountType: 'account', // 'account' or 'iban'
+            accountNumber: '',
+            receiverName: '',
+            amount: 0
+        };
+
+        // Refresh & render live balance on Amount screen immediately
+        function refreshAmountScreenBalance() {
+            const myBal = currentUserProfile ? parseFloat(currentUserProfile.balance || 0) : 0;
+            const balEl = document.getElementById('step3-balance-display');
+            if (balEl) balEl.innerText = `Rs. ${myBal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        }
+
+        // Go to specific step (1, 2, 3, 4, or 5)
+        function goToStep(stepNumber) {
+            ['wallets', 'details', 'amount', 'confirm', 'success'].forEach((name, idx) => {
+                const el = document.getElementById(`withdraw-step-${name}`);
+                if (el) {
+                    if (idx + 1 === stepNumber) {
+                        el.classList.remove('hidden');
+                        if (stepNumber === 5) {
+                            el.classList.remove('slide-in-right');
+                            void el.offsetWidth; // re-trigger animation
+                            el.classList.add('slide-in-right');
+                        }
+                    } else {
+                        el.classList.add('hidden');
+                    }
+                }
+            });
+
+            if (stepNumber === 1) {
+                document.getElementById('step2-account-input').value = '';
+                document.getElementById('step2-name-input').value = '';
+                document.getElementById('step3-amount-input').value = '';
+                validateStep2();
+            } else if (stepNumber === 3) {
+                // Immediately show My Balance on Screen 3 without waiting for user typing
+                refreshAmountScreenBalance();
+
+                const myBal = currentUserProfile ? parseFloat(currentUserProfile.balance || 0) : 0;
+                const amtInput = document.getElementById('step3-amount-input');
+                if (amtInput) {
+                    amtInput.value = '';
+                    setTimeout(() => amtInput.focus(), 150);
+                }
+
+                // Check button state
+                const nextBtn = document.getElementById('step3-next-btn');
+                if (nextBtn) {
+                    nextBtn.disabled = true;
+                    nextBtn.classList.remove('ready');
+                }
+            } else if (stepNumber === 4) {
+                // Update Step 4 balance immediately
+                const myBal = currentUserProfile ? parseFloat(currentUserProfile.balance || 0) : 0;
+                document.getElementById('confirm-user-balance').innerText = `Balance: Rs. ${myBal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
             }
-            if (!account) {
-                showNotification("Account details required.", "danger");
+        }
+
+        function backToWalletSelection() {
+            goToStep(1);
+        }
+
+        // When wallet clicked in Step 1
+        function selectWithdrawMethod(encName, encLogo) {
+            const methodName = decodeURIComponent(encName || '');
+            const logoUrl = decodeURIComponent(encLogo || '');
+            const design = getWalletDesign(methodName);
+
+            withdrawOrder.methodName = methodName;
+            withdrawOrder.methodLogo = logoUrl;
+
+            // Render Header in Step 2
+            document.getElementById('step2-wallet-name').innerText = methodName;
+            const logoEl2 = document.getElementById('step2-wallet-logo');
+            if (logoUrl && logoUrl.trim() !== '') {
+                logoEl2.innerHTML = `<img src="${logoUrl}" alt="${methodName}">`;
+            } else {
+                logoEl2.innerHTML = `<span style="font-size:14px;font-weight:800;color:${design.bg};">${design.initial}</span>`;
+            }
+
+            // Render Header in Step 3
+            document.getElementById('step3-method-title').innerText = methodName;
+            const logoEl3 = document.getElementById('step3-wallet-logo');
+            if (logoUrl && logoUrl.trim() !== '') {
+                logoEl3.innerHTML = `<img src="${logoUrl}" alt="${methodName}">`;
+            } else {
+                logoEl3.innerHTML = `<span style="font-size:14px;font-weight:800;color:${design.bg};">${design.initial}</span>`;
+            }
+
+            // Default to Account No mode
+            setAccountMode('account');
+
+            goToStep(2);
+        }
+
+        // Toggle Account No vs IBAN
+        function setAccountMode(mode) {
+            withdrawOrder.accountType = mode;
+            const btnAcc = document.getElementById('tab-btn-accno');
+            const btnIban = document.getElementById('tab-btn-iban');
+            const label = document.getElementById('step2-account-label');
+            const input = document.getElementById('step2-account-input');
+
+            if (mode === 'account') {
+                btnAcc.classList.add('active');
+                btnIban.classList.remove('active');
+                label.innerText = "Enter Receiver's Account Number";
+                input.placeholder = "Enter Here";
+            } else {
+                btnIban.classList.add('active');
+                btnAcc.classList.remove('active');
+                label.innerText = "Enter Receiver's IBAN";
+                input.placeholder = "Enter Here";
+            }
+            validateStep2();
+        }
+
+        // Step 2 Validations
+        function handleAccountInput(input) {
+            // Strictly numeric only for Account Number
+            input.value = input.value.replace(/\D/g, '');
+            withdrawOrder.accountNumber = input.value.trim();
+            validateStep2();
+        }
+
+        function handleNameInput(input) {
+            // Strictly English letters and spaces only. Absolutely no numbers or symbols like @, &, _, ", ?, 2
+            input.value = input.value.replace(/[^a-zA-Z\s]/g, '');
+            withdrawOrder.receiverName = input.value.trim();
+            validateStep2();
+        }
+
+        function validateStep2() {
+            const acc = (document.getElementById('step2-account-input').value || '').trim();
+            const name = (document.getElementById('step2-name-input').value || '').trim();
+            const nextBtn = document.getElementById('step2-next-btn');
+
+            // Must have at least 8 digits for account and at least 3 letters for name
+            const isValid = acc.length >= 8 && name.length >= 3;
+            if (isValid) {
+                nextBtn.disabled = false;
+                nextBtn.classList.add('ready');
+            } else {
+                nextBtn.disabled = true;
+                nextBtn.classList.remove('ready');
+            }
+
+            // Sync account info to Step 3 and Step 4
+            document.getElementById('step3-account-display').innerText = acc;
+            document.getElementById('confirm-receiver-name').innerText = name.toUpperCase();
+            document.getElementById('confirm-receiver-account').innerText = `Account Number-${acc}`;
+        }
+
+        // Step 3 Amount Validation
+        function handleAmountInput(input) {
+            // Strictly whole numbers only (No dot '.', no minus, no letters)
+            input.value = input.value.replace(/\D/g, '');
+            
+            // Remove leading zeroes
+            if (input.value.length > 1 && input.value.startsWith('0')) {
+                input.value = parseInt(input.value, 10).toString();
+            }
+
+            const amt = parseInt(input.value || '0', 10);
+            withdrawOrder.amount = amt;
+
+            const myBal = currentUserProfile ? parseFloat(currentUserProfile.balance || 0) : 0;
+            document.getElementById('step3-balance-display').innerText = `Rs. ${myBal.toLocaleString()}`;
+
+            const nextBtn = document.getElementById('step3-next-btn');
+
+            // Rule: Min Rs. 5 and must not exceed user balance
+            if (amt >= 5 && amt <= myBal) {
+                nextBtn.disabled = false;
+                nextBtn.classList.add('ready');
+            } else {
+                nextBtn.disabled = true;
+                nextBtn.classList.remove('ready');
+            }
+
+            // Sync values to Step 4 Confirmation
+            document.getElementById('confirm-user-balance').innerText = `Balance: Rs. ${myBal.toLocaleString()}`;
+            document.getElementById('summary-transfer-amount').innerText = `Rs. ${amt.toLocaleString()}.00`;
+            document.getElementById('summary-total-amount').innerText = `Rs. ${amt.toLocaleString()}.00`;
+
+            const logoElConf = document.getElementById('confirm-receiver-logo');
+            if (withdrawOrder.methodLogo && withdrawOrder.methodLogo.trim() !== '') {
+                logoElConf.innerHTML = `<img src="${withdrawOrder.methodLogo}" alt="${withdrawOrder.methodName}">`;
+            } else {
+                const design = getWalletDesign(withdrawOrder.methodName);
+                logoElConf.innerHTML = `<span style="font-size:13px;font-weight:800;color:${design.bg};">${design.initial}</span>`;
+            }
+        }
+
+        // Step 4: Final Send Now Execution
+        function executeFinalWithdrawal() {
+            const btn = document.getElementById('btn-final-send-now');
+            const amount = withdrawOrder.amount;
+            const method = withdrawOrder.methodName;
+            const account = withdrawOrder.accountNumber;
+            const receiverName = withdrawOrder.receiverName;
+
+            if (amount < 5) {
+                showNotification("Minimum withdrawal amount is Rs. 5.", "danger");
+                goToStep(3);
                 return;
             }
 
             const clientBal = currentUserProfile ? parseFloat(currentUserProfile.balance || 0) : 0;
             if (clientBal < amount) {
                 showNotification(`Insufficient wallet balance. Available: Rs. ${clientBal.toFixed(2)}`, "danger");
+                goToStep(3);
                 return;
             }
 
             btn.disabled = true;
-            btn.innerText = "Processing...";
+            btn.innerText = "Processing Transaction...";
 
             const userRef = db.ref('users/' + currentUser.uid);
             let failDueToBalance = false;
@@ -2503,7 +3387,7 @@
                 }
             }, (error, committed) => {
                 btn.disabled = false;
-                btn.innerText = "Submit Withdraw Request";
+                btn.innerText = "Send Now";
 
                 if (error) {
                     showNotification("Transaction error: " + error.message, "danger");
@@ -2513,26 +3397,33 @@
                         amount: amount,
                         method: method,
                         account: account,
+                        receiverName: receiverName,
+                        accountType: withdrawOrder.accountType,
                         status: 'processing',
                         date: new Date().toISOString()
                     };
 
-                    db.ref('withdrawals').push(withdrawalData).then(() => {
-                        showNotification("Withdrawal request queued successfully!");
-                        amountInput.value = '';
-                        accountInput.value = '';
+                    db.ref('withdrawals').push(withdrawalData).then((pushedRef) => {
+                        // Alert popup completely disabled on withdraw: direct green screen only
+                        
+                        // Populate Exact Screenshot Success View
+                        document.getElementById('success-screen-amount').innerText = `Rs. ${parseFloat(amount).toLocaleString()}.00`;
+                        document.getElementById('success-screen-name').innerText = receiverName;
+                        document.getElementById('success-screen-acc').innerText = account;
 
-                        displayReceiptModal({
-                            type: 'Withdrawal',
-                            amount: amount,
-                            method: method,
-                            account: account,
-                            status: 'processing',
-                            date: new Date().toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' }),
-                            refCode: currentUserProfile ? currentUserProfile.referralCode : 'BENVIXA'
-                        });
+                        // Set Wallet Logo in Circle Avatar
+                        const avatarBox = document.getElementById('success-receiver-avatar');
+                        if (withdrawOrder.methodLogo && withdrawOrder.methodLogo.trim() !== '') {
+                            avatarBox.innerHTML = `<img src="${withdrawOrder.methodLogo}" alt="${method}">`;
+                        } else {
+                            const design = getWalletDesign(method);
+                            avatarBox.innerHTML = `<span style="font-size:18px;font-weight:800;color:${design.bg};">${design.initial}</span>`;
+                        }
+
+                        // Slide in Step 5 smoothly from right
+                        goToStep(5);
                     }).catch(err => {
-                        showNotification("Saved with notice: " + err.message, "danger");
+                        console.error("Withdrawal record notice:", err);
                     });
                 } else {
                     if (failDueToBalance) {
@@ -2544,192 +3435,41 @@
             });
         }
 
-        // --- Receipt Slip Modal ---
-        function displayReceiptModal(data) {
-            currentReceiptData = data;
-            const isDeposit = (data.type || '').toLowerCase() === 'deposit';
-            
-            document.getElementById('rcpt-header-type').innerText = isDeposit ? 'Deposit Receipt' : 'Withdrawal Receipt';
-            document.getElementById('rcpt-type-title').innerText = isDeposit ? 'Deposit Funds' : 'Payout Withdrawal';
-            document.getElementById('rcpt-amount').innerText = `Rs. ${parseFloat(data.amount).toLocaleString()}`;
-            document.getElementById('rcpt-method').innerText = data.method;
-            document.getElementById('rcpt-date').innerText = data.date;
-            document.getElementById('rcpt-ref').innerText = data.refCode || (currentUserProfile ? currentUserProfile.referralCode : 'BENVIXA');
+        function finishWithdrawalToHome() {
+            goToStep(1);
+            showSection('home');
+        }
 
-            const statusTag = document.getElementById('rcpt-status-tag');
-            const statusIcon = document.getElementById('rcpt-status-icon');
-            const statusStr = (data.status || 'processing').toLowerCase();
-
-            statusTag.innerText = data.status.toUpperCase();
-            statusTag.className = `history-status-badge ${statusStr}`;
-
-            if (statusStr === 'approved' || statusStr === 'completed') {
-                statusIcon.style.background = '#dcfce7';
-                statusIcon.style.color = '#059669';
-                statusIcon.innerHTML = `<i class='bx bx-check-double' style="font-size:32px;"></i>`;
-            } else if (statusStr === 'rejected') {
-                statusIcon.style.background = '#fee2e2';
-                statusIcon.style.color = '#dc2626';
-                statusIcon.innerHTML = `<i class='bx bx-x' style="font-size:32px;"></i>`;
+        function shareWithdrawalProof() {
+            const amt = document.getElementById('success-screen-amount').innerText;
+            const name = document.getElementById('success-screen-name').innerText;
+            const msg = `Transaction Successful! Transferred ${amt} to ${name} via Benvixa Hub.`;
+            if (navigator.share) {
+                navigator.share({ title: 'Transfer Receipt', text: msg });
             } else {
-                statusIcon.style.background = '#fef3c7';
-                statusIcon.style.color = '#d97706';
-                statusIcon.innerHTML = `<i class='bx bx-time' style="font-size:32px;"></i>`;
+                window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
             }
-
-            const targetLabel = document.getElementById('rcpt-target-label');
-            const targetVal = document.getElementById('rcpt-account');
-            const trxRow = document.getElementById('rcpt-trx-row');
-            const trxVal = document.getElementById('rcpt-trx-val');
-
-            if (isDeposit) {
-                targetLabel.innerText = 'Sender Mobile:';
-                targetVal.innerText = data.sendingNumber || '-';
-                trxRow.style.display = 'flex';
-                trxVal.innerText = data.tid || '-';
-            } else {
-                targetLabel.innerText = 'Receiver Account:';
-                targetVal.innerText = data.account || '-';
-                if (data.tid) {
-                    trxRow.style.display = 'flex';
-                    trxVal.innerText = data.tid;
-                } else {
-                    trxRow.style.display = 'none';
-                }
-            }
-
-            document.getElementById('receipt-modal').classList.remove('hidden');
         }
 
-        function closeReceiptModal() {
-            document.getElementById('receipt-modal').classList.add('hidden');
-        }
-
-        function downloadReceiptSlip() {
-            if (!currentReceiptData) return;
-            const canvas = document.createElement('canvas');
-            canvas.width = 460;
-            canvas.height = 640;
-            const ctx = canvas.getContext('2d');
-            const isDeposit = (currentReceiptData.type || '').toLowerCase() === 'deposit';
-
-            ctx.fillStyle = '#f8fafc';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            ctx.fillStyle = isDeposit ? '#059669' : '#4f46e5';
-            ctx.fillRect(0, 0, canvas.width, 110);
-
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 24px "Plus Jakarta Sans", sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText('Benvixa Digital Hub', canvas.width / 2, 45);
-
-            ctx.font = '14px sans-serif';
-            ctx.fillStyle = isDeposit ? '#a7f3d0' : '#c7d2fe';
-            ctx.fillText(isDeposit ? 'Official Deposit Confirmation' : 'Official Payout Receipt', canvas.width / 2, 75);
-
-            ctx.fillStyle = '#ffffff';
-            ctx.strokeStyle = '#e2e8f0';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            if (ctx.roundRect) {
-                ctx.roundRect(25, 130, 410, 420, 16);
-            } else {
-                ctx.rect(25, 130, 410, 420);
-            }
-            ctx.fill();
-            ctx.stroke();
-
-            ctx.fillStyle = '#0f172a';
-            ctx.font = 'bold 36px "Plus Jakarta Sans", sans-serif';
-            ctx.fillText(`Rs. ${parseFloat(currentReceiptData.amount).toLocaleString()}`, canvas.width / 2, 195);
-
-            const st = (currentReceiptData.status || 'processing').toUpperCase();
-            ctx.font = 'bold 13px sans-serif';
-            ctx.fillStyle = (st === 'APPROVED' || st === 'COMPLETED') ? '#059669' : '#d97706';
-            ctx.fillText(`• STATUS: ${st} •`, canvas.width / 2, 225);
-
-            ctx.strokeStyle = '#f1f5f9';
-            ctx.beginPath();
-            ctx.moveTo(45, 245);
-            ctx.lineTo(415, 245);
-            ctx.stroke();
-
-            const drawRow = (label, val, y) => {
-                ctx.textAlign = 'left';
-                ctx.fillStyle = '#64748b';
-                ctx.font = '600 14px "Plus Jakarta Sans", sans-serif';
-                ctx.fillText(label, 50, y);
-
-                ctx.textAlign = 'right';
-                ctx.fillStyle = '#0f172a';
-                ctx.font = 'bold 14px "Plus Jakarta Sans", sans-serif';
-                ctx.fillText(val, 410, y);
-            };
-
-            drawRow('Payment Channel:', currentReceiptData.method, 280);
-            drawRow(isDeposit ? 'Sender Phone:' : 'Receiver Account:', isDeposit ? currentReceiptData.sendingNumber : currentReceiptData.account, 320);
-            drawRow(isDeposit ? 'TRX ID:' : 'Transaction ID:', currentReceiptData.tid || 'In Queue', 360);
-            drawRow('Sponsor Code:', currentReceiptData.refCode || 'BENVIXA', 400);
-
-            ctx.strokeStyle = '#e2e8f0';
-            ctx.beginPath();
-            ctx.moveTo(45, 425);
-            ctx.lineTo(415, 425);
-            ctx.stroke();
-
-            ctx.textAlign = 'center';
-            ctx.fillStyle = '#4f46e5';
-            ctx.font = 'bold 15px "Plus Jakarta Sans", sans-serif';
-            ctx.fillText('Earn Rs. 300 - Rs. 1,000 Daily!', canvas.width / 2, 465);
-
-            ctx.fillStyle = '#64748b';
-            ctx.font = '12px sans-serif';
-            ctx.fillText(`Register with Code: ${currentReceiptData.refCode || 'BENVIXA'}`, canvas.width / 2, 492);
-            ctx.fillText('benvixa.vercel.app', canvas.width / 2, 515);
-
-            ctx.fillStyle = '#94a3b8';
-            ctx.font = '11px sans-serif';
-            ctx.fillText('Verified Transaction Certificate', canvas.width / 2, 600);
-
-            const link = document.createElement('a');
-            link.download = `Benvixa_${currentReceiptData.type}_${Date.now()}.png`;
-            link.href = canvas.toDataURL('image/png');
-            link.click();
-            showNotification('Slip downloaded successfully!');
-        }
-
-        function shareReceiptToWhatsApp() {
-            if (!currentReceiptData) return;
-            const refLink = `${window.location.origin}${window.location.pathname}?ref=${currentReceiptData.refCode || ''}`;
-            const text = 
-                `💸 *Benvixa Payment Verification!*\n\n` +
-                `Transaction for *Rs. ${currentReceiptData.amount}* via ${currentReceiptData.method} is ${currentReceiptData.status.toUpperCase()}!\n\n` +
-                `Join Benvixa today, complete daily work tasks, and earn real daily payouts.\n\n` +
-                `👉 Register now using my official link:\n${refLink}`;
-            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
-        }
-
-        // --- Tasks Activities ---
-        function loadTasks() {
+        // --- Tasks Activities (Optimized) ---
+        async function loadTasks() {
             const container = document.getElementById('task-list-container');
             container.innerHTML = '<p style="color:var(--text-muted);">Syncing tasks...</p>';
 
-            db.ref('investments').orderByChild('userId').equalTo(currentUser.uid).once('value', snapshot => {
-                Object.values(countdownIntervals).forEach(clearInterval);
-                countdownIntervals = {};
-                container.innerHTML = '';
-                let hasTasks = false;
+            const investments = await getUserInvestmentsData();
+            Object.values(countdownIntervals).forEach(clearInterval);
+            countdownIntervals = {};
+            container.innerHTML = '';
+            let hasTasks = false;
 
-                if (!snapshot.exists()) {
-                    container.innerHTML = "<p style='color:var(--text-muted);'>No active packages found.</p>";
-                    return;
-                }
+            if (investments.length === 0) {
+                container.innerHTML = "<p style='color:var(--text-muted);'>No active packages found.</p>";
+                return;
+            }
 
-                const now = getExactTime();
-                snapshot.forEach(child => {
-                    const key = child.key;
-                    const task = child.val();
+            const now = getExactTime();
+            investments.forEach(task => {
+                const key = task.key;
                     if (task.status === 'approved') {
                         const invDate = new Date(task.date).getTime();
                         const validityMs = (task.validity || 60) * 24 * 60 * 60 * 1000;
@@ -2755,7 +3495,6 @@
                 if (!hasTasks) {
                     container.innerHTML = "<p style='color:var(--text-muted);'>No active packages available.</p>";
                 }
-            });
         }
 
         function updateClaimButton(key, lastClaimed) {
@@ -2875,6 +3614,7 @@
                 });
 
                 showNotification(`Reward credited: Rs. ${rewardVal}`);
+                cachedUserInvestments = null; // Cache refresh
                 updateClaimButton(key, realNow);
 
             } catch (e) {
@@ -2913,14 +3653,13 @@
                     const formattedDate = new Date(d.date).toLocaleString('en-GB', options);
 
                     cards.unshift(`
-                        <div class="history-card-item" onclick="openDepositSlip('${key}')">
+                        <div class="history-card-item" style="cursor:default;">
                             <div class="history-card-left">
                                 <span class="history-card-amt mono">Rs. ${parseFloat(d.amount).toLocaleString()}</span>
                                 <span class="history-card-meta">${d.method} • ${formattedDate}</span>
                             </div>
                             <div class="history-card-right">
                                 <span class="history-status-badge ${statusClass}">${d.status}</span>
-                                <i class='bx bx-chevron-right' style="font-size:22px; color:var(--text-dim);"></i>
                             </div>
                         </div>
                     `);
@@ -2943,14 +3682,13 @@
                     const formattedDate = new Date(d.date).toLocaleString('en-GB', options);
 
                     cards.unshift(`
-                        <div class="history-card-item" onclick="openWithdrawalSlip('${key}')">
+                        <div class="history-card-item" style="cursor:default;">
                             <div class="history-card-left">
                                 <span class="history-card-amt mono" style="color:var(--primary);">Rs. ${parseFloat(d.amount).toLocaleString()}</span>
                                 <span class="history-card-meta">${d.method} • ${formattedDate}</span>
                             </div>
                             <div class="history-card-right">
                                 <span class="history-status-badge ${statusClass}">${d.status}</span>
-                                <i class='bx bx-chevron-right' style="font-size:22px; color:var(--text-dim);"></i>
                             </div>
                         </div>
                     `);
@@ -2959,35 +3697,6 @@
             });
         }
 
-        function openDepositSlip(key) {
-            const item = currentLoadedDeposits[key];
-            if (!item) return;
-            displayReceiptModal({
-                type: 'Deposit',
-                amount: item.amount,
-                method: item.method,
-                sendingNumber: item.sendingNumber,
-                tid: item.tid,
-                status: item.status || 'processing',
-                date: new Date(item.date).toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' }),
-                refCode: currentUserProfile ? currentUserProfile.referralCode : 'BENVIXA'
-            });
-        }
-
-        function openWithdrawalSlip(key) {
-            const item = currentLoadedWithdrawals[key];
-            if (!item) return;
-            displayReceiptModal({
-                type: 'Withdrawal',
-                amount: item.amount,
-                method: item.method,
-                account: item.account,
-                tid: item.tid || '',
-                status: item.status || 'processing',
-                date: new Date(item.date).toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' }),
-                refCode: currentUserProfile ? currentUserProfile.referralCode : 'BENVIXA'
-            });
-        }
 
         // --- Multi-Level Team Tabs & Data ---
         function switchTeamTab(level) {
@@ -3026,7 +3735,6 @@
                 const l3Data = userData.teamL3 || {};
                 renderTeamLevelCards('team-tab-pane-l3', l3Data, 'Level 3');
 
-                updateMilestonesUI(userData);
                 updateUserCustomCommissionUI(userData);
             });
         }
@@ -3062,10 +3770,9 @@
                     <div class="member-card">
                         <div class="member-info">
                             <div class="member-header-row">
-                                <span class="member-email">${maskEmailSecure(member.email)}</span>
+                                <span class="member-contact mono" style="font-size:13.5px; font-weight:700; color:var(--text-main);">${maskNumber(member.number)}</span>
                                 ${badgeHtml}
                             </div>
-                            <span class="member-contact mono">${maskNumber(member.number)}</span>
                         </div>
                         <span class="member-date">${dateStr}</span>
                     </div>
@@ -3083,123 +3790,6 @@
             copyTextUniversal(linkText, 'Invite link copied successfully!');
         }
 
-        function shareOnWhatsApp() {
-            const linkText = document.getElementById('user-referral-link').innerText;
-            if (!linkText || linkText === '- - -') {
-                showNotification("Generating link, please try again in a moment.", "danger");
-                return;
-            }
-
-            const message = 
-                `🚀 *Join Benvixa - Daily Digital Work & Tasks Hub!*\n\n` +
-                `Register now and get a *Rs. 5,000 Welcome Bonus Escrow*! Complete easy daily work tasks and withdraw your earnings directly via *Easypaisa* or *JazzCash* 💸\n\n` +
-                `✅ 100% Active Payouts\n` +
-                `✅ Instant Task Confirmation\n` +
-                `✅ Multi-Tier Commissions\n\n` +
-                `👉 Register now using my official invite link:\n${linkText}`;
-
-            const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
-            window.open(waUrl, '_blank');
-        }
-
-        // --- Poster Generator with Dynamic QR Code ---
-        function openPosterModal() {
-            if (!currentUserProfile) return;
-            const canvas = document.getElementById('posterCanvas');
-            const ctx = canvas.getContext('2d');
-            const refCode = currentUserProfile.referralCode || 'BENVIXA';
-            const inviteUrl = `${window.location.origin}${window.location.pathname}?ref=${refCode}`;
-
-            const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-            grad.addColorStop(0, '#0f172a');
-            grad.addColorStop(0.5, '#1e1b4b');
-            grad.addColorStop(1, '#312e81');
-            ctx.fillStyle = grad;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
-            ctx.strokeStyle = '#4f46e5';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            if (ctx.roundRect) {
-                ctx.roundRect(25, 25, canvas.width - 50, canvas.height - 50, 20);
-            } else {
-                ctx.rect(25, 25, canvas.width - 50, canvas.height - 50);
-            }
-            ctx.fill();
-            ctx.stroke();
-
-            ctx.fillStyle = '#ffffff';
-            ctx.font = '800 26px "Plus Jakarta Sans", sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText('BENVIXA DIGITAL HUB', canvas.width / 2, 75);
-
-            ctx.fillStyle = '#38bdf8';
-            ctx.font = '700 12px "Plus Jakarta Sans", sans-serif';
-            ctx.fillText('VERIFIED DIGITAL WORK NETWORK', canvas.width / 2, 98);
-
-            ctx.fillStyle = '#ffffff';
-            ctx.font = '800 28px "Plus Jakarta Sans", sans-serif';
-            ctx.fillText('EARN RS. 500 - 1,500', canvas.width / 2, 145);
-            ctx.fillStyle = '#10b981';
-            ctx.font = '800 20px "Plus Jakarta Sans", sans-serif';
-            ctx.fillText('DAILY FROM MOBILE PHONE', canvas.width / 2, 175);
-
-            ctx.textAlign = 'left';
-            ctx.fillStyle = '#e2e8f0';
-            ctx.font = '600 13px "Plus Jakarta Sans", sans-serif';
-            ctx.fillText('✓ Rs. 5,000 Welcome Bonus Escrow', 50, 225);
-            ctx.fillText('✓ Instant Easypaisa & JazzCash Withdrawals', 50, 255);
-            ctx.fillText('✓ Multi-Tier Invite Cash Commissions', 50, 285);
-
-            // Draw QR Code onto Canvas
-            const qrImg = new Image();
-            qrImg.crossOrigin = "anonymous";
-            qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=${encodeURIComponent(inviteUrl)}`;
-            qrImg.onload = () => {
-                ctx.fillStyle = '#ffffff';
-                ctx.beginPath();
-                if (ctx.roundRect) {
-                    ctx.roundRect(canvas.width / 2 - 75, 315, 150, 150, 12);
-                } else {
-                    ctx.rect(canvas.width / 2 - 75, 315, 150, 150);
-                }
-                ctx.fill();
-                ctx.drawImage(qrImg, canvas.width / 2 - 65, 325, 130, 130);
-            };
-
-            ctx.textAlign = 'center';
-            ctx.fillStyle = '#c7d2fe';
-            ctx.font = '700 12px sans-serif';
-            ctx.fillText('SCAN QR CODE OR USE CODE:', canvas.width / 2, 495);
-
-            ctx.fillStyle = '#fbbf24';
-            ctx.font = 'bold 22px "JetBrains Mono", monospace';
-            ctx.fillText(refCode, canvas.width / 2, 525);
-
-            ctx.fillStyle = '#94a3b8';
-            ctx.font = '600 12px sans-serif';
-            ctx.fillText('Official Portal: benvixa.vercel.app', canvas.width / 2, 555);
-
-            document.getElementById('poster-modal').classList.remove('hidden');
-        }
-
-        function closePosterModal() {
-            document.getElementById('poster-modal').classList.add('hidden');
-        }
-
-        function downloadPoster() {
-            try {
-                const canvas = document.getElementById('posterCanvas');
-                const link = document.createElement('a');
-                link.download = `Benvixa_Promo_Poster_${Date.now()}.png`;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-                showNotification('Status Poster Downloaded! Post it to WhatsApp.');
-            } catch(e) {
-                showNotification("Please take a screenshot of the poster to share.", "danger");
-            }
-        }
 
         function checkForReferralCodeInURL() {
             const params = new URLSearchParams(window.location.search);
@@ -3211,67 +3801,6 @@
             }
         }
 
-        // --- Live Ticker ---
-        const pakPrefixes = ['0300', '0301', '0302', '0303', '0306', '0311', '0312', '0315', '0321', '0322', '0324', '0331', '0332', '0333', '0334', '0342', '0345', '0346', '0347'];
-        const realisticAmounts = [120, 240, 350, 480, 520, 680, 850, 1100, 1450, 1750, 2100, 3200, 4600];
-        const tiers = [1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 15];
-        const timePhrases = ['Just now', '1 min ago', '2 mins ago', '3 mins ago'];
-
-        function getRandomItem(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
-
-        function generateRandomPhone() {
-            const prefix = getRandomItem(pakPrefixes);
-            const suffix = Math.floor(100 + Math.random() * 900);
-            return `${prefix}****${suffix}`;
-        }
-
-        function showNextTickerItem() {
-            const tickerEl = document.getElementById('live-payout-ticker');
-            const iconEl = document.getElementById('ticker-icon');
-            const titleEl = document.getElementById('ticker-title');
-            const timeEl = document.getElementById('ticker-time');
-
-            if (!tickerEl) return;
-
-            const isWithdrawal = Math.random() > 0.32;
-            const phone = generateRandomPhone();
-            const timeText = getRandomItem(timePhrases);
-
-            if (isWithdrawal) {
-                const amount = getRandomItem(realisticAmounts);
-                const method = Math.random() > 0.5 ? 'Easypaisa' : 'JazzCash';
-                iconEl.className = 'ticker-badge wth';
-                iconEl.innerHTML = `<i class='bx bx-check-circle'></i>`;
-                titleEl.innerHTML = `${phone} withdrew <strong style="color:var(--accent);">Rs. ${amount.toLocaleString()}</strong>`;
-                timeEl.innerText = `${method} • ${timeText}`;
-            } else {
-                const tierNum = getRandomItem(tiers);
-                iconEl.className = 'ticker-badge act';
-                iconEl.innerHTML = `<i class='bx bx-layer'></i>`;
-                titleEl.innerHTML = `${phone} unlocked <strong>Tier ${tierNum} Task Pack</strong>`;
-                timeEl.innerText = `Work Package • ${timeText}`;
-            }
-
-            tickerEl.classList.add('show');
-            setTimeout(() => { tickerEl.classList.remove('show'); }, 4500);
-
-            const nextInterval = Math.floor(Math.random() * (19000 - 9000 + 1) + 9000);
-            tickerTimeoutId = setTimeout(showNextTickerItem, nextInterval);
-        }
-
-        function startSmartLiveTicker() {
-            stopSmartLiveTicker();
-            tickerTimeoutId = setTimeout(showNextTickerItem, 4500);
-        }
-
-        function stopSmartLiveTicker() {
-            if (tickerTimeoutId) {
-                clearTimeout(tickerTimeoutId);
-                tickerTimeoutId = null;
-            }
-            const tickerEl = document.getElementById('live-payout-ticker');
-            if (tickerEl) tickerEl.classList.remove('show');
-        }
     </script>
 </body>
 </html>
