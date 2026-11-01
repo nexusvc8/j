@@ -3019,8 +3019,12 @@
                 container.innerHTML = html;
         }
 
-        // --- Deposit & Withdrawal ---
+        // --- Deposit & Withdrawal (With Anti-Fraud & Strict TRX Verification) ---
+        let isDepositSubmitting = false;
+
         function submitDeposit() {
+            if (isDepositSubmitting) return;
+
             const btn = document.getElementById('btn-deposit-submit');
             const amountInput = document.getElementById('deposit-amount');
             const methodSelect = document.getElementById('payment-method');
@@ -3032,28 +3036,55 @@
                 showNotification("Minimum deposit is Rs. 20.", "danger");
                 return;
             }
-            if (!tidInput.value.trim() || !numberInput.value.trim()) {
-                showNotification("Please provide TRX ID and sender mobile number.", "danger");
+            if (amount > 500000) {
+                showNotification("Deposit amount exceeds maximum limit.", "danger");
                 return;
             }
 
-            btn.disabled = true;
-            btn.innerText = "Checking TRX ID...";
-
-            // Auto-clean spaces and non-alphanumeric noise from TRX ID & Mobile
-            const cleanTid = tidInput.value.trim().replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+            const cleanTid = (tidInput.value || '').trim().replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
             const cleanSenderNumber = sanitizePhoneNumber(numberInput.value);
 
-            // Check if this TRX ID was already submitted by anyone
+            // 1. Minimum Length Check (Easypaisa / JazzCash TRX IDs are at least 10 to 12 digits/chars)
+            if (!cleanTid || cleanTid.length < 9 || cleanTid.length > 24) {
+                showNotification("Please enter a valid Transaction ID (minimum 9-12 characters).", "danger");
+                return;
+            }
+
+            // 2. Reject obvious fake pattern inputs (e.g. 11111111, 00000000, 123456789)
+            const isAllSameChar = /^([a-zA-Z0-9])\1+$/.test(cleanTid);
+            const isSequential = "01234567890123456789".includes(cleanTid);
+            if (isAllSameChar || isSequential) {
+                showNotification("Invalid Transaction ID format. Please check your bank receipt SMS.", "danger");
+                return;
+            }
+
+            // 3. Sender Phone Number check (Must be valid 11-digit Pakistani mobile)
+            if (cleanSenderNumber.length !== 11 || !cleanSenderNumber.startsWith('03')) {
+                showNotification("Please enter a valid 11-digit sender phone number (e.g. 03XXXXXXXXX).", "danger");
+                return;
+            }
+
+            isDepositSubmitting = true;
+            btn.disabled = true;
+            btn.style.pointerEvents = 'none';
+            btn.innerText = "Checking TRX ID...";
+
+            const resetDepositBtn = () => {
+                isDepositSubmitting = false;
+                btn.disabled = false;
+                btn.style.pointerEvents = 'auto';
+                btn.innerText = "Submit Deposit";
+            };
+
+            // Check if this TRX ID was already submitted in the database
             db.ref('deposits').orderByChild('tid').equalTo(cleanTid).once('value', tidSnap => {
                 if (tidSnap.exists()) {
-                    btn.disabled = false;
-                    btn.innerText = "Submit Deposit";
+                    resetDepositBtn();
                     showNotification("This TRX ID has already been submitted. Please check your transaction details.", "danger");
                     return;
                 }
 
-                btn.innerText = "Submitting...";
+                btn.innerText = "Submitting Deposit...";
                 const depositData = {
                     userId: currentUser.uid,
                     amount: amount,
@@ -3065,16 +3096,15 @@
                 };
 
                 db.ref('deposits').push(depositData).then(() => {
-                    showNotification("Deposit submitted for verification.");
+                    showNotification("Deposit submitted successfully! Verification in progress.");
                     amountInput.value = '';
                     tidInput.value = '';
                     numberInput.value = '';
+                    resetDepositBtn();
                     showSection('history', document.querySelector("a[onclick*='history']"));
                 }).catch(e => {
+                    resetDepositBtn();
                     showNotification("Error: " + e.message, "danger");
-                }).finally(() => {
-                    btn.disabled = false;
-                    btn.innerText = "Submit Deposit";
                 });
             });
         }
@@ -3348,8 +3378,13 @@
             }
         }
 
-        // Step 4: Final Send Now Execution
+        // Step 4: Final Send Now Execution (With Double-Tap & Multi-Click Lock)
+        let isWithdrawProcessing = false;
+
         function executeFinalWithdrawal() {
+            // Agar pehle se withdraw process ho raha hai toh tap block karein
+            if (isWithdrawProcessing) return;
+
             const btn = document.getElementById('btn-final-send-now');
             const amount = withdrawOrder.amount;
             const method = withdrawOrder.methodName;
@@ -3369,8 +3404,20 @@
                 return;
             }
 
+            // Button ko mukammal lock karein taake tap na ho sake
+            isWithdrawProcessing = true;
             btn.disabled = true;
+            btn.classList.remove('ready');
+            btn.style.pointerEvents = 'none';
             btn.innerText = "Processing Transaction...";
+
+            const unlockButton = () => {
+                isWithdrawProcessing = false;
+                btn.disabled = false;
+                btn.classList.add('ready');
+                btn.style.pointerEvents = 'auto';
+                btn.innerText = "Send Now";
+            };
 
             const userRef = db.ref('users/' + currentUser.uid);
             let failDueToBalance = false;
@@ -3386,10 +3433,8 @@
                     return;
                 }
             }, (error, committed) => {
-                btn.disabled = false;
-                btn.innerText = "Send Now";
-
                 if (error) {
+                    unlockButton();
                     showNotification("Transaction error: " + error.message, "danger");
                 } else if (committed) {
                     const withdrawalData = {
@@ -3404,8 +3449,9 @@
                     };
 
                     db.ref('withdrawals').push(withdrawalData).then((pushedRef) => {
-                        // Alert popup completely disabled on withdraw: direct green screen only
-                        
+                        // Success screen par janey ke baad lock reset karein
+                        unlockButton();
+
                         // Populate Exact Screenshot Success View
                         document.getElementById('success-screen-amount').innerText = `Rs. ${parseFloat(amount).toLocaleString()}.00`;
                         document.getElementById('success-screen-name').innerText = receiverName;
@@ -3423,9 +3469,11 @@
                         // Slide in Step 5 smoothly from right
                         goToStep(5);
                     }).catch(err => {
+                        unlockButton();
                         console.error("Withdrawal record notice:", err);
                     });
                 } else {
+                    unlockButton();
                     if (failDueToBalance) {
                         showNotification("Insufficient wallet balance on server.", "danger");
                     } else {
@@ -3561,15 +3609,25 @@
             }, 5200);
         }
 
+        // Anti-Cheat: Task claiming in-flight memory lock
+        const activeClaimingTasks = new Set();
+
         async function claimEarning(key) {
+            // Agar ye task pehle se process ho raha hai toh multiple tap ya loop ko foran block karein
+            if (activeClaimingTasks.has(key)) {
+                return;
+            }
+            activeClaimingTasks.add(key);
+
             const btn = document.getElementById(`btn-${key}`);
             if (btn) {
                 btn.disabled = true;
+                btn.style.pointerEvents = 'none';
                 btn.innerText = "Verifying...";
             }
 
             try {
-                // 1. Asli internet time fetch hoga (Phone date/time se bypass nahi hoga)
+                // 1. Asli internet time fetch hoga (Phone date/time se bypass nahi ho sakta)
                 const realNow = await getTrustedServerTime();
 
                 const invRef = db.ref('investments/' + key);
@@ -3577,34 +3635,37 @@
                 const invData = invSnap.val();
 
                 if (!invData || invData.userId !== currentUser.uid) {
-                    throw new Error("Task record not found.");
+                    throw new Error("Invalid task request or unauthorized access.");
                 }
 
                 const investDate = new Date(invData.date).getTime();
                 const validityMs = (invData.validity || 60) * 24 * 60 * 60 * 1000;
                 
                 if (realNow - investDate > validityMs) {
-                    throw new Error("This work package has expired. Please unlock a new package.");
+                    throw new Error("This package has expired. Please activate a new package.");
                 }
 
                 const twentyFourHours = 24 * 60 * 60 * 1000;
                 const lastClaimTime = invData.lastClaimed || 0;
 
-                // 24 ghante ka strict check
+                // Strict 24 hours timer check
                 if (realNow < lastClaimTime + twentyFourHours) {
                     const remainingMs = (lastClaimTime + twentyFourHours) - realNow;
                     const remHours = Math.ceil(remainingMs / (1000 * 60 * 60));
-                    throw new Error(`24 ghante se pehle dobara claim nahi ho sakta! Baqi waqt: ${remHours} ghante.`);
+                    throw new Error(`Task already claimed! Next claim available in ${remHours} hours.`);
                 }
 
                 const rewardVal = parseFloat(invData.dailyEarning || 0);
+                if (isNaN(rewardVal) || rewardVal <= 0) {
+                    throw new Error("Invalid reward configuration.");
+                }
 
-                // 2. Database mein Google Firebase ka apna asli Server Timestamp save karein
+                // 2. Pehle database mein lastClaimed timestamp update karein taake double-claim impossible ho jaye
                 await invRef.update({ 
                     lastClaimed: firebase.database.ServerValue.TIMESTAMP 
                 });
 
-                // 3. Balance add karein
+                // 3. User balance mein atomic addition
                 await db.ref('users/' + currentUser.uid).transaction(currUser => {
                     if (currUser) {
                         const curBal = parseFloat(currUser.balance || 0);
@@ -3621,8 +3682,12 @@
                 showNotification(e.message, "danger");
                 if (btn) {
                     btn.disabled = false;
+                    btn.style.pointerEvents = 'auto';
                     btn.innerText = "Complete Task";
                 }
+            } finally {
+                // Process mukammal hone ke baad task lock release karein
+                activeClaimingTasks.delete(key);
             }
         }
 
