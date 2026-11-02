@@ -1381,6 +1381,125 @@
             .wheel-wrapper { width: 270px; height: 270px; }
             #spinCanvas { width: 270px; height: 270px; }
         }
+
+        /* Rewards Page Styling */
+        .reward-hero-card {
+            background: linear-gradient(135deg, #065f46 0%, #047857 50%, #0f172a 100%);
+            border-radius: var(--radius-lg);
+            padding: 22px 20px;
+            color: #ffffff;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 25px rgba(4, 120, 87, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+        .reward-hero-title { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; color: #a7f3d0; }
+        .reward-hero-val { font-size: 28px; font-weight: 900; color: #ffffff; margin-top: 4px; }
+        .reward-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .reward-card {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 16px 18px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transition: var(--transition);
+        }
+        .reward-card:hover {
+            border-color: #cbd5e1;
+            box-shadow: var(--shadow-md);
+        }
+        .reward-top-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .reward-target-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .reward-icon-badge {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: rgba(5, 150, 105, 0.1);
+            color: #059669;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+        .reward-amount-box {
+            text-align: right;
+        }
+        .reward-amount-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+        .reward-amount-val { font-size: 20px; font-weight: 900; color: #059669; }
+        .reward-prog-box {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .reward-prog-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+        .reward-bar-bg {
+            background: #e2e8f0;
+            height: 8px;
+            border-radius: 10px;
+            overflow: hidden;
+            width: 100%;
+        }
+        .reward-bar-fill {
+            background: linear-gradient(90deg, #059669, #10b981);
+            height: 100%;
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+        .btn-claim-reward {
+            width: 100%;
+            padding: 11px;
+            border-radius: 12px;
+            font-size: 13.5px;
+            font-weight: 800;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .btn-claim-reward.ready {
+            background: linear-gradient(135deg, #059669, #047857);
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(5, 150, 105, 0.3);
+        }
+        .btn-claim-reward.ready:hover {
+            filter: brightness(1.08);
+            transform: translateY(-1px);
+        }
+        .btn-claim-reward.locked {
+            background: #f1f5f9;
+            color: #94a3b8;
+            cursor: not-allowed;
+            border: 1px solid #e2e8f0;
+        }
+        .btn-claim-reward.claimed {
+            background: #ecfdf5;
+            color: #059669;
+            cursor: default;
+            border: 1px solid #a7f3d0;
+        }
     </style>
 </head>
 <body>
@@ -1413,6 +1532,7 @@
                     <li><a href="javascript:void(0)" onclick="showSection('invest', this)"><i class='bx bx-layer icon'></i><span>Packages</span></a></li>
                     <li><a href="javascript:void(0)" onclick="showSection('task', this)"><i class='bx bx-check-shield icon'></i><span>Daily Tasks</span></a></li>
                     <li><a href="javascript:void(0)" onclick="showSection('send', this)"><i class='bx bx-money-withdraw icon'></i><span>Withdraw</span></a></li>
+                    <li><a href="javascript:void(0)" onclick="showSection('rewards', this)"><i class='bx bx-gift icon'></i><span>Rewards</span></a></li>
                     <li><a href="javascript:void(0)" onclick="showSection('history', this)"><i class='bx bx-receipt icon'></i><span>History</span></a></li>
                     <li><a href="javascript:void(0)" onclick="showSection('team', this)"><i class='bx bx-user-plus icon'></i><span>Invite</span></a></li>
                     <li><a href="javascript:void(0)" onclick="showSection('profile', this)"><i class='bx bx-user icon'></i><span>Profile</span></a></li>
@@ -1895,6 +2015,31 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Level 1 Team Milestone Rewards Page -->
+                <div id="rewards-content" class="content-section hidden">
+                    <div class="section-header">
+                        <h2>Team Milestones Rewards</h2>
+                        <p>Earn cash bonuses when your Level 1 members activate new packages.</p>
+                    </div>
+
+                    <!-- Hero Card -->
+                    <div class="reward-hero-card">
+                        <div>
+                            <span class="reward-hero-title">Level 1 New Team Investment</span>
+                            <div class="reward-hero-val mono" id="rewards-total-l1-invest">Rs. 0</div>
+                            <span style="font-size:12px; color:#d1fae5; margin-top:2px; display:block;">Calculated from new package activations</span>
+                        </div>
+                        <div style="width:52px; height:52px; border-radius:50%; background:rgba(255,255,255,0.15); display:flex; align-items:center; justify-content:center; font-size:30px;">
+                            <i class='bx bx-trophy' style="color:#fde047;"></i>
+                        </div>
+                    </div>
+
+                    <!-- Rewards List Grid -->
+                    <div id="rewards-list-container" class="reward-grid">
+                        <p style="text-align:center; color:var(--text-muted); font-size:13px; padding:20px;">Loading rewards...</p>
+                    </div>
+                </div>
             </div>
         </section>
     </div>
@@ -1977,6 +2122,7 @@
         // Dynamic Data holders
         let dynamicInvestmentPlans = [];
         let dynamicWithdrawalMethods = [];
+        let dynamicTeamRewards = [];
         let cachedUserInvestments = null;
         let lastInvestmentsFetchTime = 0;
 
@@ -2086,6 +2232,39 @@
                         }
                     });
                     renderWalletsList(dynamicWithdrawalMethods);
+                }
+            });
+
+            // Dynamic Level 1 Team Milestone Rewards Sync
+            db.ref('rewards').once('value', snapshot => {
+                if (!snapshot.exists()) {
+                    const defaultRewards = {
+                        "reward_1": { id: "reward_1", target: 200, reward: 20, order: 1 },
+                        "reward_2": { id: "reward_2", target: 1000, reward: 80, order: 2 },
+                        "reward_3": { id: "reward_3", target: 5000, reward: 350, order: 3 },
+                        "reward_4": { id: "reward_4", target: 10000, reward: 600, order: 4 },
+                        "reward_5": { id: "reward_5", target: 20000, reward: 1000, order: 5 },
+                        "reward_6": { id: "reward_6", target: 30000, reward: 1500, order: 6 },
+                        "reward_7": { id: "reward_7", target: 50000, reward: 3000, order: 7 },
+                        "reward_8": { id: "reward_8", target: 70000, reward: 4000, order: 8 },
+                        "reward_9": { id: "reward_9", target: 95000, reward: 5000, order: 9 },
+                        "reward_10": { id: "reward_10", target: 135000, reward: 7000, order: 10 },
+                        "reward_11": { id: "reward_11", target: 200000, reward: 12000, order: 11 }
+                    };
+                    db.ref('rewards').set(defaultRewards);
+                    dynamicTeamRewards = Object.values(defaultRewards).sort((a,b) => a.order - b.order);
+                } else {
+                    const data = snapshot.val();
+                    dynamicTeamRewards = Object.keys(data).map(k => ({
+                        id: k,
+                        target: parseFloat(data[k].target || 0),
+                        reward: parseFloat(data[k].reward || 0),
+                        order: data[k].order || 999
+                    })).sort((a,b) => a.order !== b.order ? a.order - b.order : a.target - b.target);
+                }
+                const rewCont = document.getElementById('rewards-content');
+                if (rewCont && !rewCont.classList.contains('hidden')) {
+                    renderRewardsList();
                 }
             });
 
@@ -2405,6 +2584,7 @@
 
             if (sectionId === 'invest') loadInvestmentPlans();
             if (sectionId === 'task') loadTasks();
+            if (sectionId === 'rewards') renderRewardsList();
             if (sectionId === 'history') loadHistory();
             if (sectionId === 'team') loadTeamData();
             if (sectionId === 'home') loadActivePackagesCount();
@@ -2745,20 +2925,18 @@
                 const userData = userSnap.val();
                 if (!userData) return;
 
-                // Level 1 Commission (Direct Sponsor)
+                // Level 1 Commission + Level 1 Team New Investment Volume (For Milestone Rewards)
                 if (userData.referredBy && userData.referredBy !== 'none') {
-                    db.ref('users/' + userData.referredBy).once('value', l1Snap => {
-                        const l1User = l1Snap.val();
-                        if (l1User) {
-                            const rate = (l1User.customCommissionL1 !== undefined ? parseFloat(l1User.customCommissionL1) : 8) / 100;
-                            const commL1 = parseFloat((amount * rate).toFixed(2));
-                            if (commL1 > 0) {
-                                db.ref('users/' + userData.referredBy).update({
-                                    balance: firebase.database.ServerValue.increment(commL1),
-                                    referralEarnings: firebase.database.ServerValue.increment(commL1)
-                                });
-                            }
-                        }
+                    db.ref('users/' + userData.referredBy + '/customCommissionL1').once('value', snap => {
+                        const rateVal = snap.exists() ? parseFloat(snap.val()) : 8;
+                        const commL1 = parseFloat((amount * (rateVal / 100)).toFixed(2));
+                        
+                        // Atomically increment Level 1 new investment volume for rewards
+                        db.ref('users/' + userData.referredBy).update({
+                            l1RewardInvestment: firebase.database.ServerValue.increment(amount),
+                            balance: commL1 > 0 ? firebase.database.ServerValue.increment(commL1) : firebase.database.ServerValue.increment(0),
+                            referralEarnings: commL1 > 0 ? firebase.database.ServerValue.increment(commL1) : firebase.database.ServerValue.increment(0)
+                        });
                     });
                 }
 
@@ -3864,6 +4042,125 @@
                 if (signupReferralInput) signupReferralInput.value = refCode;
                 toggleForms(true);
             }
+        }
+
+// --- LEVEL 1 MILESTONES REWARDS LOGIC ---
+        function renderRewardsList() {
+            const container = document.getElementById('rewards-list-container');
+            const totalDisplay = document.getElementById('rewards-total-l1-invest');
+            if (!container) return;
+
+            const l1Investment = currentUserProfile ? parseFloat(currentUserProfile.l1RewardInvestment || 0) : 0;
+            if (totalDisplay) {
+                totalDisplay.innerText = `Rs. ${l1Investment.toLocaleString()}`;
+            }
+
+            if (dynamicTeamRewards.length === 0) {
+                container.innerHTML = '<p style="text-align:center; color:var(--text-muted); font-size:13px; padding:20px;">No milestone rewards active at this moment.</p>';
+                return;
+            }
+
+            const claimedObj = (currentUserProfile && currentUserProfile.milestonesClaimed) ? currentUserProfile.milestonesClaimed : {};
+
+            let html = '';
+            dynamicTeamRewards.forEach((item, index) => {
+                const target = item.target;
+                const reward = item.reward;
+                const isClaimed = claimedObj[item.id] === true;
+                const isReached = l1Investment >= target;
+                const pct = Math.min(100, Math.floor((l1Investment / target) * 100));
+
+                let buttonHtml = '';
+                if (isClaimed) {
+                    buttonHtml = `<button class="btn-claim-reward claimed" disabled><i class='bx bx-check-double'></i> Claimed</button>`;
+                } else if (isReached) {
+                    buttonHtml = `<button class="btn-claim-reward ready" id="btn-rew-${item.id}" onclick="claimTeamReward('${item.id}', ${target}, ${reward})"><i class='bx bx-gift'></i> Claim Rs. ${reward.toLocaleString()}</button>`;
+                } else {
+                    buttonHtml = `<button class="btn-claim-reward locked" disabled><i class='bx bx-lock-alt'></i> Locked (Rs. ${l1Investment.toLocaleString()} / Rs. ${target.toLocaleString()})</button>`;
+                }
+
+                html += `
+                    <div class="reward-card">
+                        <div class="reward-top-row">
+                            <div class="reward-target-wrap">
+                                <div class="reward-icon-badge">
+                                    <i class='bx bx-award'></i>
+                                </div>
+                                <div>
+                                    <h4 style="font-size:15px; font-weight:800; color:var(--text-main);">Milestone Tier ${index + 1}</h4>
+                                    <span style="font-size:12px; color:var(--text-muted); font-weight:600;">Level 1 Target: <strong>Rs. ${target.toLocaleString()}</strong></span>
+                                </div>
+                            </div>
+                            <div class="reward-amount-box">
+                                <span class="reward-amount-label">Cash Reward</span>
+                                <div class="reward-amount-val mono">+Rs. ${reward.toLocaleString()}</div>
+                            </div>
+                        </div>
+
+                        <div class="reward-prog-box">
+                            <div class="reward-prog-labels">
+                                <span>Progress</span>
+                                <span class="mono">${pct}% (Rs. ${Math.min(l1Investment, target).toLocaleString()} / Rs. ${target.toLocaleString()})</span>
+                            </div>
+                            <div class="reward-bar-bg">
+                                <div class="reward-bar-fill" style="width: ${pct}%;"></div>
+                            </div>
+                        </div>
+
+                        ${buttonHtml}
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Anti-Cheat: Claim Reward Lock
+        const activeRewardClaims = new Set();
+
+        function claimTeamReward(rewardId, target, rewardAmount) {
+            if (activeRewardClaims.has(rewardId)) return;
+            activeRewardClaims.add(rewardId);
+
+            const btn = document.getElementById(`btn-rew-${rewardId}`);
+            if (btn) {
+                btn.disabled = true;
+                btn.style.pointerEvents = 'none';
+                btn.innerText = "Claiming...";
+            }
+
+            const userRef = db.ref('users/' + currentUser.uid);
+
+            userRef.transaction(userData => {
+                if (!userData) return userData;
+
+                const l1Invest = parseFloat(userData.l1RewardInvestment || 0);
+                const claimed = userData.milestonesClaimed || {};
+
+                // Strict Server Checks: Target reached hona chahiye aur pehle claim na hua ho
+                if (l1Invest >= target && !claimed[rewardId]) {
+                    const currentBal = parseFloat(userData.balance || 0);
+                    userData.balance = parseFloat((currentBal + rewardAmount).toFixed(2));
+                    if (!userData.milestonesClaimed) userData.milestonesClaimed = {};
+                    userData.milestonesClaimed[rewardId] = true;
+                    return userData;
+                }
+                return; // Agar condition match nahi karti toh cancel
+            }, (error, committed) => {
+                activeRewardClaims.delete(rewardId);
+
+                if (committed) {
+                    showNotification(`Congratulations! Rs. ${rewardAmount.toLocaleString()} reward added to wallet balance!`);
+                    renderRewardsList();
+                } else {
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.style.pointerEvents = 'auto';
+                        btn.innerText = `Claim Rs. ${rewardAmount.toLocaleString()}`;
+                    }
+                    showNotification("Reward already claimed or milestone criteria not met.", "danger");
+                }
+            });
         }
 
     </script>
