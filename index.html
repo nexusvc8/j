@@ -2111,6 +2111,15 @@
         const auth = firebase.auth();
         const db = firebase.database();
 
+        // Screen lock ya tab minimize hone par background data consumption block karein
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                db.goOffline();
+            } else {
+                db.goOnline();
+            }
+        });
+
         let currentUser = null;
         let currentUserProfile = null;
         let countdownIntervals = {};
@@ -2160,24 +2169,37 @@
             return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
         }
 
-        // --- Dynamic Milestones & Settings Listeners (Optimized .once to save quota) ---
+        // --- Dynamic Milestones & Settings Listeners (15-Minute Smart Cache - Huge Bandwidth Saver) ---
         function initFirebaseDynamicConfigs() {
-            // Packages sync (once fetch to save bandwidth)
+            const CACHE_KEY = 'bv_app_configs';
+            const CACHE_TIME_KEY = 'bv_app_configs_time';
+            const now = Date.now();
+            const lastCacheTime = parseInt(localStorage.getItem(CACHE_TIME_KEY) || '0', 10);
+            const cachedData = localStorage.getItem(CACHE_KEY);
+
+            // 15 Minutes Cache Check (900,000 ms)
+            if (cachedData && (now - lastCacheTime < 900000)) {
+                try {
+                    const parsed = JSON.parse(cachedData);
+                    if (parsed.plans) dynamicInvestmentPlans = parsed.plans;
+                    if (parsed.wallets) {
+                        dynamicWithdrawalMethods = parsed.wallets;
+                        renderWalletsList(dynamicWithdrawalMethods);
+                    }
+                    if (parsed.rewards) dynamicTeamRewards = parsed.rewards;
+                    if (parsed.depositAccount) {
+                        applyDepositAccountUI(parsed.depositAccount);
+                    }
+                    return; // Cache se successfully load ho gaya, Firebase request skip!
+                } catch(e) {}
+            }
+
+            // Agar cache purana ho ya pehli dafa chal raha ho, tab Firebase se fetch karein
+            let tempConfigs = {};
+
+            // 1. Packages sync
             db.ref('packages').once('value', snapshot => {
-                if (!snapshot.exists()) {
-                    const default32Plans = [
-                        { id: "tier_1", name: "Tier 1 Task Pack", invest: 20, daily: 2.1, validity: 60, discountPercent: 0, order: 1 },
-                        { id: "tier_2", name: "Tier 2 Task Pack", invest: 50, daily: 4.1, validity: 60, discountPercent: 0, order: 2 },
-                        { id: "tier_3", name: "Tier 3 Task Pack", invest: 70, daily: 5.9, validity: 60, discountPercent: 0, order: 3 },
-                        { id: "tier_4", name: "Tier 4 Task Pack", invest: 100, daily: 7.7, validity: 60, discountPercent: 0, order: 4 },
-                        { id: "tier_5", name: "Tier 5 Task Pack", invest: 130, daily: 10.1, validity: 60, discountPercent: 0, order: 5 },
-                        { id: "tier_6", name: "Tier 6 Task Pack", invest: 150, daily: 11.1, validity: 60, discountPercent: 0, order: 6 },
-                        { id: "tier_15", name: "Tier 15 Task Pack", invest: 500, daily: 35.7, validity: 60, discountPercent: 0, order: 15 }
-                    ];
-                    const seedData = {};
-                    default32Plans.forEach(p => { seedData[p.id] = p; });
-                    db.ref('packages').set(seedData);
-                } else {
+                if (snapshot.exists()) {
                     const data = snapshot.val();
                     dynamicInvestmentPlans = Object.keys(data).map(key => {
                         const item = data[key];
@@ -2192,34 +2214,13 @@
                             order: item.order || 999
                         };
                     }).sort((a, b) => (a.order !== b.order ? a.order - b.order : a.invest - b.invest));
-
-                    const container = document.getElementById('invest-content');
-                    if (container && !container.classList.contains('hidden')) {
-                        loadInvestmentPlans();
-                    }
                 }
+                saveAppConfigsToCache();
             });
 
-            // Withdrawal methods sync
+            // 2. Withdrawal methods sync
             db.ref('withdrawalMethods').once('value', snapshot => {
-                if (!snapshot.exists()) {
-                    const defaultWallets = {
-                        "easypaisa": { 
-                            name: "Easypaisa", 
-                            logo: "https://i.ibb.co/bMywLFcy/Screenshot-20261027-005853-1.jpg", 
-                            active: true 
-                        },
-                        "jazzcash": { name: "JazzCash", logo: "", active: true },
-                        "sadapay": { name: "SadaPay", logo: "", active: true },
-                        "nayapay": { name: "NayaPay", logo: "", active: true },
-                        "upaisa": { name: "Upaisa", logo: "", active: true },
-                        "hbl_konnect": { name: "HBL Konnect", logo: "", active: true },
-                        "opay": { name: "OPay", logo: "", active: true }
-                    };
-                    db.ref('withdrawalMethods').set(defaultWallets);
-                    dynamicWithdrawalMethods = Object.keys(defaultWallets).map(k => ({ key: k, ...defaultWallets[k] }));
-                    renderWalletsList(dynamicWithdrawalMethods);
-                } else {
+                if (snapshot.exists()) {
                     const methods = snapshot.val();
                     dynamicWithdrawalMethods = [];
                     Object.keys(methods).forEach(key => {
@@ -2233,27 +2234,12 @@
                     });
                     renderWalletsList(dynamicWithdrawalMethods);
                 }
+                saveAppConfigsToCache();
             });
 
-            // Dynamic Level 1 Team Milestone Rewards Sync
+            // 3. Dynamic Level 1 Team Milestone Rewards Sync
             db.ref('rewards').once('value', snapshot => {
-                if (!snapshot.exists()) {
-                    const defaultRewards = {
-                        "reward_1": { id: "reward_1", target: 200, reward: 20, order: 1 },
-                        "reward_2": { id: "reward_2", target: 1000, reward: 80, order: 2 },
-                        "reward_3": { id: "reward_3", target: 5000, reward: 350, order: 3 },
-                        "reward_4": { id: "reward_4", target: 10000, reward: 600, order: 4 },
-                        "reward_5": { id: "reward_5", target: 20000, reward: 1000, order: 5 },
-                        "reward_6": { id: "reward_6", target: 30000, reward: 1500, order: 6 },
-                        "reward_7": { id: "reward_7", target: 50000, reward: 3000, order: 7 },
-                        "reward_8": { id: "reward_8", target: 70000, reward: 4000, order: 8 },
-                        "reward_9": { id: "reward_9", target: 95000, reward: 5000, order: 9 },
-                        "reward_10": { id: "reward_10", target: 135000, reward: 7000, order: 10 },
-                        "reward_11": { id: "reward_11", target: 200000, reward: 12000, order: 11 }
-                    };
-                    db.ref('rewards').set(defaultRewards);
-                    dynamicTeamRewards = Object.values(defaultRewards).sort((a,b) => a.order - b.order);
-                } else {
+                if (snapshot.exists()) {
                     const data = snapshot.val();
                     dynamicTeamRewards = Object.keys(data).map(k => ({
                         id: k,
@@ -2262,50 +2248,58 @@
                         order: data[k].order || 999
                     })).sort((a,b) => a.order !== b.order ? a.order - b.order : a.target - b.target);
                 }
-                const rewCont = document.getElementById('rewards-content');
-                if (rewCont && !rewCont.classList.contains('hidden')) {
-                    renderRewardsList();
-                }
+                saveAppConfigsToCache();
             });
 
-            // Live Deposit Account Settings Sync
+            // 4. Live Deposit Account Settings Sync
             db.ref('depositAccount').once('value', snapshot => {
-                if (!snapshot.exists()) {
-                    db.ref('depositAccount').set({
-                        title: "Taufeeq Ahmed",
-                        number: "03262550724",
-                        channels: "Easypaisa / Jazzcash"
-                    });
-                } else {
+                if (snapshot.exists()) {
                     const val = snapshot.val();
-                    if (val.title && document.getElementById('deposit-account-title')) {
-                        document.getElementById('deposit-account-title').innerText = val.title;
-                    }
-                    if (val.number) {
-                        dynamicDepositNumber = val.number;
-                        if (document.getElementById('deposit-account-number')) {
-                            document.getElementById('deposit-account-number').innerText = val.number;
-                        }
-                    }
-                    if (val.channels && document.getElementById('deposit-account-channels')) {
-                        document.getElementById('deposit-account-channels').innerText = `Payment Channels (${val.channels})`;
-                        
-                        const depMethodSelect = document.getElementById('payment-method');
-                        if (depMethodSelect) {
-                            const channelList = val.channels.split(/[\/,|]+/).map(c => c.trim()).filter(Boolean);
-                            if (channelList.length > 0) {
-                                depMethodSelect.innerHTML = '';
-                                channelList.forEach(ch => {
-                                    const opt = document.createElement('option');
-                                    opt.value = ch;
-                                    opt.innerText = ch;
-                                    depMethodSelect.appendChild(opt);
-                                });
-                            }
-                        }
+                    applyDepositAccountUI(val);
+                    tempConfigs.depositAccount = val;
+                }
+                saveAppConfigsToCache();
+            });
+
+            function saveAppConfigsToCache() {
+                const toSave = {
+                    plans: dynamicInvestmentPlans,
+                    wallets: dynamicWithdrawalMethods,
+                    rewards: dynamicTeamRewards,
+                    depositAccount: tempConfigs.depositAccount || { title: "Taufeeq Ahmed", number: dynamicDepositNumber, channels: "Easypaisa / Jazzcash" }
+                };
+                localStorage.setItem(CACHE_KEY, JSON.stringify(toSave));
+                localStorage.setItem(CACHE_TIME_KEY, Date.now().toString());
+            }
+        }
+
+        function applyDepositAccountUI(val) {
+            if (!val) return;
+            if (val.title && document.getElementById('deposit-account-title')) {
+                document.getElementById('deposit-account-title').innerText = val.title;
+            }
+            if (val.number) {
+                dynamicDepositNumber = val.number;
+                if (document.getElementById('deposit-account-number')) {
+                    document.getElementById('deposit-account-number').innerText = val.number;
+                }
+            }
+            if (val.channels && document.getElementById('deposit-account-channels')) {
+                document.getElementById('deposit-account-channels').innerText = `Payment Channels (${val.channels})`;
+                const depMethodSelect = document.getElementById('payment-method');
+                if (depMethodSelect) {
+                    const channelList = val.channels.split(/[\/,|]+/).map(c => c.trim()).filter(Boolean);
+                    if (channelList.length > 0) {
+                        depMethodSelect.innerHTML = '';
+                        channelList.forEach(ch => {
+                            const opt = document.createElement('option');
+                            opt.value = ch;
+                            opt.innerText = ch;
+                            depMethodSelect.appendChild(opt);
+                        });
                     }
                 }
-            });
+            }
         }
 
         initFirebaseDynamicConfigs();
@@ -2585,8 +2579,20 @@
             if (sectionId === 'invest') loadInvestmentPlans();
             if (sectionId === 'task') loadTasks();
             if (sectionId === 'rewards') renderRewardsList();
-            if (sectionId === 'history') loadHistory();
-            if (sectionId === 'team') loadTeamData();
+            if (sectionId === 'history') {
+                const now = Date.now();
+                if (!window.lastHistoryFetchTime || (now - window.lastHistoryFetchTime > 45000)) {
+                    loadHistory();
+                    window.lastHistoryFetchTime = now;
+                }
+            }
+            if (sectionId === 'team') {
+                const now = Date.now();
+                if (!window.lastTeamFetchTime || (now - window.lastTeamFetchTime > 60000)) {
+                    loadTeamData();
+                    window.lastTeamFetchTime = now;
+                }
+            }
             if (sectionId === 'home') loadActivePackagesCount();
             if (sectionId === 'send') backToWalletSelection();
         }
@@ -2940,36 +2946,30 @@
                     });
                 }
 
-                // Level 2 Commission (Upline Level 2)
+                // Level 2 Commission (Sirf single field fetch hogi - Mega Bandwidth Saver)
                 if (userData.referrerL2 && userData.referrerL2 !== 'none') {
-                    db.ref('users/' + userData.referrerL2).once('value', l2Snap => {
-                        const l2User = l2Snap.val();
-                        if (l2User) {
-                            const rate = (l2User.customCommissionL2 !== undefined ? parseFloat(l2User.customCommissionL2) : 3) / 100;
-                            const commL2 = parseFloat((amount * rate).toFixed(2));
-                            if (commL2 > 0) {
-                                db.ref('users/' + userData.referrerL2).update({
-                                    balance: firebase.database.ServerValue.increment(commL2),
-                                    referralEarnings: firebase.database.ServerValue.increment(commL2)
-                                });
-                            }
+                    db.ref('users/' + userData.referrerL2 + '/customCommissionL2').once('value', snap => {
+                        const rateVal = snap.exists() ? parseFloat(snap.val()) : 3;
+                        const commL2 = parseFloat((amount * (rateVal / 100)).toFixed(2));
+                        if (commL2 > 0) {
+                            db.ref('users/' + userData.referrerL2).update({
+                                balance: firebase.database.ServerValue.increment(commL2),
+                                referralEarnings: firebase.database.ServerValue.increment(commL2)
+                            });
                         }
                     });
                 }
 
-                // Level 3 Commission (Upline Level 3)
+                // Level 3 Commission (Sirf single field fetch hogi)
                 if (userData.referrerL3 && userData.referrerL3 !== 'none') {
-                    db.ref('users/' + userData.referrerL3).once('value', l3Snap => {
-                        const l3User = l3Snap.val();
-                        if (l3User) {
-                            const rate = (l3User.customCommissionL3 !== undefined ? parseFloat(l3User.customCommissionL3) : 1) / 100;
-                            const commL3 = parseFloat((amount * rate).toFixed(2));
-                            if (commL3 > 0) {
-                                db.ref('users/' + userData.referrerL3).update({
-                                    balance: firebase.database.ServerValue.increment(commL3),
-                                    referralEarnings: firebase.database.ServerValue.increment(commL3)
-                                });
-                            }
+                    db.ref('users/' + userData.referrerL3 + '/customCommissionL3').once('value', snap => {
+                        const rateVal = snap.exists() ? parseFloat(snap.val()) : 1;
+                        const commL3 = parseFloat((amount * (rateVal / 100)).toFixed(2));
+                        if (commL3 > 0) {
+                            db.ref('users/' + userData.referrerL3).update({
+                                balance: firebase.database.ServerValue.increment(commL3),
+                                referralEarnings: firebase.database.ServerValue.increment(commL3)
+                            });
                         }
                     });
                 }
@@ -3037,6 +3037,7 @@
             let loggedIn = false;
             let lastError = null;
 
+            // 1. Direct Auth Pehle Try Karein (Zero Database Read)
             for (const emailToTry of candidates) {
                 try {
                     await auth.signInWithEmailAndPassword(emailToTry, password);
@@ -3047,6 +3048,26 @@
                     if (err.code === 'auth/wrong-password' || err.code === 'auth/too-many-requests') {
                         break;
                     }
+                }
+            }
+
+            // 2. Agar direct auth fail ho aur user phone se login kar raha ho, sirf tab fallback database query karein
+            if (!loggedIn && !isEmail && cleanNumber.length === 11 && lastError && lastError.code === 'auth/user-not-found') {
+                try {
+                    const snap = await db.ref('users').orderByChild('number').equalTo(cleanNumber).once('value');
+                    if (snap.exists()) {
+                        let customEmail = null;
+                        snap.forEach(c => {
+                            const u = c.val();
+                            if (u && u.email) customEmail = u.email.trim().toLowerCase();
+                        });
+                        if (customEmail && !candidates.includes(customEmail)) {
+                            await auth.signInWithEmailAndPassword(customEmail, password);
+                            loggedIn = true;
+                        }
+                    }
+                } catch(e) {
+                    lastError = e;
                 }
             }
 
