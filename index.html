@@ -684,6 +684,25 @@
         .history-status-badge.approved, .history-status-badge.completed { background: #dcfce7; color: #059669; }
         .history-status-badge.rejected { background: #fee2e2; color: #dc2626; }
 
+        /* See More History Button */
+        .btn-load-more {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background: #ffffff;
+            border: 1.5px dashed var(--border);
+            border-radius: var(--radius-md);
+            color: var(--primary);
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .btn-load-more:hover {
+            border-color: var(--primary);
+            background: var(--surface-card);
+        }
+
 
         
 
@@ -1948,11 +1967,13 @@
                     <div id="deposit-history-cards" class="history-cards-container">
                         <p style="color:var(--text-muted); font-size:13px;">Loading deposits...</p>
                     </div>
+                    <button id="btn-more-deposits" class="btn-load-more hidden" onclick="showMoreDeposits()">See More Deposits (+10)</button>
 
                     <h3 style="font-size: 15px; margin: 26px 0 10px 0; color:var(--text-main);">Withdrawals</h3>
                     <div id="withdrawal-history-cards" class="history-cards-container">
                         <p style="color:var(--text-muted); font-size:13px;">Loading withdrawals...</p>
                     </div>
+                    <button id="btn-more-withdrawals" class="btn-load-more hidden" onclick="showMoreWithdrawals()">See More Withdrawals (+10)</button>
                 </div>
 
                 <!-- Invite (Affiliate Hierarchy) -->
@@ -2441,6 +2462,7 @@
             modalConfirmBtn.disabled = true;
             modalConfirmBtn.innerText = "Activating...";
 
+            let isFirstActivation = false;
             const userRef = db.ref('users/' + currentUser.uid);
             userRef.transaction(currentData => {
                 if (currentData === null) return currentData;
@@ -2448,6 +2470,10 @@
                 if (currentBal >= finalPrice) {
                     currentData.balance = parseFloat((currentBal - finalPrice).toFixed(2));
                     const prevInvested = parseFloat(currentData.totalInvested || 0);
+                    // Agar pehle investment 0 thi to hi first activation maani jaye gi
+                    if (prevInvested === 0) {
+                        isFirstActivation = true;
+                    }
                     currentData.totalInvested = parseFloat((prevInvested + finalPrice).toFixed(2));
                     return currentData;
                 }
@@ -2460,53 +2486,53 @@
                 if (error) {
                     showNotification("An error occurred. Please try again.", "danger");
                 } else if (committed) {
-                    db.ref('investments').orderByChild('userId').equalTo(currentUser.uid).once('value', invCheckSnap => {
-                        const isFirstActivation = !invCheckSnap.exists();
+                    const invData = { 
+                        userId: currentUser.uid, 
+                        planId: plan.id,
+                        planName: plan.name, 
+                        amount: finalPrice, 
+                        dailyEarning: plan.daily, 
+                        validity: plan.validity, 
+                        status: 'approved', 
+                        date: new Date().toISOString(), 
+                        lastClaimed: 0 
+                    };
 
-                        const invData = { 
-                            userId: currentUser.uid, 
-                            planId: plan.id,
-                            planName: plan.name, 
-                            amount: finalPrice, 
-                            dailyEarning: plan.daily, 
-                            validity: plan.validity, 
-                            status: 'approved', 
-                            date: new Date().toISOString(), 
-                            lastClaimed: 0 
-                        };
+                    db.ref('investments').push(invData).then(() => {
+                        showNotification("Package activated successfully!");
+                        cachedUserInvestments = null; // Cache refresh taake naya task foran show ho
+                        handleMultiTierCommission(finalPrice);
+                        
+                        // Reliable active upline referral counter & direct team node update
+                        if (isFirstActivation && currentUserProfile) {
+                            const updateTeamActiveStatus = (rootNode, lvl) => {
+                                // Direct key update (Instant & zero search)
+                                db.ref(`teams/${rootNode}/${lvl}/${currentUser.uid}/isActive`).set(true);
+                                // Backwards compatibility for older records
+                                db.ref(`teams/${rootNode}/${lvl}`).orderByChild('userId').equalTo(currentUser.uid).once('value', s => {
+                                    s.forEach(c => c.ref.update({ isActive: true }));
+                                });
+                                db.ref(`users/${rootNode}/teamL${lvl.slice(1)}`).orderByChild('userId').equalTo(currentUser.uid).once('value', s => {
+                                    s.forEach(c => c.ref.update({ isActive: true }));
+                                });
+                            };
 
-                        db.ref('investments').push(invData).then(() => {
-                            showNotification("Package activated successfully!");
-                            cachedUserInvestments = null; // Cache refresh taake naya task foran show ho
-                            handleMultiTierCommission(finalPrice);
-                            
-                            // Reliable 100% update for active upline referral counter
-                            if (isFirstActivation && currentUserProfile) {
-                                if (currentUserProfile.referredBy && currentUserProfile.referredBy !== 'none') {
-                                    db.ref('users/' + currentUserProfile.referredBy).update({
-                                        activeReferralsCount: firebase.database.ServerValue.increment(1)
-                                    });
-                                    db.ref('users/' + currentUserProfile.referredBy + '/teamL1').orderByChild('userId').equalTo(currentUser.uid).once('value', s => {
-                                        s.forEach(c => c.ref.update({ isActive: true }));
-                                    });
-                                }
-
-                                if (currentUserProfile.referrerL2 && currentUserProfile.referrerL2 !== 'none') {
-                                    db.ref('users/' + currentUserProfile.referrerL2 + '/teamL2').orderByChild('userId').equalTo(currentUser.uid).once('value', s => {
-                                        s.forEach(c => c.ref.update({ isActive: true }));
-                                    });
-                                }
-
-                                if (currentUserProfile.referrerL3 && currentUserProfile.referrerL3 !== 'none') {
-                                    db.ref('users/' + currentUserProfile.referrerL3 + '/teamL3').orderByChild('userId').equalTo(currentUser.uid).once('value', s => {
-                                        s.forEach(c => c.ref.update({ isActive: true }));
-                                    });
-                                }
+                            if (currentUserProfile.referredBy && currentUserProfile.referredBy !== 'none') {
+                                db.ref('users/' + currentUserProfile.referredBy).update({
+                                    activeReferralsCount: firebase.database.ServerValue.increment(1)
+                                });
+                                updateTeamActiveStatus(currentUserProfile.referredBy, 'l1');
                             }
+                            if (currentUserProfile.referrerL2 && currentUserProfile.referrerL2 !== 'none') {
+                                updateTeamActiveStatus(currentUserProfile.referrerL2, 'l2');
+                            }
+                            if (currentUserProfile.referrerL3 && currentUserProfile.referrerL3 !== 'none') {
+                                updateTeamActiveStatus(currentUserProfile.referrerL3, 'l3');
+                            }
+                        }
 
-                            loadActivePackagesCount();
-                            showSection('task', document.querySelector("a[onclick*='task']"));
-                        });
+                        loadActivePackagesCount();
+                        showSection('task', document.querySelector("a[onclick*='task']"));
                     });
                 } else {
                     showNotification("Insufficient balance. Please deposit funds first.", "danger");
@@ -2636,10 +2662,9 @@
             }
         }
 
-        // Smart Cache: 30 seconds tak dobara Firebase par call nahi jayegi
+        // Session Smart Cache: Jab tak package buy na ho ya task na claim ho, Firebase ko bar bar call nahi karega
         async function getUserInvestmentsData(forceRefresh = false) {
-            const now = Date.now();
-            if (!forceRefresh && cachedUserInvestments && (now - lastInvestmentsFetchTime < 30000)) {
+            if (!forceRefresh && cachedUserInvestments !== null) {
                 return cachedUserInvestments;
             }
             if (!currentUser) return [];
@@ -2649,7 +2674,6 @@
                 list.push({ key: child.key, ...child.val() });
             });
             cachedUserInvestments = list;
-            lastInvestmentsFetchTime = now;
             return list;
         }
 
@@ -2824,26 +2848,36 @@
             btn.disabled = true;
             btn.innerText = "Creating Account...";
 
-            // Step 1: Pre-verify Sponsor Code FIRST (Before creating Auth user)
+            // Step 1: Pre-verify Sponsor Code FIRST via Direct Key Lookup (Zero Database Download)
             let sponsorUid = 'none';
             let sponsorL2 = 'none';
             let sponsorL3 = 'none';
 
             if (referralCode) {
                 try {
-                    const snap = await db.ref('users').orderByChild('referralCode').equalTo(referralCode).once('value');
-                    if (!snap.exists()) {
-                        btn.disabled = false;
-                        btn.innerText = "Register Account";
-                        showNotification("Invalid Sponsor Code! Please check the code or leave it empty.", "danger");
-                        return;
+                    // Pehle direct fast table check karega
+                    const refSnap = await db.ref('referralCodes/' + referralCode).once('value');
+                    if (refSnap.exists()) {
+                        const rData = refSnap.val() || {};
+                        sponsorUid = rData.uid || 'none';
+                        sponsorL2 = rData.referredBy || 'none';
+                        sponsorL3 = rData.referrerL2 || 'none';
+                    } else {
+                        // Purane users ke liye fallback check
+                        const snap = await db.ref('users').orderByChild('referralCode').equalTo(referralCode).once('value');
+                        if (!snap.exists()) {
+                            btn.disabled = false;
+                            btn.innerText = "Register Account";
+                            showNotification("Invalid Sponsor Code! Please check the code or leave it empty.", "danger");
+                            return;
+                        }
+                        snap.forEach(child => {
+                            sponsorUid = child.key;
+                            const sData = child.val() || {};
+                            if (sData.referredBy && sData.referredBy !== 'none') sponsorL2 = sData.referredBy;
+                            if (sData.referrerL2 && sData.referrerL2 !== 'none') sponsorL3 = sData.referrerL2;
+                        });
                     }
-                    snap.forEach(child => {
-                        sponsorUid = child.key;
-                        const sData = child.val() || {};
-                        if (sData.referredBy && sData.referredBy !== 'none') sponsorL2 = sData.referredBy;
-                        if (sData.referrerL2 && sData.referrerL2 !== 'none') sponsorL3 = sData.referrerL2;
-                    });
                 } catch(e) {
                     btn.disabled = false;
                     btn.innerText = "Register Account";
@@ -2874,33 +2908,29 @@
                 };
 
                 newUserRef.set(newUserData).then(() => {
-                    // Populate hierarchy
+                    // Save to direct fast referral lookup (Zero bandwidth for future registrations)
+                    db.ref('referralCodes/' + newReferralCode).set({
+                        uid: cred.user.uid,
+                        referredBy: sponsorUid,
+                        referrerL2: sponsorL2
+                    });
+
+                    // Populate hierarchy with userId as direct key (Fast activation without search)
+                    const memberData = {
+                        userId: cred.user.uid,
+                        email: email,
+                        number: number,
+                        joinedDate: new Date().toISOString(),
+                        isActive: false
+                    };
                     if (sponsorUid !== 'none') {
-                        db.ref('users/' + sponsorUid + '/teamL1').push({
-                            userId: cred.user.uid,
-                            email: email,
-                            number: number,
-                            joinedDate: new Date().toISOString(),
-                            isActive: false
-                        });
+                        db.ref('teams/' + sponsorUid + '/l1/' + cred.user.uid).set(memberData);
                     }
                     if (sponsorL2 !== 'none') {
-                        db.ref('users/' + sponsorL2 + '/teamL2').push({
-                            userId: cred.user.uid,
-                            email: email,
-                            number: number,
-                            joinedDate: new Date().toISOString(),
-                            isActive: false
-                        });
+                        db.ref('teams/' + sponsorL2 + '/l2/' + cred.user.uid).set(memberData);
                     }
                     if (sponsorL3 !== 'none') {
-                        db.ref('users/' + sponsorL3 + '/teamL3').push({
-                            userId: cred.user.uid,
-                            email: email,
-                            number: number,
-                            joinedDate: new Date().toISOString(),
-                            isActive: false
-                        });
+                        db.ref('teams/' + sponsorL3 + '/l3/' + cred.user.uid).set(memberData);
                     }
                     showNotification("Account created successfully!");
                     document.getElementById('community-modal').classList.remove('hidden');
@@ -2921,59 +2951,58 @@
             });
         }
 
-        // --- 100% Reliable Multi-Tier Commission (Direct Atomic Server Increment) ---
+        // --- 100% Reliable Multi-Tier Commission (Memory-Optimized Atomic Server Increment) ---
         function handleMultiTierCommission(investmentAmount) {
             if (!currentUser) return;
             const amount = parseFloat(investmentAmount);
             if (isNaN(amount) || amount <= 0) return;
 
-            db.ref('users/' + currentUser.uid).once('value', userSnap => {
-                const userData = userSnap.val();
-                if (!userData) return;
+            // Memory se uplines uthayein (0 database read)
+            const userData = currentUserProfile || {};
+            const refL1 = userData.referredBy;
+            const refL2 = userData.referrerL2;
+            const refL3 = userData.referrerL3;
 
-                // Level 1 Commission + Level 1 Team New Investment Volume (For Milestone Rewards)
-                if (userData.referredBy && userData.referredBy !== 'none') {
-                    db.ref('users/' + userData.referredBy + '/customCommissionL1').once('value', snap => {
-                        const rateVal = snap.exists() ? parseFloat(snap.val()) : 8;
-                        const commL1 = parseFloat((amount * (rateVal / 100)).toFixed(2));
-                        
-                        // Atomically increment Level 1 new investment volume for rewards
-                        db.ref('users/' + userData.referredBy).update({
-                            l1RewardInvestment: firebase.database.ServerValue.increment(amount),
-                            balance: commL1 > 0 ? firebase.database.ServerValue.increment(commL1) : firebase.database.ServerValue.increment(0),
-                            referralEarnings: commL1 > 0 ? firebase.database.ServerValue.increment(commL1) : firebase.database.ServerValue.increment(0)
+            // Level 1 Commission + Level 1 Team New Investment Volume (For Milestone Rewards)
+            if (refL1 && refL1 !== 'none') {
+                db.ref('users/' + refL1 + '/customCommissionL1').once('value', snap => {
+                    const rateVal = snap.exists() ? parseFloat(snap.val()) : 8;
+                    const commL1 = parseFloat((amount * (rateVal / 100)).toFixed(2));
+                    db.ref('users/' + refL1).update({
+                        l1RewardInvestment: firebase.database.ServerValue.increment(amount),
+                        balance: commL1 > 0 ? firebase.database.ServerValue.increment(commL1) : firebase.database.ServerValue.increment(0),
+                        referralEarnings: commL1 > 0 ? firebase.database.ServerValue.increment(commL1) : firebase.database.ServerValue.increment(0)
+                    });
+                });
+            }
+
+            // Level 2 Commission
+            if (refL2 && refL2 !== 'none') {
+                db.ref('users/' + refL2 + '/customCommissionL2').once('value', snap => {
+                    const rateVal = snap.exists() ? parseFloat(snap.val()) : 3;
+                    const commL2 = parseFloat((amount * (rateVal / 100)).toFixed(2));
+                    if (commL2 > 0) {
+                        db.ref('users/' + refL2).update({
+                            balance: firebase.database.ServerValue.increment(commL2),
+                            referralEarnings: firebase.database.ServerValue.increment(commL2)
                         });
-                    });
-                }
+                    }
+                });
+            }
 
-                // Level 2 Commission (Sirf single field fetch hogi - Mega Bandwidth Saver)
-                if (userData.referrerL2 && userData.referrerL2 !== 'none') {
-                    db.ref('users/' + userData.referrerL2 + '/customCommissionL2').once('value', snap => {
-                        const rateVal = snap.exists() ? parseFloat(snap.val()) : 3;
-                        const commL2 = parseFloat((amount * (rateVal / 100)).toFixed(2));
-                        if (commL2 > 0) {
-                            db.ref('users/' + userData.referrerL2).update({
-                                balance: firebase.database.ServerValue.increment(commL2),
-                                referralEarnings: firebase.database.ServerValue.increment(commL2)
-                            });
-                        }
-                    });
-                }
-
-                // Level 3 Commission (Sirf single field fetch hogi)
-                if (userData.referrerL3 && userData.referrerL3 !== 'none') {
-                    db.ref('users/' + userData.referrerL3 + '/customCommissionL3').once('value', snap => {
-                        const rateVal = snap.exists() ? parseFloat(snap.val()) : 1;
-                        const commL3 = parseFloat((amount * (rateVal / 100)).toFixed(2));
-                        if (commL3 > 0) {
-                            db.ref('users/' + userData.referrerL3).update({
-                                balance: firebase.database.ServerValue.increment(commL3),
-                                referralEarnings: firebase.database.ServerValue.increment(commL3)
-                            });
-                        }
-                    });
-                }
-            });
+            // Level 3 Commission
+            if (refL3 && refL3 !== 'none') {
+                db.ref('users/' + refL3 + '/customCommissionL3').once('value', snap => {
+                    const rateVal = snap.exists() ? parseFloat(snap.val()) : 1;
+                    const commL3 = parseFloat((amount * (rateVal / 100)).toFixed(2));
+                    if (commL3 > 0) {
+                        db.ref('users/' + refL3).update({
+                            balance: firebase.database.ServerValue.increment(commL3),
+                            referralEarnings: firebase.database.ServerValue.increment(commL3)
+                        });
+                    }
+                });
+            }
         }
 
         function joinCommunityAndSignIn() {
@@ -3012,18 +3041,7 @@
                 }
             }
 
-            // Low-bandwidth targeted lookup (Only check this single user if needed)
-            if (!isEmail && cleanNumber.length === 11) {
-                try {
-                    const snap = await db.ref('users').orderByChild('number').equalTo(cleanNumber).once('value');
-                    if (snap.exists()) {
-                        snap.forEach(c => {
-                            const u = c.val();
-                            if (u && u.email) candidates.push(u.email.trim().toLowerCase());
-                        });
-                    }
-                } catch(e) {}
-            }
+            // Zero Database Read on Login: Default formats pehle direct bina database read ke auth try karenge
 
             candidates = [...new Set(candidates.filter(Boolean))];
 
@@ -3275,8 +3293,8 @@
                 btn.innerText = "Submit Deposit";
             };
 
-            // Check if this TRX ID was already submitted in the database
-            db.ref('deposits').orderByChild('tid').equalTo(cleanTid).once('value', tidSnap => {
+            // Direct Key Duplicate Check (Ultra Fast & 0 Extra Reads)
+            db.ref('usedTids/' + cleanTid).once('value', tidSnap => {
                 if (tidSnap.exists()) {
                     resetDepositBtn();
                     showNotification("This TRX ID has already been submitted. Please check your transaction details.", "danger");
@@ -3294,7 +3312,12 @@
                     date: new Date().toISOString()
                 };
 
+                // Save to deposits and mark TRX as used simultaneously
                 db.ref('deposits').push(depositData).then(() => {
+                    db.ref('usedTids/' + cleanTid).set({
+                        userId: currentUser.uid,
+                        time: firebase.database.ServerValue.TIMESTAMP
+                    });
                     showNotification("Deposit submitted successfully! Verification in progress.");
                     amountInput.value = '';
                     tidInput.value = '';
@@ -3890,75 +3913,132 @@
             }
         }
 
-        // --- History ---
-        let currentLoadedDeposits = {};
-        let currentLoadedWithdrawals = {};
+        // --- Paginated History System (10 Initial + See More) ---
+        let allUserDeposits = [];
+        let allUserWithdrawals = [];
+        let depositDisplayCount = 10;
+        let withdrawalDisplayCount = 10;
 
         function loadHistory() {
             const depCards = document.getElementById('deposit-history-cards');
             const wthCards = document.getElementById('withdrawal-history-cards');
-            const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-
             depCards.innerHTML = '<p style="color:var(--text-muted); font-size:13px;">Loading deposits...</p>';
             wthCards.innerHTML = '<p style="color:var(--text-muted); font-size:13px;">Loading withdrawals...</p>';
 
-            db.ref('deposits').orderByChild('userId').equalTo(currentUser.uid).limitToLast(25).once('value', snap => {
-                if (!snap.exists()) {
-                    depCards.innerHTML = '<p style="color:var(--text-muted); font-size:13px;">No deposits recorded yet.</p>';
-                    return;
-                }
-                let cards = [];
-                currentLoadedDeposits = {};
-                snap.forEach(c => {
-                    const key = c.key;
-                    const d = c.val();
-                    currentLoadedDeposits[key] = d;
-                    const statusClass = (d.status || 'processing').toLowerCase();
-                    const formattedDate = new Date(d.date).toLocaleString('en-GB', options);
+            depositDisplayCount = 10;
+            withdrawalDisplayCount = 10;
 
-                    cards.unshift(`
-                        <div class="history-card-item" style="cursor:default;">
-                            <div class="history-card-left">
-                                <span class="history-card-amt mono">Rs. ${parseFloat(d.amount).toLocaleString()}</span>
-                                <span class="history-card-meta">${d.method} • ${formattedDate}</span>
-                            </div>
-                            <div class="history-card-right">
-                                <span class="history-status-badge ${statusClass}">${d.status}</span>
-                            </div>
-                        </div>
-                    `);
+            // Fetch deposits once and sort descending
+            db.ref('deposits').orderByChild('userId').equalTo(currentUser.uid).once('value', snap => {
+                allUserDeposits = [];
+                snap.forEach(c => {
+                    allUserDeposits.unshift({ id: c.key, ...c.val() });
                 });
-                depCards.innerHTML = cards.join('');
+                // Sort by date newest first
+                allUserDeposits.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+                renderDepositsUI();
             });
 
-            db.ref('withdrawals').orderByChild('userId').equalTo(currentUser.uid).limitToLast(25).once('value', snap => {
-                if (!snap.exists()) {
-                    wthCards.innerHTML = '<p style="color:var(--text-muted); font-size:13px;">No withdrawals recorded yet.</p>';
-                    return;
-                }
-                let cards = [];
-                currentLoadedWithdrawals = {};
+            // Fetch withdrawals once and sort descending
+            db.ref('withdrawals').orderByChild('userId').equalTo(currentUser.uid).once('value', snap => {
+                allUserWithdrawals = [];
                 snap.forEach(c => {
-                    const key = c.key;
-                    const d = c.val();
-                    currentLoadedWithdrawals[key] = d;
-                    const statusClass = (d.status || 'processing').toLowerCase();
-                    const formattedDate = new Date(d.date).toLocaleString('en-GB', options);
-
-                    cards.unshift(`
-                        <div class="history-card-item" style="cursor:default;">
-                            <div class="history-card-left">
-                                <span class="history-card-amt mono" style="color:var(--primary);">Rs. ${parseFloat(d.amount).toLocaleString()}</span>
-                                <span class="history-card-meta">${d.method} • ${formattedDate}</span>
-                            </div>
-                            <div class="history-card-right">
-                                <span class="history-status-badge ${statusClass}">${d.status}</span>
-                            </div>
-                        </div>
-                    `);
+                    allUserWithdrawals.unshift({ id: c.key, ...c.val() });
                 });
-                wthCards.innerHTML = cards.join('');
+                // Sort by date newest first
+                allUserWithdrawals.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+                renderWithdrawalsUI();
             });
+        }
+
+        function renderDepositsUI() {
+            const depCards = document.getElementById('deposit-history-cards');
+            const moreBtn = document.getElementById('btn-more-deposits');
+            const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+
+            if (!allUserDeposits || allUserDeposits.length === 0) {
+                depCards.innerHTML = '<p style="color:var(--text-muted); font-size:13px;">No deposits recorded yet.</p>';
+                if (moreBtn) moreBtn.classList.add('hidden');
+                return;
+            }
+
+            const visibleItems = allUserDeposits.slice(0, depositDisplayCount);
+            let html = '';
+            visibleItems.forEach(d => {
+                const statusClass = (d.status || 'processing').toLowerCase();
+                const formattedDate = new Date(d.date).toLocaleString('en-GB', options);
+                html += `
+                    <div class="history-card-item" style="cursor:default;">
+                        <div class="history-card-left">
+                            <span class="history-card-amt mono">Rs. ${parseFloat(d.amount).toLocaleString()}</span>
+                            <span class="history-card-meta">${d.method} • ${formattedDate}</span>
+                        </div>
+                        <div class="history-card-right">
+                            <span class="history-status-badge ${statusClass}">${d.status}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            depCards.innerHTML = html;
+
+            if (moreBtn) {
+                if (depositDisplayCount < allUserDeposits.length) {
+                    moreBtn.classList.remove('hidden');
+                    moreBtn.innerText = `See More Deposits (${allUserDeposits.length - depositDisplayCount} remaining)`;
+                } else {
+                    moreBtn.classList.add('hidden');
+                }
+            }
+        }
+
+        function showMoreDeposits() {
+            depositDisplayCount += 10;
+            renderDepositsUI();
+        }
+
+        function renderWithdrawalsUI() {
+            const wthCards = document.getElementById('withdrawal-history-cards');
+            const moreBtn = document.getElementById('btn-more-withdrawals');
+            const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+
+            if (!allUserWithdrawals || allUserWithdrawals.length === 0) {
+                wthCards.innerHTML = '<p style="color:var(--text-muted); font-size:13px;">No withdrawals recorded yet.</p>';
+                if (moreBtn) moreBtn.classList.add('hidden');
+                return;
+            }
+
+            const visibleItems = allUserWithdrawals.slice(0, withdrawalDisplayCount);
+            let html = '';
+            visibleItems.forEach(d => {
+                const statusClass = (d.status || 'processing').toLowerCase();
+                const formattedDate = new Date(d.date).toLocaleString('en-GB', options);
+                html += `
+                    <div class="history-card-item" style="cursor:default;">
+                        <div class="history-card-left">
+                            <span class="history-card-amt mono" style="color:var(--primary);">Rs. ${parseFloat(d.amount).toLocaleString()}</span>
+                            <span class="history-card-meta">${d.method} • ${formattedDate}</span>
+                        </div>
+                        <div class="history-card-right">
+                            <span class="history-status-badge ${statusClass}">${d.status}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            wthCards.innerHTML = html;
+
+            if (moreBtn) {
+                if (withdrawalDisplayCount < allUserWithdrawals.length) {
+                    moreBtn.classList.remove('hidden');
+                    moreBtn.innerText = `See More Withdrawals (${allUserWithdrawals.length - withdrawalDisplayCount} remaining)`;
+                } else {
+                    moreBtn.classList.add('hidden');
+                }
+            }
+        }
+
+        function showMoreWithdrawals() {
+            withdrawalDisplayCount += 10;
+            renderWithdrawalsUI();
         }
 
 
@@ -3990,14 +4070,17 @@
                 document.getElementById('user-referral-earnings').innerText = `Rs. ${parseFloat(userData.referralEarnings || 0).toFixed(2)}`;
                 document.getElementById('user-active-members-count').innerText = userData.activeReferralsCount || 0;
                 
-                const l1Data = userData.teamL1 || userData.team || {};
-                renderTeamLevelCards('team-tab-pane-l1', l1Data, 'Level 1');
+                // Fetch from isolated 'teams/' node (Bandwidth Saver) with fallback to older data
+                db.ref('teams/' + currentUser.uid).once('value', teamSnap => {
+                    const teams = teamSnap.val() || {};
+                    const l1Data = teams.l1 || userData.teamL1 || userData.team || {};
+                    const l2Data = teams.l2 || userData.teamL2 || {};
+                    const l3Data = teams.l3 || userData.teamL3 || {};
 
-                const l2Data = userData.teamL2 || {};
-                renderTeamLevelCards('team-tab-pane-l2', l2Data, 'Level 2');
-
-                const l3Data = userData.teamL3 || {};
-                renderTeamLevelCards('team-tab-pane-l3', l3Data, 'Level 3');
+                    renderTeamLevelCards('team-tab-pane-l1', l1Data, 'Level 1');
+                    renderTeamLevelCards('team-tab-pane-l2', l2Data, 'Level 2');
+                    renderTeamLevelCards('team-tab-pane-l3', l3Data, 'Level 3');
+                });
 
                 updateUserCustomCommissionUI(userData);
             });
